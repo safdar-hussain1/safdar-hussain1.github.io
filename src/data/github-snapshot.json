@@ -1,0 +1,65 @@
+{
+  "fetchedAt": "2026-10-19T17:40:50.335Z",
+  "rows": [
+    {
+      "repo": "wardos",
+      "stars": 1,
+      "pushedAt": "2026-10-19T13:08:13Z",
+      "openIssues": 0,
+      "licence": "MIT",
+      "ci": "passing",
+      "source": "snapshot",
+      "fetchedAt": "2026-10-19T17:40:50.335Z"
+    },
+    {
+      "repo": "nightingale",
+      "stars": 1,
+      "pushedAt": "2026-10-06T19:25:39Z",
+      "openIssues": 0,
+      "licence": "MIT",
+      "ci": "passing",
+      "source": "snapshot",
+      "fetchedAt": "2026-10-19T17:40:50.335Z"
+    },
+    {
+      "repo": "trafficlens",
+      "stars": 1,
+      "pushedAt": "2026-10-19T08:57:51Z",
+      "openIssues": 0,
+      "licence": "MIT",
+      "ci": "passing",
+      "source": "snapshot",
+      "fetchedAt": "2026-10-19T17:40:50.335Z"
+    },
+    {
+      "repo": "red-light-green-light-cv",
+      "stars": 1,
+      "pushedAt": "2026-10-06T16:52:06Z",
+      "openIssues": 0,
+      "licence": "MIT",
+      "ci": "passing",
+      "source": "snapshot",
+      "fetchedAt": "2026-10-19T17:40:50.335Z"
+    },
+    {
+      "repo": "carmine",
+      "stars": 1,
+      "pushedAt": "2026-10-19T17:05:01Z",
+      "openIssues": 0,
+      "licence": "MIT",
+      "ci": "passing",
+      "source": "snapshot",
+      "fetchedAt": "2026-10-19T17:40:50.335Z"
+    },
+    {
+      "repo": "homecast",
+      "stars": 1,
+      "pushedAt": "2026-10-06T19:11:09Z",
+      "openIssues": 0,
+      "licence": "MIT",
+      "ci": "passing",
+      "source": "snapshot",
+      "fetchedAt": "2026-10-19T17:40:50.335Z"
+    }
+  ]
+}
