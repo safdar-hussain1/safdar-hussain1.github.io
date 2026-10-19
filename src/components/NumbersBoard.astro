@@ -1,0 +1,91 @@
+---
+import type { WorkEntry } from '../lib/work-schema';
+import { liveEntries } from '../lib/work';
+
+interface Props {
+  entries: WorkEntry[];
+}
+const { entries } = Astro.props;
+const live = liveEntries(entries);
+---
+<div class="numbers" id="numbers-board">
+  <h3>Measured, in each project's own words</h3>
+  <p class="meta">Every line is copied from the project's README and links to it. Nothing here is rounded or re-stated.</p>
+  <div class="numbers__grid">
+    {
+      live.map((e) => (
+        <div class="numbers__tile" style={`--accent:${e.accent};--accent-ink:${e.accentInk.dark};--accent-ink-light:${e.accentInk.light}`}>
+          <b class="numbers__name"><span class="numbers__dot" aria-hidden="true"></span>{e.name}</b>
+          <ul>
+            {e.facts.slice(0, 3).map((f) => (
+              <li><a href={f.source}>{f.text}</a></li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .numbers {
+    display: grid;
+    gap: 0.6rem;
+  }
+  .numbers__grid {
+    margin-top: var(--s-2);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .numbers__tile {
+    background: var(--raised);
+    padding: 1rem 1.1rem 1.1rem;
+    display: grid;
+    gap: 0.6rem;
+    align-content: start;
+  }
+  .numbers__name {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--display);
+    font-weight: 500;
+    font-stretch: 104%;
+  }
+  .numbers__dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .numbers__tile ul {
+    margin: 0;
+    padding-left: 1rem;
+    display: grid;
+    gap: 0.35rem;
+    font-family: var(--display);
+    font-size: 0.92rem;
+    font-stretch: 97%;
+    color: var(--ink-2);
+  }
+  .numbers__tile a {
+    color: var(--ink);
+    text-decoration-color: var(--line-2);
+  }
+  .numbers__tile a:hover {
+    color: var(--accent-ink);
+  }
+  :root[data-theme='light'] .numbers__tile {
+    --accent-ink: var(--accent-ink-light);
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme='dark']) .numbers__tile {
+      --accent-ink: var(--accent-ink-light);
+    }
+  }
+</style>

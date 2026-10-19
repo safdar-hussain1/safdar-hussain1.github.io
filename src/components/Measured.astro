@@ -1,0 +1,24 @@
+---
+import type { WorkEntry } from '../lib/work-schema';
+import NumbersBoard from './NumbersBoard.astro';
+import GithubBoard from './GithubBoard.astro';
+
+interface Props {
+  entries: WorkEntry[];
+}
+const { entries } = Astro.props;
+---
+<section id="measured" class="measured section wrap" aria-labelledby="measured-title">
+  <h2 id="measured-title">Measured</h2>
+  <div class="measured__grid">
+    <NumbersBoard entries={entries} />
+    <GithubBoard entries={entries} />
+  </div>
+</section>
+
+<style>
+  .measured__grid {
+    display: grid;
+    gap: var(--s-4);
+  }
+</style>
