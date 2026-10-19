@@ -1,0 +1,100 @@
+---
+import about from '../data/about.json';
+import Wall from './Wall.astro';
+import { longDate } from '../lib/dates';
+---
+<section id="about" class="about section wrap" aria-labelledby="about-title">
+  <h2 id="about-title">About</h2>
+  <div class="about__grid">
+    <div class="about__story">
+      <p class="about__now meta">{longDate(about.now.date)} · {about.now.text}</p>
+      {about.paragraphs.map((p) => <p>{p}</p>)}
+      <h3>Outside work</h3>
+      <p>{about.outside}</p>
+      {
+        about.swara && (
+          <>
+            <h3>Also</h3>
+            <p>
+              <a href={about.swara.href}>{about.swara.text}</a>
+            </p>
+          </>
+        )
+      }
+    </div>
+    <div class="about__facts">
+      <ul class="facts">
+        {
+          about.facts.map((f) => (
+            <li>
+              <b>{f.label}</b>
+              <span>{f.text}</span>
+            </li>
+          ))
+        }
+      </ul>
+      <Wall />
+    </div>
+  </div>
+</section>
+
+<style>
+  .about__grid {
+    display: grid;
+    gap: var(--s-4);
+  }
+  @media (min-width: 820px) {
+    .about__grid {
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    }
+  }
+  .about__story {
+    display: grid;
+    gap: var(--s-2);
+    align-content: start;
+  }
+  .about__story p {
+    font-size: var(--step-1);
+    max-width: 56ch;
+  }
+  .about__story h3 {
+    margin-top: var(--s-2);
+  }
+  .about__now {
+    font-size: 0.95rem;
+    color: var(--ink-2);
+  }
+  .about__facts {
+    display: grid;
+    gap: var(--s-3);
+    align-content: start;
+  }
+  .facts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.7rem;
+    font-family: var(--display);
+    font-size: 0.95rem;
+    font-stretch: 96%;
+    color: var(--ink-2);
+  }
+  .facts li {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 0.8rem;
+    padding-top: 0.7rem;
+    border-top: 1px solid var(--line);
+  }
+  .facts b {
+    color: var(--ink);
+    font-weight: 500;
+  }
+  @media (max-width: 480px) {
+    .facts li {
+      grid-template-columns: 1fr;
+      gap: 0.2rem;
+    }
+  }
+</style>

@@ -1,0 +1,88 @@
+---
+import timeline from '../data/timeline.json';
+import { shortDate } from '../lib/dates';
+---
+<section id="timeline" class="timeline section wrap" aria-labelledby="timeline-title">
+  <h2 id="timeline-title">Where I have been</h2>
+  <ol class="timeline__list">
+    {
+      timeline.map((t) => (
+        <li class="timeline__item">
+          <span class="timeline__when meta">
+            {shortDate(t.when)}
+            {t.until && <> – {shortDate(t.until)}</>}
+          </span>
+          <h3>{t.title}</h3>
+          <p>{t.text}</p>
+        </li>
+      ))
+    }
+  </ol>
+</section>
+
+<style>
+  .timeline__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-3);
+    position: relative;
+  }
+  .timeline__item {
+    display: grid;
+    gap: 0.45rem;
+    padding-left: 1.4rem;
+    position: relative;
+  }
+  .timeline__item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.45rem;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--ink-2);
+  }
+  .timeline__item::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 1.1rem;
+    bottom: calc(-1 * var(--s-3));
+    width: 1px;
+    background: var(--line);
+  }
+  .timeline__item:last-child::after {
+    display: none;
+  }
+  .timeline__item p {
+    max-width: 44ch;
+  }
+  @media (min-width: 900px) {
+    .timeline__list {
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: var(--s-2);
+    }
+    .timeline__item {
+      padding-left: 0;
+      padding-top: 1.2rem;
+    }
+    .timeline__item::before {
+      top: 0;
+      left: 0;
+    }
+    .timeline__item::after {
+      top: 4px;
+      left: 1rem;
+      right: calc(-1 * var(--s-2));
+      bottom: auto;
+      width: auto;
+      height: 1px;
+    }
+    .timeline__item p {
+      font-size: var(--step--1);
+    }
+  }
+</style>

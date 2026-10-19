@@ -1,0 +1,82 @@
+---
+import certificates from '../data/certificates.json';
+import skills from '../data/skills.json';
+---
+<div class="wall">
+  <div class="wall__block">
+    <h3>Certificates</h3>
+    <ul class="wall__certs">
+      {
+        certificates.map((c) => (
+          <li>
+            <span>{c.name}</span>
+            {c.issuer && <span class="meta">{c.issuer}</span>}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+  <div class="wall__block">
+    <h3>What I build with</h3>
+    <dl class="wall__skills">
+      {
+        skills.map((g) => (
+          <>
+            <dt>{g.name}</dt>
+            <dd>{g.items.join(', ')}</dd>
+          </>
+        ))
+      }
+    </dl>
+  </div>
+</div>
+
+<style>
+  .wall {
+    display: grid;
+    gap: var(--s-3);
+  }
+  .wall__block {
+    display: grid;
+    gap: 0.8rem;
+  }
+  .wall__certs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .wall__certs li {
+    display: grid;
+    gap: 0.1rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--line);
+  }
+  .wall__skills {
+    margin: 0;
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.5rem 1rem;
+    font-family: var(--display);
+    font-size: 0.95rem;
+    font-stretch: 96%;
+  }
+  .wall__skills dt {
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .wall__skills dd {
+    margin: 0;
+    color: var(--ink-2);
+  }
+  @media (max-width: 480px) {
+    .wall__skills {
+      grid-template-columns: 1fr;
+      gap: 0.2rem 0;
+    }
+    .wall__skills dd {
+      margin-bottom: 0.6rem;
+    }
+  }
+</style>

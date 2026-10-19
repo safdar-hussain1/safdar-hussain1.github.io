@@ -1,0 +1,69 @@
+---
+import type { WorkEntry } from '../lib/work-schema';
+
+interface Props {
+  entries: WorkEntry[];
+}
+const { entries } = Astro.props;
+const fact = (slug: string, i: number) => {
+  const e = entries.find((x) => x.slug === slug)!;
+  return { ...e.facts[i], name: e.name };
+};
+const principles = [
+  {
+    title: 'Measure, don’t claim',
+    text: 'Every product is scored against the naive thing people actually do, and the number is on the page.',
+    proof: fact('homecast', 2),
+  },
+  {
+    title: 'Break it on purpose',
+    text: 'Each headline claim has a test that goes red when the mechanism behind it is removed.',
+    proof: fact('red-light-green-light-cv', 1),
+  },
+  {
+    title: 'Publish the bad number',
+    text: 'A fix that did not help stays in the report, next to the ones that did.',
+    proof: fact('nightingale', 3),
+  },
+  {
+    title: 'It runs on your device',
+    text: 'No server anywhere. The model you read about is the model that runs, and nothing you load leaves the tab.',
+    proof: fact('wardos', 0),
+  },
+];
+---
+<section id="how" class="how section wrap" aria-labelledby="how-title">
+  <h2 id="how-title">How I work</h2>
+  <div class="how__grid">
+    {
+      principles.map((p) => (
+        <div class="how__item">
+          <h3>{p.title}</h3>
+          <p>{p.text}</p>
+          <p class="how__proof meta">
+            {p.proof.name}: <a href={p.proof.source}>{p.proof.text}</a>
+          </p>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .how__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--s-3) var(--s-4);
+  }
+  .how__item {
+    display: grid;
+    gap: 0.6rem;
+    align-content: start;
+  }
+  .how__item p {
+    max-width: 36ch;
+  }
+  .how__proof a {
+    color: var(--ink);
+  }
+</style>

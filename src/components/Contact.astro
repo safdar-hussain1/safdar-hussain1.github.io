@@ -1,0 +1,50 @@
+---
+import { SITE } from '../data/site';
+import Icon from './Icon.astro';
+---
+<section id="contact" class="contact section wrap" aria-labelledby="contact-title">
+  <h2 id="contact-title">Contact</h2>
+  <p class="contact__lede">Email is best. I answer within a day.</p>
+  <div class="contact__row">
+    <code id="contact-email">{SITE.author.email}</code>
+    <button class="btn" type="button" id="copy-email" aria-label="Copy the email address"><Icon name="copy" size={15} /> Copy</button>
+    <a class="btn" href={SITE.author.github}>GitHub</a>
+    <a class="btn" href={SITE.author.linkedin}>LinkedIn</a>
+  </div>
+</section>
+
+<script>
+  import { copyText } from '../scripts/copy';
+
+  const btn = document.getElementById('copy-email');
+  const code = document.getElementById('contact-email');
+  btn?.addEventListener('click', async () => {
+    const ok = await copyText(code?.textContent?.trim() ?? '', code ?? undefined);
+    const label = btn.querySelector('svg')?.nextSibling;
+    if (label) label.textContent = ok ? ' Copied' : ' Selected';
+    setTimeout(() => {
+      if (label) label.textContent = ' Copy';
+    }, 1600);
+  });
+</script>
+
+<style>
+  .contact__lede {
+    font-size: var(--step-1);
+    margin-bottom: var(--s-2);
+  }
+  .contact__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    align-items: center;
+  }
+  .contact__row code {
+    font-size: 1rem;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 0.6rem 0.9rem;
+    background: var(--raised);
+    user-select: all;
+  }
+</style>
