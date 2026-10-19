@@ -1,0 +1,68 @@
+---
+// The 1200×630 preview picture for a project page, rendered only when the page is opened
+// with ?still=og by the still script: the project's poster with its name on a band.
+import type { WorkEntry } from '../lib/work-schema';
+
+interface Props {
+  entry: WorkEntry;
+}
+const { entry: e } = Astro.props;
+---
+<div class="og-card" aria-hidden="true" style={`--accent:${e.accent}`}>
+  <img src={`/work/${e.slug}/poster.webp`} alt="" />
+  <div class="og-card__band">
+    <span class="og-card__name">{e.name}</span>
+    <span class="og-card__by">Safdar Hussain · runs live on the page</span>
+  </div>
+</div>
+
+<style>
+  .og-card {
+    display: none;
+  }
+  :global(html[data-still='og']) .og-card {
+    display: block;
+    position: fixed;
+    inset: 0;
+    width: 1200px;
+    height: 630px;
+    background: #0b1020;
+    overflow: hidden;
+  }
+  .og-card img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+  .og-card__band {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 28px 44px 34px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+    background: linear-gradient(to top, rgba(11, 16, 32, 0.96), rgba(11, 16, 32, 0.75) 70%, rgba(11, 16, 32, 0));
+    border-bottom: 10px solid var(--accent);
+    color: #eef2ff;
+    font-family: var(--display);
+  }
+  .og-card__name {
+    font-size: 64px;
+    font-weight: 400;
+    font-stretch: 112%;
+    letter-spacing: -0.01em;
+  }
+  .og-card__by {
+    font-size: 24px;
+    font-weight: 500;
+    font-stretch: 96%;
+    color: #aab4cf;
+    white-space: nowrap;
+  }
+</style>

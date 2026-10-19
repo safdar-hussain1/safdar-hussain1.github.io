@@ -4,6 +4,7 @@ import Base from '../../layouts/Base.astro';
 import Masthead from '../../components/Masthead.astro';
 import InlineApp from '../../components/InlineApp.astro';
 import Brief from '../../components/Brief.astro';
+import OgCard from '../../components/OgCard.astro';
 import { SITE } from '../../data/site';
 import { liveEntries } from '../../lib/work';
 import { describePage, pageTitle } from '../../lib/describe';
@@ -42,6 +43,7 @@ const page = {
     <InlineApp entry={e} />
     <Brief entry={e} />
   </article>
+  <OgCard entry={e} />
 </Base>
 
 <style>

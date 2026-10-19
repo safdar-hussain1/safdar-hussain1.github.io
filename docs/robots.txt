@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://safdar-hussain1.github.io/sitemap.xml
+Sitemap: https://safdar-hussain1.github.io/wardos/sitemap.xml
+Sitemap: https://safdar-hussain1.github.io/nightingale/sitemap.xml
+Sitemap: https://safdar-hussain1.github.io/trafficlens/sitemap.xml
+Sitemap: https://safdar-hussain1.github.io/red-light-green-light-cv/sitemap.xml
+Sitemap: https://safdar-hussain1.github.io/carmine/sitemap.xml
+Sitemap: https://safdar-hussain1.github.io/homecast/sitemap.xml
+Sitemap: https://safdar-hussain1.github.io/health-haven/sitemap.xml

@@ -165,3 +165,39 @@ code {
     transition: none;
   }
 }
+
+/* Still mode: the still script opens a page with ?still=hero or ?still=og at 1200×630 and
+   screenshots exactly one picture. Everything else is hidden. */
+html[data-still] body {
+  padding: 0;
+  overflow: hidden;
+}
+html[data-still] .mast,
+html[data-still] .foot,
+html[data-still='hero'] main > :not(.hero),
+html[data-still='og'] main > * {
+  display: none !important;
+}
+html[data-still='hero'] .hero {
+  min-height: 630px;
+  height: 630px;
+  width: 1200px;
+  max-width: none;
+  margin: 0;
+  padding: 0 72px 56px;
+  justify-content: flex-end;
+  box-sizing: border-box;
+}
+html[data-still='hero'] .hero h1 {
+  font-size: 118px;
+}
+html[data-still='hero'] .hero__line {
+  font-size: 30px;
+}
+html[data-still='hero'] .hero__cue {
+  display: none;
+}
+html[data-still='hero'] .hero__skyline {
+  transform: scale(1.5);
+  transform-origin: left bottom;
+}

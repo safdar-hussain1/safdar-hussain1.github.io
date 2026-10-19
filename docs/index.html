@@ -6,6 +6,7 @@
     <title>Safdar Hussain — software that runs on your device</title>
     <meta name="description" content="I build machine learning, computer vision and full products that run on your own device. Every one of them runs live on this page, with measured results.">
     <meta name="author" content="Safdar Hussain">
+    
     <meta name="google-site-verification" content="0SIEfExLTSQj1qvnHWF5A5fY58KVl2lpIEnePP9CtI0">
     <link rel="canonical" href="https://safdar-hussain1.github.io/">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -37,9 +38,11 @@
           var t = localStorage.getItem('portfolio.theme');
           if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
         } catch (e) {}
+        var still = /[?&]still=(hero|og)\b/.exec(location.search);
+        if (still) document.documentElement.dataset.still = still[1];
       })();
     </script>
-  <link rel="stylesheet" href="/_astro/work.BtQRk8-5.css">
+  <link rel="stylesheet" href="/_astro/Masthead.QIJ4WCaJ.css">
 <link rel="stylesheet" href="/_astro/index.zz2JpfVo.css"></head>
   <body class>
     <header class="mast" slot="header" data-astro-cid-v3lsk6py>

@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import Masthead from '../components/Masthead.astro';
+import { SITE } from '../data/site';
+---
+<Base title="Not found — Safdar Hussain" description={SITE.description} canonical={`${SITE.url}404.html`} noindex>
+  <Masthead slot="header" home={false} />
+  <section class="wrap lost">
+    <h1>Not in the city</h1>
+    <p>There is nothing at this address. The work, the measured results and the way to reach me are all on the <a href="/">front page</a>.</p>
+  </section>
+</Base>
+
+<style>
+  .lost {
+    display: grid;
+    gap: var(--s-2);
+    padding-block: var(--s-5);
+    min-height: 60vh;
+    align-content: center;
+  }
+  .lost h1 {
+    font-size: var(--step-3);
+    font-weight: 300;
+    font-stretch: 116%;
+  }
+</style>
