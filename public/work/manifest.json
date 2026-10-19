@@ -1,0 +1,74 @@
+{
+  "wardos": {
+    "capturedAt": "2026-10-19T18:14:22.559Z",
+    "title": "WardOS — Hospital Management System in Your Browser",
+    "poster": {
+      "bytes": 76512
+    },
+    "loop": {
+      "seconds": 8,
+      "webmBytes": 291636,
+      "mp4Bytes": 174853
+    }
+  },
+  "nightingale": {
+    "capturedAt": "2026-10-19T18:15:03.475Z",
+    "title": "Nightingale — Disease Risk Prediction in Your Browser",
+    "poster": {
+      "bytes": 86066
+    },
+    "loop": {
+      "seconds": 8,
+      "webmBytes": 1354472,
+      "mp4Bytes": 1158983
+    }
+  },
+  "trafficlens": {
+    "capturedAt": "2026-10-19T18:15:40.655Z",
+    "title": "TrafficLens — vehicle counting that runs in your browser",
+    "poster": {
+      "bytes": 62406
+    },
+    "loop": {
+      "seconds": 8,
+      "webmBytes": 675337,
+      "mp4Bytes": 451097
+    }
+  },
+  "red-light-green-light-cv": {
+    "capturedAt": "2026-10-19T18:16:16.867Z",
+    "title": "Red Light, Green Light — computer-vision Squid Game referee",
+    "poster": {
+      "bytes": 55198
+    },
+    "loop": {
+      "seconds": 8,
+      "webmBytes": 471442,
+      "mp4Bytes": 401093
+    }
+  },
+  "carmine": {
+    "capturedAt": "2026-10-19T18:16:50.769Z",
+    "title": "Carmine — virtual makeup try-on that keeps skin texture",
+    "poster": {
+      "bytes": 86046
+    },
+    "loop": {
+      "seconds": 8,
+      "webmBytes": 982564,
+      "mp4Bytes": 607755
+    }
+  },
+  "homecast": {
+    "capturedAt": "2026-10-19T18:17:32.351Z",
+    "title": "HomeCast — Property Price Prediction for Gurgaon, India",
+    "poster": {
+      "bytes": 77094
+    },
+    "loop": {
+      "seconds": 8,
+      "webmBytes": 322463,
+      "mp4Bytes": 188289
+    }
+  }
+}
