@@ -1,0 +1,57 @@
+{
+  "slug": "carmine",
+  "name": "Carmine",
+  "order": 5,
+  "accent": "#a4133c",
+  "accentInk": {
+    "dark": "#c15f7a",
+    "light": "#a4133c"
+  },
+  "tagline": "Virtual makeup that keeps your skin's texture, live on your camera.",
+  "live": "https://safdar-hussain1.github.io/carmine/",
+  "repo": "https://github.com/safdar-hussain1/carmine",
+  "readme": "https://raw.githubusercontent.com/safdar-hussain1/carmine/main/README.md",
+  "building": "studio",
+  "needs": {
+    "camera": true,
+    "webgl": true
+  },
+  "runsOnDevice": true,
+  "facts": [
+    {
+      "text": "lip texture correlation 0.988, the highest of the five methods benchmarked",
+      "quote": "| **carmine** | **0.838** | **1.000** | **0.988** |",
+      "source": "https://github.com/safdar-hussain1/carmine#readme"
+    },
+    {
+      "text": "benchmarked on 26 photographs",
+      "quote": "26 photographs",
+      "source": "https://github.com/safdar-hussain1/carmine#readme"
+    },
+    {
+      "text": "26.6 ms a frame, about 37.6 fps, live on an M1 Pro",
+      "quote": "**26.6 ms/frame ≈ 37.6 fps.**",
+      "source": "https://github.com/safdar-hussain1/carmine#readme"
+    },
+    {
+      "text": "259 pytest tests",
+      "quote": "259 tests",
+      "source": "https://github.com/safdar-hussain1/carmine#readme"
+    },
+    {
+      "text": "118 vitest tests",
+      "quote": "118 tests",
+      "source": "https://github.com/safdar-hussain1/carmine#readme"
+    }
+  ],
+  "limits": "Benchmarked on 26 private portraits whose numbers are public and whose photos are not; the landmarker, not the renderer, is the main source of disagreement between the two surfaces.",
+  "stack": [
+    "Python",
+    "OpenCV",
+    "MediaPipe",
+    "TypeScript",
+    "WebGL2",
+    "Vite"
+  ],
+  "status": "live"
+}

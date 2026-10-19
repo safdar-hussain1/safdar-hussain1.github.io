@@ -1,0 +1,29 @@
+{
+  "slug": "sightline",
+  "name": "Sightline",
+  "order": 8,
+  "accent": "#9333ea",
+  "accentInk": {
+    "dark": "#a454ed",
+    "light": "#9333ea"
+  },
+  "tagline": "A steering model that shows you where it looks, running on recorded driving footage.",
+  "live": "https://safdar-hussain1.github.io/sightline/",
+  "repo": "https://github.com/safdar-hussain1/sightline",
+  "readme": "https://raw.githubusercontent.com/safdar-hussain1/sightline/main/README.md",
+  "building": "depot",
+  "needs": {
+    "camera": false,
+    "webgl": false
+  },
+  "runsOnDevice": true,
+  "facts": [],
+  "limits": "",
+  "stack": [
+    "Python",
+    "PyTorch",
+    "TypeScript",
+    "ONNX Runtime Web"
+  ],
+  "status": "scenery"
+}

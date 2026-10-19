@@ -1,0 +1,55 @@
+{
+  "slug": "wardos",
+  "name": "WardOS",
+  "order": 1,
+  "accent": "#0369a1",
+  "accentInk": {
+    "dark": "#3084b2",
+    "light": "#0369a1"
+  },
+  "tagline": "A 32-bed hospital running on a real database in your browser.",
+  "live": "https://safdar-hussain1.github.io/wardos/",
+  "repo": "https://github.com/safdar-hussain1/wardos",
+  "readme": "https://raw.githubusercontent.com/safdar-hussain1/wardos/main/README.md",
+  "building": "hospital",
+  "needs": {
+    "camera": false,
+    "webgl": false
+  },
+  "runsOnDevice": true,
+  "facts": [
+    {
+      "text": "364 tests, no server, every byte stays on your device",
+      "quote": "364 tests. No server. Every byte stays on your device.",
+      "source": "https://github.com/safdar-hussain1/wardos#readme"
+    },
+    {
+      "text": "32 beds in four colour-coded wards",
+      "quote": "32 beds in four colour-coded wards",
+      "source": "https://github.com/safdar-hussain1/wardos#readme"
+    },
+    {
+      "text": "0 of 87 invoices wrong in the six-month benchmark",
+      "quote": "| Invoices wrong | **0** of 87 checked |",
+      "source": "https://github.com/safdar-hussain1/wardos#readme"
+    },
+    {
+      "text": "0 double bookings across 104 admissions",
+      "quote": "| Double-bookings accepted | **0** across 104 admissions |",
+      "source": "https://github.com/safdar-hussain1/wardos#readme"
+    }
+  ],
+  "limits": "One hospital on one device with a frozen demo clock; the browser database can be evicted, and a reset restores the seeded hospital.",
+  "stack": [
+    "TypeScript",
+    "React",
+    "SQLite as WebAssembly",
+    "Vite",
+    "Vitest"
+  ],
+  "status": "live",
+  "related": {
+    "label": "Also as a Java desktop system: Health Haven",
+    "href": "https://github.com/safdar-hussain1/health-haven"
+  }
+}

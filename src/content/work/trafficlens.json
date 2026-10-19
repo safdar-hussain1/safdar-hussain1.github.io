@@ -1,0 +1,47 @@
+{
+  "slug": "trafficlens",
+  "name": "TrafficLens",
+  "order": 3,
+  "accent": "#b45309",
+  "accentInk": {
+    "dark": "#bd6827",
+    "light": "#b05109"
+  },
+  "tagline": "Draw a line on traffic video. It counts what crosses, on your own machine.",
+  "live": "https://safdar-hussain1.github.io/trafficlens/",
+  "repo": "https://github.com/safdar-hussain1/trafficlens",
+  "readme": "https://raw.githubusercontent.com/safdar-hussain1/trafficlens/main/README.md",
+  "building": "gantry",
+  "needs": {
+    "camera": true,
+    "webgl": true
+  },
+  "runsOnDevice": true,
+  "facts": [
+    {
+      "text": "gate rule precision 0.889, recall 0.941, F1 0.914",
+      "quote": "| `engine+gate` | 0.889 | 0.941 | 0.914 | 18 | 16 | 2 | 1 |",
+      "source": "https://github.com/safdar-hussain1/trafficlens#readme"
+    },
+    {
+      "text": "17 hand-labelled crossings in the benchmark clip",
+      "quote": "There are 17 labelled crossings",
+      "source": "https://github.com/safdar-hussain1/trafficlens#readme"
+    },
+    {
+      "text": "42.06 fps on WebGPU, 22.05 ms a frame",
+      "quote": "| WebGPU | 22.05 | 42.06 |",
+      "source": "https://github.com/safdar-hussain1/trafficlens#readme"
+    }
+  ],
+  "limits": "One clip, one gate and 17 labels, so every figure is an upper bound; no speed on the real clip because its calibration could not be defended.",
+  "stack": [
+    "Python",
+    "OpenCV",
+    "YOLO11",
+    "TypeScript",
+    "ONNX Runtime Web",
+    "Vite"
+  ],
+  "status": "live"
+}

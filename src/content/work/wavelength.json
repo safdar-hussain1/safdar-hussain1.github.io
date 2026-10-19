@@ -1,0 +1,28 @@
+{
+  "slug": "wavelength",
+  "name": "Wavelength",
+  "order": 7,
+  "accent": "#0d9488",
+  "accentInk": {
+    "dark": "#0d9488",
+    "light": "#0b7970"
+  },
+  "tagline": "Music discovery that learns your taste on your own device.",
+  "live": "https://safdar-hussain1.github.io/wavelength/",
+  "repo": "https://github.com/safdar-hussain1/wavelength",
+  "readme": "https://raw.githubusercontent.com/safdar-hussain1/wavelength/main/README.md",
+  "building": "hall",
+  "needs": {
+    "camera": false,
+    "webgl": false
+  },
+  "runsOnDevice": true,
+  "facts": [],
+  "limits": "",
+  "stack": [
+    "Python",
+    "TypeScript",
+    "Preact"
+  ],
+  "status": "scenery"
+}

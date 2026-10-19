@@ -1,0 +1,51 @@
+{
+  "slug": "homecast",
+  "name": "HomeCast",
+  "order": 6,
+  "accent": "#4338ca",
+  "accentInk": {
+    "dark": "#7870d9",
+    "light": "#4338ca"
+  },
+  "tagline": "Price a Gurgaon home with a model that runs in your browser.",
+  "live": "https://safdar-hussain1.github.io/homecast/",
+  "repo": "https://github.com/safdar-hussain1/homecast",
+  "readme": "https://raw.githubusercontent.com/safdar-hussain1/homecast/main/README.md",
+  "building": "towers",
+  "needs": {
+    "camera": false,
+    "webgl": false
+  },
+  "runsOnDevice": true,
+  "facts": [
+    {
+      "text": "18.4% MAPE when the building is known",
+      "quote": "supply a society and you're in the 18.4% MAPE regime",
+      "source": "https://github.com/safdar-hussain1/homecast#readme"
+    },
+    {
+      "text": "19.9% MAPE when it is not",
+      "quote": "no society given -- priced from the sector rate, 19.9% MAPE accuracy band",
+      "source": "https://github.com/safdar-hussain1/homecast#readme"
+    },
+    {
+      "text": "the sector-median rule agents use scores 26.6% MAPE",
+      "quote": "Sector-median baseline             72.8     26.6  0.653",
+      "source": "https://github.com/safdar-hussain1/homecast#readme"
+    },
+    {
+      "text": "314 tests",
+      "quote": "314 tests covering cities, cleaning, features, model, valuation",
+      "source": "https://github.com/safdar-hussain1/homecast#readme"
+    }
+  ],
+  "limits": "Asking prices, not sale prices, from one undated snapshot; Gurgaon only.",
+  "stack": [
+    "Python",
+    "scikit-learn",
+    "pandas",
+    "JavaScript",
+    "pytest"
+  ],
+  "status": "live"
+}

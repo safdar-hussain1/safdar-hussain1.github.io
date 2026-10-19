@@ -1,0 +1,46 @@
+{
+  "slug": "nightingale",
+  "name": "Nightingale",
+  "order": 2,
+  "accent": "#8b2f6b",
+  "accentInk": {
+    "dark": "#ab6994",
+    "light": "#8b2f6b"
+  },
+  "tagline": "Six disease-risk models that show their uncertainty, running in the page.",
+  "live": "https://safdar-hussain1.github.io/nightingale/",
+  "repo": "https://github.com/safdar-hussain1/nightingale",
+  "readme": "https://raw.githubusercontent.com/safdar-hussain1/nightingale/main/README.md",
+  "building": "clinic",
+  "needs": {
+    "camera": false,
+    "webgl": false
+  },
+  "runsOnDevice": true,
+  "facts": [
+    {
+      "text": "six clinical conditions in one calibrated pipeline",
+      "quote": "Calibrated screening-triage risk models for six clinical conditions",
+      "source": "https://github.com/safdar-hussain1/nightingale#readme"
+    },
+    {
+      "text": "heart disease ROC-AUC 0.8892, interval 0.8663 to 0.9101",
+      "quote": "roc_auc=0.8892 [0.8663, 0.9101]",
+      "source": "https://github.com/safdar-hussain1/nightingale#readme"
+    },
+    {
+      "text": "the browser and Python agree to 7.22e-16 in the worst case",
+      "quote": "Parity gate: 1e-9, measured worst case 7.22e-16.",
+      "source": "https://github.com/safdar-hussain1/nightingale#readme"
+    }
+  ],
+  "limits": "Screening-triage models on small public datasets, not diagnostic devices; only heart disease has external validation.",
+  "stack": [
+    "Python",
+    "scikit-learn",
+    "XGBoost",
+    "JavaScript",
+    "pytest"
+  ],
+  "status": "live"
+}
