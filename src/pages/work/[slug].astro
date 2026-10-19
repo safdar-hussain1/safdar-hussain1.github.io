@@ -5,6 +5,7 @@ import Masthead from '../../components/Masthead.astro';
 import InlineApp from '../../components/InlineApp.astro';
 import Brief from '../../components/Brief.astro';
 import OgCard from '../../components/OgCard.astro';
+import Palette from '../../components/Palette.astro';
 import { SITE } from '../../data/site';
 import { liveEntries } from '../../lib/work';
 import { describePage, pageTitle } from '../../lib/describe';
@@ -44,6 +45,7 @@ const page = {
     <Brief entry={e} />
   </article>
   <OgCard entry={e} />
+  <Palette entries={[e]} />
 </Base>
 
 <style>

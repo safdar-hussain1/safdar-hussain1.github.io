@@ -1,0 +1,157 @@
+---
+import type { WorkEntry } from '../lib/work-schema';
+import { liveEntries } from '../lib/work';
+import { SITE } from '../data/site';
+import type { Command } from '../lib/fuzzy';
+
+interface Props {
+  entries: WorkEntry[];
+}
+const { entries } = Astro.props;
+const live = liveEntries(entries);
+const commands: Command[] = [
+  ...live.map((e) => ({ id: `dock:${e.slug}`, label: `Use ${e.name} here`, hint: 'runs in the page', group: 'project' as const, keywords: [e.slug, e.tagline] })),
+  ...live.map((e) => ({ id: `go:/work/${e.slug}/`, label: `Read about ${e.name}`, hint: 'its page', group: 'project' as const, keywords: [e.slug] })),
+  { id: 'go:#work', label: 'Work', hint: 'section', group: 'section', keywords: ['projects', 'city'] },
+  { id: 'go:#how', label: 'How I work', hint: 'section', group: 'section' },
+  { id: 'go:#measured', label: 'Measured', hint: 'section', group: 'section', keywords: ['numbers', 'github'] },
+  { id: 'go:#timeline', label: 'Where I have been', hint: 'section', group: 'section', keywords: ['timeline', 'experience'] },
+  { id: 'go:#about', label: 'About', hint: 'section', group: 'section' },
+  { id: 'go:#contact', label: 'Contact', hint: 'section', group: 'section', keywords: ['email'] },
+  { id: `link:${SITE.author.github}`, label: 'GitHub', hint: 'opens github.com', group: 'link', keywords: ['source', 'code'] },
+  { id: `link:${SITE.author.linkedin}`, label: 'LinkedIn', hint: 'opens linkedin.com', group: 'link' },
+  { id: 'theme', label: 'Switch theme', hint: 'dark or light', group: 'action', keywords: ['dark', 'light', 'mode'] },
+  { id: 'sound', label: 'Sound on or off', hint: 'off by default', group: 'action', keywords: ['audio', 'mute'] },
+];
+---
+<div class="palette" id="palette" hidden>
+  <div class="palette__box" role="dialog" aria-modal="true" aria-label="Jump anywhere">
+    <label class="visually-hidden" for="palette-input">Type to jump to a project, a section or a link</label>
+    <input id="palette-input" type="text" role="combobox" aria-expanded="true" aria-controls="palette-list" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="Jump to a project, a section, a link" />
+    <ul id="palette-list" class="palette__list" role="listbox" aria-label="Commands"></ul>
+    <p class="palette__empty meta" data-palette-empty hidden>Nothing matches. Try a project's name.</p>
+    <p class="palette__keys meta"><kbd>↑</kbd><kbd>↓</kbd> move <kbd>↵</kbd> go <kbd>esc</kbd> close</p>
+  </div>
+  <script type="application/json" data-palette-commands set:html={JSON.stringify(commands)} />
+</div>
+
+<script>
+  import { createPalette } from '../scripts/palette';
+  import { toggleTheme } from '../scripts/theme';
+
+  const root = document.getElementById('palette');
+  if (root) {
+    const commands = JSON.parse(root.querySelector('[data-palette-commands]')?.textContent ?? '[]');
+    const w = window as unknown as { __dock?: { open(slug: string): Promise<void> }; __sound?: { toggle(): boolean; play(cue: string): void }; __palette?: unknown };
+    const palette = createPalette({
+      root,
+      commands,
+      onMove: () => w.__sound?.play('tick'),
+      onRun: (id) => {
+        if (id.startsWith('dock:')) {
+          const slug = id.slice(5);
+          if (w.__dock && matchMedia('(min-width: 900px)').matches) void w.__dock.open(slug);
+          else location.href = `/work/${slug}/`;
+        } else if (id.startsWith('go:')) {
+          const target = id.slice(3);
+          if (target.startsWith('#') && location.pathname !== '/') location.href = `/${target}`;
+          else if (target.startsWith('#')) document.querySelector(target)?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+          else location.href = target;
+        } else if (id.startsWith('link:')) {
+          window.open(id.slice(5), '_blank', 'noopener');
+        } else if (id === 'theme') {
+          toggleTheme();
+        } else if (id === 'sound') {
+          w.__sound?.toggle();
+        }
+      },
+    });
+    document.getElementById('palette-trigger')?.addEventListener('click', (e) => palette.open(e.currentTarget as HTMLElement));
+    w.__palette = palette;
+  }
+</script>
+
+<style>
+  .palette {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: grid;
+    align-content: start;
+    justify-items: center;
+    padding: clamp(12vh, 16vh, 160px) var(--gutter-r) 0 var(--gutter-l);
+    background: color-mix(in srgb, var(--ground) 60%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  .palette[hidden] {
+    display: none;
+  }
+  .palette__box {
+    width: min(620px, 100%);
+    border: 1px solid var(--line-2);
+    border-radius: 14px;
+    background: var(--raised);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    font-family: var(--display);
+  }
+  .palette__box input {
+    width: 100%;
+    font: inherit;
+    font-size: 1.1rem;
+    padding: 0.95rem 1.1rem;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink);
+    outline: none;
+  }
+  .palette__box input::placeholder {
+    color: var(--ink-3);
+  }
+  .palette__list {
+    list-style: none;
+    margin: 0;
+    padding: 0.4rem;
+    max-height: min(52vh, 440px);
+    overflow-y: auto;
+  }
+  .palette__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .palette__item.is-active {
+    background: color-mix(in srgb, var(--accent) 18%, var(--raised));
+  }
+  .palette__item .palette__hint {
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+  .palette__empty,
+  .palette__keys {
+    margin: 0;
+    padding: 0.7rem 1.1rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.8rem;
+  }
+  .palette__keys kbd {
+    display: inline-block;
+    min-width: 1.4em;
+    text-align: center;
+    padding: 0 0.3em;
+    margin-right: 0.3em;
+    border: 1px solid var(--line-2);
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 0.75rem;
+  }
+  :global(body.palette-open) {
+    overflow: hidden;
+  }
+</style>
