@@ -17,7 +17,7 @@ export const SITE = {
   },
   repo: 'https://github.com/safdar-hussain1/safdar-hussain1.github.io',
   gsc: '0SIEfExLTSQj1qvnHWF5A5fY58KVl2lpIEnePP9CtI0',
-  lastmod: '2026-10-20',
+  lastmod: '2026-10-19',
   ogImage: 'https://safdar-hussain1.github.io/og-image.png',
   ogAlt: 'Safdar Hussain, set in wide light type over a dark ground, with a row of the colours of his eight projects',
 } as const;

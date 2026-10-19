@@ -1,0 +1,26 @@
+{
+  "wardos": {
+    "capturedAt": "2026-10-19T18:03:13.496Z",
+    "title": "WardOS — Hospital Management System in Your Browser",
+    "poster": {
+      "bytes": 76610
+    },
+    "loop": {
+      "seconds": 8,
+      "webmBytes": 289340,
+      "mp4Bytes": 165848
+    }
+  },
+  "nightingale": {
+    "capturedAt": "2026-10-19T18:01:28.061Z",
+    "title": "Nightingale — Disease Risk Prediction in Your Browser",
+    "poster": {
+      "bytes": 85970
+    },
+    "loop": {
+      "seconds": 8,
+      "webmBytes": 1345834,
+      "mp4Bytes": 1162753
+    }
+  }
+}

@@ -11,7 +11,7 @@ const { entries } = Astro.props;
 const live = liveEntries(entries);
 const commands: Command[] = [
   ...live.map((e) => ({ id: `dock:${e.slug}`, label: `Use ${e.name} here`, hint: 'runs in the page', group: 'project' as const, keywords: [e.slug, e.tagline] })),
-  ...live.map((e) => ({ id: `go:/work/${e.slug}/`, label: `Read about ${e.name}`, hint: 'its page', group: 'project' as const, keywords: [e.slug] })),
+  ...live.map((e) => ({ id: `go:/work/${e.slug}/`, label: `${e.name}: read more`, hint: 'its page', group: 'project' as const, keywords: [e.slug] })),
   { id: 'go:#work', label: 'Work', hint: 'section', group: 'section', keywords: ['projects', 'city'] },
   { id: 'go:#how', label: 'How I work', hint: 'section', group: 'section' },
   { id: 'go:#measured', label: 'Measured', hint: 'section', group: 'section', keywords: ['numbers', 'github'] },
@@ -55,7 +55,7 @@ const commands: Command[] = [
         } else if (id.startsWith('go:')) {
           const target = id.slice(3);
           if (target.startsWith('#') && location.pathname !== '/') location.href = `/${target}`;
-          else if (target.startsWith('#')) document.querySelector(target)?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+          else if (target.startsWith('#')) location.hash = target;
           else location.href = target;
         } else if (id.startsWith('link:')) {
           window.open(id.slice(5), '_blank', 'noopener');

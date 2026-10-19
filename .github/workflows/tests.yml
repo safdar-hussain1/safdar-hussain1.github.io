@@ -1,0 +1,36 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  site:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: npm run build
+      - run: npm test
+      - name: Browser flows on the built site
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+        run: |
+          node scripts/serve.mjs --port 4300 > serve.log 2>&1 &
+          sleep 2
+          node scripts/e2e.mjs --only home-dark,home-light,home-390,project-page,palette,reduced-motion,selftest --shots /tmp/shots
+      - name: The committed site is the built site
+        run: |
+          git diff --exit-code -- docs/
+          test -z "$(git status --porcelain -- docs/)"
