@@ -4,6 +4,7 @@ import { liveEntries } from '../lib/work';
 import snapshot from '../data/github-snapshot.json';
 import type { GithubSnapshot, RepoStatus } from '../lib/github';
 import { shortIsoDate } from '../lib/format';
+import { jsonForHtml } from '../lib/json';
 
 interface Props {
   entries: WorkEntry[];
@@ -46,7 +47,7 @@ const CI_WORDS: Record<RepoStatus['ci'], string> = { passing: 'tests passing', f
       }
     </tbody>
   </table>
-  <script type="application/json" data-gh-snapshot set:html={JSON.stringify(snap.rows)} />
+  <script type="application/json" data-gh-snapshot set:html={jsonForHtml(snap.rows)} />
 </div>
 
 <script>

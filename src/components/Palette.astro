@@ -3,6 +3,7 @@ import type { WorkEntry } from '../lib/work-schema';
 import { liveEntries } from '../lib/work';
 import { SITE } from '../data/site';
 import type { Command } from '../lib/fuzzy';
+import { jsonForHtml } from '../lib/json';
 
 interface Props {
   entries: WorkEntry[];
@@ -32,7 +33,7 @@ const commands: Command[] = [
     <p class="palette__empty meta" data-palette-empty hidden>Nothing matches. Try a project's name.</p>
     <p class="palette__keys meta"><kbd>↑</kbd><kbd>↓</kbd> move <kbd>↵</kbd> go <kbd>esc</kbd> close</p>
   </div>
-  <script type="application/json" data-palette-commands set:html={JSON.stringify(commands)} />
+  <script type="application/json" data-palette-commands set:html={jsonForHtml(commands)} />
 </div>
 
 <script>

@@ -3,6 +3,7 @@ import type { WorkEntry } from '../lib/work-schema';
 import { liveEntries } from '../lib/work';
 import { SITE } from '../data/site';
 import Icon from './Icon.astro';
+import { jsonForHtml } from '../lib/json';
 
 interface Props {
   entries: WorkEntry[];
@@ -29,7 +30,7 @@ const data = liveEntries(entries).map((e) => ({ slug: e.slug, name: e.name, live
       <a class="btn pri" data-dock-open-fallback href="/" target="_blank" rel="noopener">Open in its own tab</a>
     </div>
   </div>
-  <script type="application/json" data-dock-entries set:html={JSON.stringify(data)} />
+  <script type="application/json" data-dock-entries set:html={jsonForHtml(data)} />
 </div>
 
 <script>

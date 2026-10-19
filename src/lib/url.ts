@@ -23,7 +23,9 @@ export function isSiteRoot(href: string, siteUrl: string): boolean {
 export function framePath(live: string, siteUrl: string): string {
   try {
     const u = new URL(live);
-    return u.host === new URL(siteUrl).host ? `${u.pathname}${u.search}${u.hash}` : live;
+    if (u.origin !== new URL(siteUrl).origin) return live;
+    const path = '/' + u.pathname.replace(/^\/+/, '');
+    return `${path}${u.search}${u.hash}`;
   } catch {
     return live;
   }
