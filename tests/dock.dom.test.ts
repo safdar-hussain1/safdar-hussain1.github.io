@@ -27,11 +27,11 @@ describe('dock', () => {
     history.replaceState(null, '', '/');
   });
 
-  test('open sets the frame src to the entry live URL and the hash', async () => {
+  test('open frames the entry by its path and sets the hash', async () => {
     const { root, trigger } = mount();
     const dock = createDock({ root, entries, siteUrl: SITE, wide: () => true });
     await dock.open('wardos', trigger);
-    expect(root.querySelector('iframe')!.getAttribute('src')).toBe('https://safdar-hussain1.github.io/wardos/');
+    expect(root.querySelector('iframe')!.getAttribute('src')).toBe('/wardos/');
     expect(root.hidden).toBe(false);
     expect(location.hash).toBe('#work/wardos');
     expect(root.querySelector('[data-dock-name]')!.textContent).toBe('WardOS');

@@ -1,13 +1,15 @@
 ---
 import type { WorkEntry } from '../lib/work-schema';
 import Icon from './Icon.astro';
+import { framePath } from '../lib/url';
+import { SITE } from '../data/site';
 
 interface Props {
   entry: WorkEntry;
 }
 const { entry: e } = Astro.props;
 ---
-<section class="app" data-inline-app data-live={e.live} data-name={e.name} style={`--accent:${e.accent};--accent-ink:${e.accentInk.dark};--accent-ink-light:${e.accentInk.light}`}>
+<section class="app" data-inline-app data-live={e.live} data-frame={framePath(e.live, SITE.url)} data-name={e.name} style={`--accent:${e.accent};--accent-ink:${e.accentInk.dark};--accent-ink-light:${e.accentInk.light}`}>
   <div class="app__bar">
     <span class="app__dot" aria-hidden="true"></span>
     <b>{e.name}, running in this page</b>
@@ -27,7 +29,7 @@ const { entry: e } = Astro.props;
     const stage = el.querySelector<HTMLElement>('.app__stage');
     if (!stage) continue;
     const frame = document.createElement('iframe');
-    frame.src = el.dataset.live!;
+    frame.src = el.dataset.frame || el.dataset.live!;
     frame.title = `${el.dataset.name}, running in this page`;
     frame.setAttribute('allow', 'camera; microphone; fullscreen; autoplay');
     frame.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');

@@ -17,3 +17,14 @@ export function isSiteRoot(href: string, siteUrl: string): boolean {
     return false;
   }
 }
+
+// The URL to load into a frame: a project on the site's own host is framed by path, so the
+// same page works on github.io and on the local replica that mounts the projects by path.
+export function framePath(live: string, siteUrl: string): string {
+  try {
+    const u = new URL(live);
+    return u.host === new URL(siteUrl).host ? `${u.pathname}${u.search}${u.hash}` : live;
+  } catch {
+    return live;
+  }
+}

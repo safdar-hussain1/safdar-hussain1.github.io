@@ -1,5 +1,5 @@
 import { parseWorkHash, workHash } from '../lib/hash';
-import { isExternalTo, isSiteRoot } from '../lib/url';
+import { framePath, isExternalTo, isSiteRoot } from '../lib/url';
 
 // The dock runs a project's live site inside the page, in a same-origin frame, with the
 // camera and WebGL it needs. It adapts the framed site from the outside: links that would
@@ -130,7 +130,7 @@ export function createDock(opts: DockOptions): Dock {
     fallback.hidden = true;
     loading.hidden = false;
     frame.title = `${e.name}, running in the page`;
-    frame.src = e.live;
+    frame.src = framePath(e.live, siteUrl);
     root.hidden = false;
     root.classList.add('open');
     doc.body.classList.add('dock-open');

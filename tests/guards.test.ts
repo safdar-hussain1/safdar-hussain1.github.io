@@ -39,8 +39,8 @@ const textFiles = (files ?? []).filter((f) => TEXT.test(f) && !SKIP.some((re) =>
 
 describe.skipIf(files === null)('tracked files', () => {
   test('nothing private is tracked', () => {
-    expect(files).not.toContain(['CLA', 'UDE.md'].join(''));
-    expect(files!.some((f) => f.startsWith(['.super', 'powers/'].join('')))).toBe(false);
+    expect(files).not.toContain(join2('CLA', 'UDE.md'));
+    expect(files!.some((f) => f.startsWith(join2('.super', 'powers/')))).toBe(false);
     expect(files!.some((f) => f.startsWith('private/'))).toBe(false);
     expect(files).toContain('docs/.nojekyll');
     expect(files).toContain('public/.nojekyll');

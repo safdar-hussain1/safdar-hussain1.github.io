@@ -7,7 +7,12 @@
     "dev": "astro dev",
     "build": "astro build",
     "check": "astro check",
-    "preview": "node scripts/serve.mjs"
+    "e2e": "node scripts/e2e.mjs",
+    "serve": "node scripts/serve.mjs",
+    "capture": "node scripts/capture.mjs",
+    "snapshot": "node scripts/snapshot-github.mjs",
+    "still": "node scripts/still.mjs",
+    "shot": "node scripts/shot.mjs"
   },
   "author": "Safdar Hussain <safdar.eryx@gmail.com>",
   "license": "MIT",

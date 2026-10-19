@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { parseWorkHash, workHash } from '../src/lib/hash';
-import { isExternalTo, isSiteRoot } from '../src/lib/url';
+import { framePath, isExternalTo, isSiteRoot } from '../src/lib/url';
 
 const SITE = 'https://safdar-hussain1.github.io/';
 
@@ -27,5 +27,10 @@ describe('dock helpers', () => {
     expect(isSiteRoot('/', SITE)).toBe(true);
     expect(isSiteRoot('https://safdar-hussain1.github.io/wardos/', SITE)).toBe(false);
     expect(isSiteRoot('https://github.com/', SITE)).toBe(false);
+  });
+
+  test('framePath frames a project on the own host by path and anything else as is', () => {
+    expect(framePath('https://safdar-hussain1.github.io/wardos/', SITE)).toBe('/wardos/');
+    expect(framePath('https://example.com/app/', SITE)).toBe('https://example.com/app/');
   });
 });
