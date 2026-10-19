@@ -114,6 +114,9 @@ export function createPalette(opts: PaletteOptions): Palette {
     } else if (e.key === 'Escape') {
       e.preventDefault();
       close();
+    } else if (e.key === 'Tab') {
+      // The box is the whole dialog: focus stays on the input while it is open.
+      e.preventDefault();
     }
   });
   list.addEventListener('click', (e) => {

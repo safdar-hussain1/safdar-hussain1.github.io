@@ -4,6 +4,7 @@ import timeline from '../src/data/timeline.json';
 import certificates from '../src/data/certificates.json';
 import skills from '../src/data/skills.json';
 import { extractNumbers } from '../src/lib/numbers';
+import { privateRuns } from './helpers/private';
 
 const everything = JSON.stringify([about, timeline, certificates, skills]);
 
@@ -12,7 +13,8 @@ describe('facts about Safdar', () => {
     expect(everything).not.toMatch(/\[(pending|verify|confirm)\]/i);
   });
 
-  test('about never contains the phone number', () => {
+  test('about never contains a private number', () => {
+    expect(privateRuns(everything)).toEqual([]);
   });
 
   test('every number in about and timeline text is allowed', () => {

@@ -16,16 +16,15 @@ const data = liveEntries(entries).map((e) => ({ slug: e.slug, name: e.name, live
     <b class="dock__name" data-dock-name>WardOS</b>
     <span class="dock__sp"></span>
     <a class="btn dock__btn" data-dock-open href="/" target="_blank" rel="noopener">Open in its own tab <Icon name="external" size={15} /></a>
-    <button class="btn dock__btn" type="button" data-dock-close>Back to the city <Icon name="close" size={15} /></button>
+    <button class="btn dock__btn" type="button" data-dock-close>Back to the portfolio <Icon name="close" size={15} /></button>
   </div>
-  <div class="dock__stage">
-    <iframe src="about:blank" title="" allow="camera; microphone; fullscreen; autoplay" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+  <div class="dock__stage" data-dock-stage>
     <div class="dock__loading" data-dock-loading hidden>
       <p class="meta">Loading. The whole app starts in this tab.</p>
     </div>
     <div class="dock__fallback" data-dock-fallback hidden>
       <img data-dock-poster alt="" src="" />
-      <p>This one did not start inside the page. It still runs on its own tab.</p>
+      <p>This one did not start inside the page. It runs on its own tab.</p>
       <a class="btn pri" data-dock-open-fallback href="/" target="_blank" rel="noopener">Open in its own tab</a>
     </div>
   </div>
@@ -98,13 +97,6 @@ const data = liveEntries(entries).map((e) => ({ slug: e.slug, name: e.name, live
   .dock__stage {
     position: relative;
     min-height: 0;
-  }
-  .dock__stage iframe {
-    width: 100%;
-    height: 100%;
-    border: 0;
-    display: block;
-    background: var(--ground);
   }
   .dock__loading,
   .dock__fallback {

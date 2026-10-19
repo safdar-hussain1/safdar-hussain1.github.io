@@ -12,9 +12,9 @@ its camera, its models and its database. Nothing on the page is a video of a pro
 
 | Section | What it does |
 |---|---|
-| **Work** | One card per project, with a loop of the real page and two actions: *Use it here* (docks the live app in the page) and *Read more* (a page per project with the app at the top and the measured facts under it) |
+| **Work** | One card per live project, with a loop of the real page and two actions: *Use it here* (docks the live app in the page on a desktop; opens it on a phone) and *Read more* (a page per project with the app at the top and the measured facts under it) |
 | **How I work** | Four principles, each with one measured fact and the README line it is quoted from |
-| **Measured** | The by-the-numbers board, every line copied word for word from a project's README, and the GitHub board, fetched live from the GitHub API with a dated snapshot as the fallback |
+| **Measured** | The by-the-numbers board, every figure quoted word for word from a project's README, and the GitHub board, fetched live from the GitHub API with a dated snapshot as the fallback |
 | **Where I have been**, **About**, **Contact** | The timeline, the facts about me, certificates and skills, and how to reach me |
 | **The palette** | Press `/` anywhere (or Ctrl/Cmd-K) to jump to any project, section or link, switch the theme or the sound |
 
@@ -24,8 +24,9 @@ turn it on. Phones get every card and open the live sites directly instead of fr
 ## The numbers rule
 
 The site shows figures about a project only as quotes from that project's README. Each
-entry in `src/content/work/` carries `facts[].quote`, the exact substring, and
-`tests/numbers.test.ts` fetches the live README and fails if a quote is not in it. Figures
+entry in `src/content/work/` carries `facts[].quote`, the exact substring, and every digit in
+the sentence shown must appear in it; `tests/numbers.test.ts` fetches the live README and fails
+if a quote is not in it. Figures
 about me live in `src/data/about.json` and `tests/about-data.test.ts` checks that every digit
 on the page comes from there. Nothing is rounded or re-stated.
 
@@ -85,7 +86,7 @@ open http://127.0.0.1:4300/
 
 The six project repositories are expected next to this one, each with its `docs/` built
 (their names, numbered as in the workspace, are listed at the top of `scripts/serve.mjs`).
-Without them the portfolio still serves; the dock then shows the fallback for each project.
+Without them the portfolio still serves; the dock then shows its fallback for each project.
 
 ## Repository
 

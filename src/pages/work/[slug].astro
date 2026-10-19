@@ -13,13 +13,15 @@ import type { WorkEntry } from '../../lib/work-schema';
 
 export async function getStaticPaths() {
   const entries = (await getCollection('work')).map((e) => e.data);
-  return liveEntries(entries).map((entry) => ({ params: { slug: entry.slug }, props: { entry } }));
+  const live = liveEntries(entries);
+  return live.map((entry) => ({ params: { slug: entry.slug }, props: { entry, live } }));
 }
 
 interface Props {
   entry: WorkEntry;
+  live: WorkEntry[];
 }
-const { entry: e } = Astro.props;
+const { entry: e, live } = Astro.props;
 const canonical = `${SITE.url}work/${e.slug}/`;
 const title = pageTitle(e);
 const description = describePage(e);
@@ -45,7 +47,7 @@ const page = {
     <Brief entry={e} />
   </article>
   <OgCard entry={e} />
-  <Palette entries={[e]} />
+  <Palette entries={live} />
 </Base>
 
 <style>

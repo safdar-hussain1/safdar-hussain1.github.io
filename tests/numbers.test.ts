@@ -28,10 +28,12 @@ describe('every figure about a project is a README quote', () => {
       for (const fact of e.facts) expect(readme, `${e.slug}: "${fact.quote}"`).toContain(fact.quote);
     });
 
-    test(`${e.name}: every digit in the tagline and the fact texts appears in a quote`, () => {
+    test(`${e.name}: every figure in the tagline, the limits and the fact texts is a whole figure of a quote`, () => {
       const quoted = e.facts.map((f) => f.quote).join(' ');
-      for (const n of extractNumbers(e.tagline)) expect(quoted, `tagline "${n}"`).toContain(n);
-      for (const f of e.facts) for (const n of extractNumbers(f.text)) expect(f.quote, `"${f.text}" → ${n}`).toContain(n);
+      const has = (text: string, n: string) => extractNumbers(text).includes(n);
+      for (const n of extractNumbers(e.tagline)) expect(has(quoted, n), `tagline "${n}"`).toBe(true);
+      for (const n of extractNumbers(e.limits)) expect(has(quoted, n), `limits "${n}"`).toBe(true);
+      for (const f of e.facts) for (const n of extractNumbers(f.text)) expect(has(f.quote, n), `"${f.text}" → ${n}`).toBe(true);
     });
   }
 });

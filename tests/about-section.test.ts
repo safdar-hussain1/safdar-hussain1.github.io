@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import about from '../src/data/about.json';
 import timeline from '../src/data/timeline.json';
 import { readDoc } from './helpers/html';
+import { privateRuns } from './helpers/private';
 
 const html = readDoc();
 const section = (id: string) => html.match(new RegExp(`<section id="${id}"[\\s\\S]*?<\\/section>`))![0];
@@ -29,6 +30,7 @@ describe('how I work, timeline, about and contact', () => {
     expect(ab).toContain(`October 2026 · ${about.now.text}`);
     expect(ab).toContain('CGPA 9.19');
     expect(ab).toContain('Academic Scholarship all four years');
+    expect(privateRuns(html)).toEqual([]);
   });
 
   test('swara entry is absent while the data is null', () => {

@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { privateRuns } from './helpers/private';
 
 // The public repo must not carry the words that tell a project's history, build-process
 // traces, machine paths or private files. The phrases are assembled from fragments so this
@@ -55,6 +56,11 @@ describe.skipIf(files === null)('tracked files', () => {
         if (m) hits.push(`${f}: "${m[0]}"`);
       }
     }
+    expect(hits).toEqual([]);
+  });
+
+  test('no tracked file contains a private number', () => {
+    const hits = textFiles.filter((f) => privateRuns(readFileSync(join(process.cwd(), f), 'utf8')).length > 0);
     expect(hits).toEqual([]);
   });
 

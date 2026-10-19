@@ -37,7 +37,7 @@ export async function runSelftest(ctx: SelftestContext): Promise<SelftestResult>
   const cards = Array.from(doc.querySelectorAll<HTMLElement>('.plate[data-status="live"]'));
   check('live cards match the live entries', cards.length === entries.length && entries.every((e) => cards.some((c) => c.dataset.slug === e.slug)));
 
-  const posters = await Promise.all(cards.map((c) => loadImage(c.querySelector('video')?.getAttribute('poster') ?? '')));
+  const posters = await Promise.all(cards.map((c) => loadImage(c.querySelector<HTMLElement>('[data-poster]')?.dataset.poster ?? '')));
   check('every poster loads', posters.length > 0 && posters.every(Boolean));
 
   if (ctx.dock && entries[0]) {

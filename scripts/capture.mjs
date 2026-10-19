@@ -25,6 +25,7 @@ import { promisify } from 'node:util';
 import { chromium } from 'playwright-core';
 import sharp from 'sharp';
 import { CHOREO, loopStartedAt } from './choreography.mjs';
+import { SMALL, writeSmallPoster } from './lib/posters.mjs';
 
 const run = promisify(execFile);
 
@@ -272,7 +273,7 @@ async function capture(browser, entry) {
     await mkdir(frames);
 
     const dark = await makePoster(browser, entry, 'dark', join(scratch, 'poster.webp'));
-    await makePoster(browser, entry, 'light', join(scratch, 'poster-light.webp'));
+    await writeSmallPoster(join(scratch, 'poster.webp'), join(scratch, 'poster-sm.webp'));
     const pictures = await film(browser, entry, frames);
     const webm = await encodeWithin(frames, join(scratch, 'loop.webm'), 'webm', WEBM);
     const mp4 = await encodeWithin(frames, join(scratch, 'loop.mp4'), 'mp4', MP4);
@@ -284,7 +285,7 @@ async function capture(browser, entry) {
     await mkdir(target, { recursive: true });
     const notes = {
       'poster.webp': `${POSTER.width}x${POSTER.height}  quality ${dark.quality}`,
-      'poster-light.webp': `${POSTER.width}x${POSTER.height}`,
+      'poster-sm.webp': `${SMALL.width}x${SMALL.height}`,
       'loop.webm': `${seconds.toFixed(2)} s  ${LOOP.width}x${LOOP.height}  crf ${webm.crf}  ${pictures} different frames`,
       'loop.mp4': `crf ${mp4.crf}`,
     };

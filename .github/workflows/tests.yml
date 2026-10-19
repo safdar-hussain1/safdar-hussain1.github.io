@@ -23,6 +23,8 @@ jobs:
       - run: npm run check
       - run: npm run build
       - run: npm test
+      # The dock flow needs the six project sites next to this repo, which CI does not have,
+      # so it runs locally (node scripts/e2e.mjs) and every other flow runs here.
       - name: Browser flows on the built site
         env:
           CHROME_PATH: /usr/bin/google-chrome

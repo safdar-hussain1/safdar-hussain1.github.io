@@ -75,18 +75,28 @@ const flows = {
     if ((await page.locator('h1').textContent())?.trim() !== 'WardOS') throw new Error('project h1');
     const src = await page.locator('[data-inline-app] iframe').getAttribute('src');
     if (!src?.endsWith('/wardos/')) throw new Error(`inline frame src is ${src}`);
-    await axe(page, 'project page');
+    const box = await page.locator('[data-inline-app] iframe').boundingBox();
+    if (!box || box.width < 900 || box.height < 500) throw new Error(`inline frame is ${box?.width}x${box?.height}`);
+    await axe(page, 'project page dark');
     await page.screenshot({ path: join(SHOTS, `project-wardos-${BROWSER}.png`), fullPage: true });
     await ctx.close();
+    const light = await browser.newContext({ viewport: WIDE, colorScheme: 'light' });
+    const lp = await light.newPage();
+    await lp.goto(`${BASE}work/carmine/`, { waitUntil: 'networkidle' });
+    await axe(lp, 'project page light');
+    await light.close();
   },
   async dock(browser) {
     const ctx = await browser.newContext({ viewport: WIDE, colorScheme: 'dark' });
     const page = await ctx.newPage();
     await page.goto(BASE, { waitUntil: 'networkidle' });
+    const historyBefore = await page.evaluate(() => history.length);
     await page.locator('[data-dock="wardos"]').click();
     await page.waitForSelector('#dock:not([hidden])');
     const src = await page.locator('#dock iframe').getAttribute('src');
     if (!src?.endsWith('/wardos/')) throw new Error(`dock frame src is ${src}`);
+    const frameBox = await page.locator('#dock iframe').boundingBox();
+    if (!frameBox || frameBox.width < 1200 || frameBox.height < 700) throw new Error(`dock frame is ${frameBox?.width}x${frameBox?.height}`);
     if ((await page.locator('[data-dock-name]').textContent()) !== 'WardOS') throw new Error('dock bar name');
     if (!(await page.evaluate(() => location.hash)).startsWith('#work/wardos')) throw new Error('dock hash');
     await page.waitForFunction(() => {
@@ -102,6 +112,9 @@ const flows = {
     await page.keyboard.press('Escape');
     await page.waitForSelector('#dock[hidden]', { state: 'attached' });
     if (await page.evaluate(() => location.hash)) throw new Error('hash not cleared on close');
+    if ((await page.locator('#dock iframe').count()) !== 0) throw new Error('the frame stayed after close');
+    const historyAfter = await page.evaluate(() => history.length);
+    if (historyAfter !== historyBefore) throw new Error(`docking added ${historyAfter - historyBefore} history entries`);
     await ctx.close();
   },
   async palette(browser) {
@@ -110,6 +123,10 @@ const flows = {
     await page.goto(BASE, { waitUntil: 'networkidle' });
     await page.keyboard.press('/');
     await page.waitForSelector('#palette:not([hidden])');
+    const activeBg = await page.evaluate(() => getComputedStyle(document.querySelector('#palette [role="option"][aria-selected="true"]')).backgroundColor);
+    if (!activeBg || activeBg === 'rgba(0, 0, 0, 0)' || activeBg === 'transparent') throw new Error('the selected palette item has no visible background');
+    const gap = await page.evaluate(() => { const li = document.querySelector('#palette [role="option"]'); return li.children.length >= 2 ? li.children[1].getBoundingClientRect().left - li.children[0].getBoundingClientRect().right : 99; });
+    if (gap < 8) throw new Error(`palette label and hint are ${Math.round(gap)}px apart`);
     await axe(page, 'palette open');
     await page.keyboard.type('about');
     await page.keyboard.press('Enter');

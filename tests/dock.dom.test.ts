@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { adaptFrameDocument, createDock, type DockEntry } from '../src/scripts/dock';
+import { createDock, type DockEntry } from '../src/scripts/dock';
+import { adaptFrameDocument, escapeShouldReachPage, looksBroken } from '../src/scripts/frame';
 
 const SITE = 'https://safdar-hussain1.github.io/';
 const entries: DockEntry[] = [
@@ -15,7 +16,7 @@ function mount(): { root: HTMLElement; trigger: HTMLElement } {
       <b data-dock-name></b>
       <a data-dock-open href="/">open</a>
       <button data-dock-close>close</button>
-      <iframe src="about:blank"></iframe>
+      <div data-dock-stage></div>
       <div data-dock-loading hidden></div>
       <div data-dock-fallback hidden><img data-dock-poster alt="" /></div>
     </div>`;
@@ -45,7 +46,7 @@ describe('dock', () => {
     await dock.open('carmine', trigger);
     await dock.close();
     expect(root.hidden).toBe(true);
-    expect(root.querySelector('iframe')!.getAttribute('src')).toBe('about:blank');
+    expect(root.querySelector('iframe')).toBeNull();
     expect(location.hash).toBe('');
     expect(document.activeElement).toBe(trigger);
     expect(dock.current()).toBeNull();
@@ -57,10 +58,32 @@ describe('dock', () => {
     const dock = createDock({ root, entries, siteUrl: SITE, wide: () => true, loadTimeoutMs: 50 });
     await dock.open('wardos');
     expect(root.querySelector<HTMLElement>('[data-dock-loading]')!.hidden).toBe(false);
+    expect(root.querySelector('iframe')).not.toBeNull();
     vi.advanceTimersByTime(60);
     expect(root.querySelector<HTMLElement>('[data-dock-fallback]')!.hidden).toBe(false);
     expect(root.querySelector<HTMLImageElement>('[data-dock-poster]')!.getAttribute('src')).toBe('/work/wardos/poster.webp');
+    expect(root.querySelector('iframe')).toBeNull();
     vi.useRealTimers();
+  });
+
+  test('a modified click is left to the browser', async () => {
+    const { root, trigger } = mount();
+    const dock = createDock({ root, entries, siteUrl: SITE, wide: () => true });
+    const ev = new MouseEvent('click', { bubbles: true, cancelable: true, metaKey: true });
+    trigger.dispatchEvent(ev);
+    expect(ev.defaultPrevented).toBe(false);
+    expect(dock.current()).toBeNull();
+  });
+
+  test('a prevented Escape does not close the dock', async () => {
+    const { root } = mount();
+    const dock = createDock({ root, entries, siteUrl: SITE, wide: () => true });
+    await dock.open('wardos');
+    const ev = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
+    ev.preventDefault();
+    document.dispatchEvent(ev);
+    await Promise.resolve();
+    expect(dock.current()).toBe('wardos');
   });
 
   test('a dock click on a narrow screen is not intercepted', async () => {
@@ -99,12 +122,32 @@ describe('dock', () => {
       <a id="in" href="https://safdar-hussain1.github.io/wardos/#bills">Bills</a>
       <a id="hash" href="#measurements">Measurements</a>`;
     const posted: unknown[] = [];
-    adaptFrameDocument(doc, SITE, (m) => posted.push(m));
+    adaptFrameDocument(doc, SITE, () => posted.push('escape'));
     expect(doc.getElementById('gh')!.getAttribute('target')).toBe('_top');
     expect(doc.getElementById('root')!.getAttribute('target')).toBe('_top');
     expect(doc.getElementById('in')!.getAttribute('target')).toBeNull();
     expect(doc.getElementById('hash')!.getAttribute('target')).toBeNull();
     doc.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
-    expect(posted).toEqual([{ type: 'portfolio:esc' }]);
+    expect(posted).toEqual(['escape']);
+  });
+
+  test('Escape stays with an app that has something open', () => {
+    const doc = document.implementation.createHTMLDocument('app');
+    doc.body.innerHTML = '<button aria-expanded="true">Role</button>';
+    expect(escapeShouldReachPage(doc, new KeyboardEvent('keydown', { key: 'Escape' }))).toBe(false);
+    doc.body.innerHTML = '<button aria-expanded="false">Role</button>';
+    expect(escapeShouldReachPage(doc, new KeyboardEvent('keydown', { key: 'Escape' }))).toBe(true);
+    const prevented = new KeyboardEvent('keydown', { key: 'Escape', cancelable: true });
+    prevented.preventDefault();
+    expect(escapeShouldReachPage(doc, prevented)).toBe(false);
+  });
+
+  test('a GitHub Pages 404 is recognised as broken', () => {
+    const doc = document.implementation.createHTMLDocument('x');
+    doc.title = 'Site not found · GitHub Pages';
+    expect(looksBroken(doc)).toBe(true);
+    const ok = document.implementation.createHTMLDocument('x');
+    ok.title = 'WardOS';
+    expect(looksBroken(ok)).toBe(false);
   });
 });

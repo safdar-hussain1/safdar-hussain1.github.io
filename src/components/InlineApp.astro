@@ -16,26 +16,19 @@ const { entry: e } = Astro.props;
     <span class="app__sp"></span>
     <a class="btn app__btn" href={e.live} target="_blank" rel="noopener">Open in its own tab <Icon name="external" size={15} /></a>
   </div>
-  <div class="app__stage">
-    <img class="app__poster" src={`/work/${e.slug}/poster.webp`} alt={`${e.name} as it opens`} width="1600" height="1000" />
-    <a class="btn pri app__open" href={e.live}>Open {e.name}</a>
+  <div class="app__stage" data-app-stage>
+    <div class="app__poster" data-app-poster>
+      <img src={`/work/${e.slug}/poster.webp`} alt={`${e.name} as it opens`} width="1600" height="1000" loading="eager" />
+      <a class="btn pri app__open" href={e.live}>Open {e.name}</a>
+      <p class="app__note meta" data-app-note hidden>It did not start inside this page. It runs on its own tab.</p>
+    </div>
   </div>
 </section>
 
 <script>
-  // On a wide screen the app itself replaces the poster; phones keep the poster and the link.
-  for (const el of document.querySelectorAll<HTMLElement>('[data-inline-app]')) {
-    if (!matchMedia('(min-width: 900px)').matches) continue;
-    const stage = el.querySelector<HTMLElement>('.app__stage');
-    if (!stage) continue;
-    const frame = document.createElement('iframe');
-    frame.src = el.dataset.frame || el.dataset.live!;
-    frame.title = `${el.dataset.name}, running in this page`;
-    frame.setAttribute('allow', 'camera; microphone; fullscreen; autoplay');
-    frame.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
-    stage.replaceChildren(frame);
-    stage.classList.add('app__stage--live');
-  }
+  import { mountInlineApps } from '../scripts/inline-app';
+
+  mountInlineApps();
 </script>
 
 <style>
@@ -80,14 +73,14 @@ const { entry: e } = Astro.props;
     aspect-ratio: auto;
     height: 82vh;
   }
-  .app__stage iframe {
-    width: 100%;
-    height: 100%;
-    border: 0;
-    display: block;
-    background: var(--ground);
-  }
   .app__poster {
+    position: absolute;
+    inset: 0;
+  }
+  .app__poster[hidden] {
+    display: none;
+  }
+  .app__poster img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -97,6 +90,16 @@ const { entry: e } = Astro.props;
     left: 50%;
     bottom: 1.2rem;
     transform: translateX(-50%);
+  }
+  .app__note {
+    position: absolute;
+    left: 50%;
+    bottom: 4.4rem;
+    transform: translateX(-50%);
+    background: var(--glass);
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
   }
   @media (max-width: 560px) {
     .app__bar b {

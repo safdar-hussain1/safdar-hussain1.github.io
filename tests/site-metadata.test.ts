@@ -81,7 +81,7 @@ describe('masthead and hero', () => {
 
   test('the hero line and cue are present', () => {
     expect(html).toContain('I build products that run on your own device and publish the numbers behind them.');
-    expect(html).toContain('Every project opens and runs right here.');
+    expect(html).toContain('Every project runs live. Scroll.');
     expect(html).toContain('id="hero-art"');
   });
 

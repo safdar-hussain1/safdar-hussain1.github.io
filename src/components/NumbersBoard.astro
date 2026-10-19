@@ -9,8 +9,8 @@ const { entries } = Astro.props;
 const live = liveEntries(entries);
 ---
 <div class="numbers" id="numbers-board">
-  <h3>In each project's own words</h3>
-  <p class="meta">Every line is copied from the project's README and links to it. Nothing here is rounded or re-stated.</p>
+  <h3>In each project's own figures</h3>
+  <p class="meta">Every figure is quoted from the project's README, and each line links to it. Nothing here is rounded or re-stated.</p>
   <div class="numbers__grid">
     {
       live.map((e) => (

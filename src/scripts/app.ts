@@ -19,6 +19,6 @@ const dock = document.getElementById('dock');
 dock?.addEventListener('dock:open', () => sound.play('dock'));
 dock?.addEventListener('dock:close', () => sound.play('undock'));
 
-// The 3D stage arrives in a later release; until then the selftest reads this.
+// The 3D stage is not part of this build; the selftest reads why it is off.
 const w = window as unknown as { __stage?: { started: boolean; reason?: string } };
 w.__stage ??= { started: false, reason: 'off' };

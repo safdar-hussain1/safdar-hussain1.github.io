@@ -30,7 +30,7 @@ const commands: Command[] = [
     <label class="visually-hidden" for="palette-input">Type to jump to a project, a section or a link</label>
     <input id="palette-input" type="text" role="combobox" aria-expanded="true" aria-controls="palette-list" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="Jump to a project, a section, a link" />
     <ul id="palette-list" class="palette__list" role="listbox" aria-label="Commands"></ul>
-    <p class="palette__empty meta" data-palette-empty hidden>Nothing matches. Try a project's name.</p>
+    <p class="palette__empty meta" data-palette-empty aria-live="polite" hidden>Nothing matches. Try a project's name.</p>
     <p class="palette__keys meta"><kbd>↑</kbd><kbd>↓</kbd> move <kbd>↵</kbd> go <kbd>esc</kbd> close</p>
   </div>
   <script type="application/json" data-palette-commands set:html={jsonForHtml(commands)} />
@@ -51,7 +51,9 @@ const commands: Command[] = [
       onRun: (id) => {
         if (id.startsWith('dock:')) {
           const slug = id.slice(5);
-          if (w.__dock && matchMedia('(min-width: 900px)').matches) void w.__dock.open(slug);
+          const wide = matchMedia('(min-width: 900px)').matches;
+          if (w.__dock && wide) void w.__dock.open(slug);
+          else if (wide) location.href = `/#work/${slug}`;
           else location.href = `/work/${slug}/`;
         } else if (id.startsWith('go:')) {
           const target = id.slice(3);
@@ -118,7 +120,7 @@ const commands: Command[] = [
     max-height: min(52vh, 440px);
     overflow-y: auto;
   }
-  .palette__item {
+  .palette__list :global(.palette__item) {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
@@ -127,10 +129,11 @@ const commands: Command[] = [
     border-radius: 8px;
     cursor: pointer;
   }
-  .palette__item.is-active {
+  .palette__list :global(.palette__item.is-active) {
     background: color-mix(in srgb, var(--accent) 18%, var(--raised));
+    outline: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
   }
-  .palette__item .palette__hint {
+  .palette__list :global(.palette__hint) {
     font-size: 0.78rem;
     white-space: nowrap;
   }

@@ -13,8 +13,8 @@ const entries: WorkEntry[] = readdirSync(entriesDir)
   .map((f) => workSchema.parse(JSON.parse(readFileSync(join(entriesDir, f), 'utf8'))));
 const live = liveEntries(entries).map((e) => e.slug);
 
-const FILES = ['poster.webp', 'poster-light.webp', 'loop.webm', 'loop.mp4'] as const;
-const POSTERS = ['poster.webp', 'poster-light.webp'] as const;
+const FILES = ['poster.webp', 'poster-sm.webp', 'loop.webm', 'loop.mp4'] as const;
+const POSTERS = ['poster.webp'] as const;
 const LOOPS = ['loop.webm', 'loop.mp4'] as const;
 
 // The limits are written in decimal, so a file that passes is under them however "KB" is read.

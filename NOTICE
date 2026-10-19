@@ -1,11 +1,13 @@
 Third-party material in this site, all free to use and redistribute.
 
-Typefaces (bundled as woff2 files by the Fontsource packages, served from this site):
-- Archivo, by Omnibus-Type. SIL Open Font License 1.1. https://github.com/Omnibus-Type/Archivo
-- Newsreader, by Production Type. SIL Open Font License 1.1. https://github.com/productiontype/Newsreader
-The licence text ships with each package (node_modules/@fontsource-variable/<name>/LICENSE).
+Typefaces (bundled as woff2 files by the Fontsource packages and served from this site):
+- Archivo, by Omnibus-Type. SIL Open Font License 1.1: licences/OFL-Archivo.txt. https://github.com/Omnibus-Type/Archivo
+- Newsreader, by Production Type. SIL Open Font License 1.1: licences/OFL-Newsreader.txt. https://github.com/productiontype/Newsreader
 
-Libraries:
-- Astro (MIT), Three.js (MIT), GSAP (GreenSock standard "no charge" licence, free for every use since 3.13).
+Libraries: Astro (MIT), Three.js (MIT), GSAP (GreenSock standard "no charge" licence, free for every use since 3.13).
 
-Everything else, the writing, the code, the 3D scene and the pictures, is by Safdar Hussain (MIT, see LICENSE).
+Pictures: the posters and loops under public/work/ are recordings of the projects' own pages. What those
+pages show is credited in each project's repository; in particular the sample portrait on Carmine's page is a
+photo by Andrea Piacquadio on Pexels, under the Pexels licence.
+
+Everything else, the writing, the code and the design, is by Safdar Hussain (MIT, see LICENSE).

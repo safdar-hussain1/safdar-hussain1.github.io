@@ -34,7 +34,7 @@
       "source": "https://github.com/safdar-hussain1/red-light-green-light-cv#readme"
     }
   ],
-  "limits": "Measured on one outdoor scene at 10 fps; a body walking through your box still counts as movement.",
+  "limits": "Measured on one outdoor scene; a body walking through your box still counts as movement.",
   "stack": [
     "Python",
     "OpenCV",
