@@ -2,7 +2,7 @@
 // Without E2E_GL the browser renders WebGL in software so the flows run anywhere; with it,
 // the real GPU is used, which the 3D checks and the captures need.
 import { existsSync } from 'node:fs';
-import { chromium } from 'playwright-core';
+import { chromium, firefox, webkit } from 'playwright-core';
 
 const CANDIDATES = [
   process.env.CHROME_PATH,
@@ -19,7 +19,11 @@ export function chromePath() {
   return found;
 }
 
-export async function launch({ gl = Boolean(process.env.E2E_GL) } = {}) {
+export async function launch({ gl = Boolean(process.env.E2E_GL), browser = process.env.E2E_BROWSER || 'chrome' } = {}) {
+  // WebKit and Firefox come from Playwright's own builds (`npx playwright-core install webkit firefox`),
+  // for the cross-browser checks; Chrome is the installed one.
+  if (browser === 'webkit') return webkit.launch({ headless: true });
+  if (browser === 'firefox') return firefox.launch({ headless: true });
   const args = gl ? ['--enable-gpu', '--ignore-gpu-blocklist'] : ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'];
   return chromium.launch({ executablePath: chromePath(), headless: true, args });
 }

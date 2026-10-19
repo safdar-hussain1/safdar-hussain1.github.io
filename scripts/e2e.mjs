@@ -3,7 +3,7 @@
 // failures, and exits 1 on any failure. Screenshots go to a temporary folder unless --shots
 // names one; they are never written into the repo.
 //
-//   node scripts/e2e.mjs [--url http://127.0.0.1:4300/] [--only dock,palette] [--shots DIR]
+//   node scripts/e2e.mjs [--url http://127.0.0.1:4300/] [--only dock,palette] [--shots DIR] [--browser chrome|webkit|firefox]
 import { mkdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
@@ -21,6 +21,7 @@ const opt = (name, fallback) => {
 const BASE = opt('--url', 'http://127.0.0.1:4300/').replace(/\/?$/, '/');
 const ONLY = opt('--only', '').split(',').filter(Boolean);
 const SHOTS = resolve(opt('--shots', join(tmpdir(), 'portfolio-shots')));
+const BROWSER = opt('--browser', process.env.E2E_BROWSER || 'chrome');
 mkdirSync(SHOTS, { recursive: true });
 
 const WIDE = { width: 1440, height: 900 };
@@ -44,7 +45,7 @@ const flows = {
     if ((await page.locator('h1').textContent())?.trim() !== 'Safdar Hussain') throw new Error('h1 is not the name');
     if ((await page.locator('.plate[data-status="live"]').count()) !== 6) throw new Error('expected six live cards');
     await axe(page, 'home dark');
-    await page.screenshot({ path: join(SHOTS, 'home-dark.png'), fullPage: true });
+    await page.screenshot({ path: join(SHOTS, `home-dark-${BROWSER}.png`), fullPage: true });
     await ctx.close();
   },
   async 'home-light'(browser) {
@@ -52,7 +53,7 @@ const flows = {
     const page = await ctx.newPage();
     await page.goto(BASE, { waitUntil: 'networkidle' });
     await axe(page, 'home light');
-    await page.screenshot({ path: join(SHOTS, 'home-light.png'), fullPage: true });
+    await page.screenshot({ path: join(SHOTS, `home-light-${BROWSER}.png`), fullPage: true });
     await ctx.close();
   },
   async 'home-390'(browser) {
@@ -64,7 +65,7 @@ const flows = {
     const href = await page.locator('[data-dock="wardos"]').getAttribute('href');
     if (!href?.includes('/wardos/')) throw new Error('the phone link does not lead to the live site');
     await axe(page, 'home 390');
-    await page.screenshot({ path: join(SHOTS, 'home-390.png'), fullPage: true });
+    await page.screenshot({ path: join(SHOTS, `home-390-${BROWSER}.png`), fullPage: true });
     await ctx.close();
   },
   async 'project-page'(browser) {
@@ -75,7 +76,7 @@ const flows = {
     const src = await page.locator('[data-inline-app] iframe').getAttribute('src');
     if (!src?.endsWith('/wardos/')) throw new Error(`inline frame src is ${src}`);
     await axe(page, 'project page');
-    await page.screenshot({ path: join(SHOTS, 'project-wardos.png'), fullPage: true });
+    await page.screenshot({ path: join(SHOTS, `project-wardos-${BROWSER}.png`), fullPage: true });
     await ctx.close();
   },
   async dock(browser) {
@@ -97,7 +98,7 @@ const flows = {
       }
     }, null, { timeout: 60000 });
     await axe(page, 'dock open');
-    await page.screenshot({ path: join(SHOTS, 'dock-wardos.png') });
+    await page.screenshot({ path: join(SHOTS, `dock-wardos-${BROWSER}.png`) });
     await page.keyboard.press('Escape');
     await page.waitForSelector('#dock[hidden]', { state: 'attached' });
     if (await page.evaluate(() => location.hash)) throw new Error('hash not cleared on close');
@@ -143,7 +144,7 @@ const flows = {
 };
 
 const names = Object.keys(flows).filter((n) => ONLY.length === 0 || ONLY.includes(n));
-const browser = await launch();
+const browser = await launch({ browser: BROWSER });
 let failed = 0;
 for (const name of names) {
   try {
@@ -155,5 +156,5 @@ for (const name of names) {
   }
 }
 await browser.close();
-console.log(failed ? `FAIL ${names.length - failed}/${names.length}` : `PASS ${names.length}/${names.length}`);
+console.log(`${failed ? 'FAIL' : 'PASS'} ${names.length - failed}/${names.length} on ${BROWSER}`);
 process.exit(failed ? 1 : 0);
