@@ -6,7 +6,7 @@ import { z } from 'astro/zod';
 export const buildingKinds = ['hospital', 'clinic', 'gantry', 'field', 'studio', 'towers', 'hall', 'depot'] as const;
 
 // Every link in an entry is https; the README is fetched, so its host is pinned too.
-const httpsUrl = z.string().url().refine((u) => new URL(u).protocol === 'https:', 'must be an https: URL');
+const httpsUrl = z.url().refine((u) => new URL(u).protocol === 'https:', 'must be an https: URL');
 const readmeUrl = httpsUrl.refine((u) => new URL(u).host === 'raw.githubusercontent.com', 'must be on raw.githubusercontent.com');
 const liveUrl = httpsUrl.refine((u) => new URL(u).host === 'safdar-hussain1.github.io', 'must be on safdar-hussain1.github.io');
 const plain = (max: number) => z.string().min(1).max(max).regex(/^[^<>]*$/, 'no angle brackets');

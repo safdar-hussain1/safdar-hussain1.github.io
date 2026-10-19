@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-10-19T17:40:50.335Z",
+  "fetchedAt": "2026-10-19T18:16:20.504Z",
   "rows": [
     {
       "repo": "wardos",
@@ -9,7 +9,7 @@
       "licence": "MIT",
       "ci": "passing",
       "source": "snapshot",
-      "fetchedAt": "2026-10-19T17:40:50.335Z"
+      "fetchedAt": "2026-10-19T18:16:20.504Z"
     },
     {
       "repo": "nightingale",
@@ -19,7 +19,7 @@
       "licence": "MIT",
       "ci": "passing",
       "source": "snapshot",
-      "fetchedAt": "2026-10-19T17:40:50.335Z"
+      "fetchedAt": "2026-10-19T18:16:20.504Z"
     },
     {
       "repo": "trafficlens",
@@ -29,7 +29,7 @@
       "licence": "MIT",
       "ci": "passing",
       "source": "snapshot",
-      "fetchedAt": "2026-10-19T17:40:50.335Z"
+      "fetchedAt": "2026-10-19T18:16:20.504Z"
     },
     {
       "repo": "red-light-green-light-cv",
@@ -39,7 +39,7 @@
       "licence": "MIT",
       "ci": "passing",
       "source": "snapshot",
-      "fetchedAt": "2026-10-19T17:40:50.335Z"
+      "fetchedAt": "2026-10-19T18:16:20.504Z"
     },
     {
       "repo": "carmine",
@@ -49,7 +49,7 @@
       "licence": "MIT",
       "ci": "passing",
       "source": "snapshot",
-      "fetchedAt": "2026-10-19T17:40:50.335Z"
+      "fetchedAt": "2026-10-19T18:16:20.504Z"
     },
     {
       "repo": "homecast",
@@ -59,7 +59,7 @@
       "licence": "MIT",
       "ci": "passing",
       "source": "snapshot",
-      "fetchedAt": "2026-10-19T17:40:50.335Z"
+      "fetchedAt": "2026-10-19T18:16:20.504Z"
     }
   ]
 }
