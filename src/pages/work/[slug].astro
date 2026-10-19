@@ -1,0 +1,62 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Masthead from '../../components/Masthead.astro';
+import InlineApp from '../../components/InlineApp.astro';
+import Brief from '../../components/Brief.astro';
+import { SITE } from '../../data/site';
+import { liveEntries } from '../../lib/work';
+import { describePage, pageTitle } from '../../lib/describe';
+import type { WorkEntry } from '../../lib/work-schema';
+
+export async function getStaticPaths() {
+  const entries = (await getCollection('work')).map((e) => e.data);
+  return liveEntries(entries).map((entry) => ({ params: { slug: entry.slug }, props: { entry } }));
+}
+
+interface Props {
+  entry: WorkEntry;
+}
+const { entry: e } = Astro.props;
+const canonical = `${SITE.url}work/${e.slug}/`;
+const title = pageTitle(e);
+const description = describePage(e);
+const ogImage = `${SITE.url}work/${e.slug}/og.png`;
+const page = {
+  '@type': 'WebPage',
+  '@id': canonical,
+  url: canonical,
+  name: title,
+  description,
+  isPartOf: { '@id': `${SITE.url}#website` },
+  about: { '@type': 'WebApplication', name: e.name, url: e.live, applicationCategory: 'WebApplication', author: { '@id': `${SITE.url}#person` } },
+};
+---
+<Base title={title} description={description} canonical={canonical} ogImage={ogImage} ogAlt={`${e.name} as it opens, framed with its name`} jsonLd={[page]} bodyClass="page-work">
+  <Masthead slot="header" home={false} />
+  <article class="wrap work-page">
+    <header class="work-page__head">
+      <p class="meta"><a href="/#work">Work</a></p>
+      <h1>{e.name}</h1>
+    </header>
+    <InlineApp entry={e} />
+    <Brief entry={e} />
+  </article>
+</Base>
+
+<style>
+  .work-page {
+    display: grid;
+    gap: var(--s-3);
+    padding-block: var(--s-3) 0;
+  }
+  .work-page__head {
+    display: grid;
+    gap: 0.6rem;
+  }
+  .work-page__head h1 {
+    font-size: var(--step-3);
+    font-weight: 300;
+    font-stretch: 116%;
+  }
+</style>

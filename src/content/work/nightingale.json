@@ -32,6 +32,11 @@
       "text": "the browser and Python agree to 7.22e-16 in the worst case",
       "quote": "Parity gate: 1e-9, measured worst case 7.22e-16.",
       "source": "https://github.com/safdar-hussain1/nightingale#readme"
+    },
+    {
+      "text": "recalibration did not demonstrably help one hospital, and the report says so",
+      "quote": "recalibration did not demonstrably help VA",
+      "source": "https://github.com/safdar-hussain1/nightingale#readme"
     }
   ],
   "limits": "Screening-triage models on small public datasets, not diagnostic devices; only heart disease has external validation.",

@@ -1,0 +1,72 @@
+---
+import type { WorkEntry } from '../lib/work-schema';
+import Icon from './Icon.astro';
+
+interface Props {
+  entry: WorkEntry;
+}
+const { entry: e } = Astro.props;
+---
+<section class="brief wrap" aria-labelledby="brief-title">
+  <div class="brief__col">
+    <h2 id="brief-title">In short</h2>
+    <p class="brief__lede">{e.tagline}</p>
+    <div class="chips">
+      <span class="chip"><Icon name="device" size={14} />Runs on your device</span>
+      {e.needs.camera && <span class="chip"><Icon name="camera" size={14} />Uses your camera</span>}
+    </div>
+    <h3>Measured</h3>
+    <ul class="brief__facts">
+      {e.facts.map((f) => <li><a href={f.source}>{f.text}</a></li>)}
+    </ul>
+    <p class="meta">Each line links to the README it is quoted from.</p>
+  </div>
+  <div class="brief__col">
+    <h3>What it does not do</h3>
+    <p>{e.limits}</p>
+    <h3>Built with</h3>
+    <p class="brief__stack">{e.stack.join(' · ')}</p>
+    <h3>Links</h3>
+    <ul class="brief__links">
+      <li><a href={e.live}>The live site</a></li>
+      <li><a href={e.repo}>Source on GitHub</a></li>
+      {e.related && <li><a href={e.related.href}>{e.related.label}</a></li>}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .brief {
+    display: grid;
+    gap: var(--s-4);
+    padding-block: var(--s-4) 0;
+  }
+  @media (min-width: 760px) {
+    .brief {
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    }
+  }
+  .brief__col {
+    display: grid;
+    gap: var(--s-2);
+    align-content: start;
+  }
+  .brief__col h3 {
+    margin-top: var(--s-2);
+  }
+  .brief__lede {
+    font-size: var(--step-1);
+  }
+  .brief__facts,
+  .brief__links {
+    margin: 0;
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .brief__stack {
+    font-family: var(--display);
+    font-stretch: 96%;
+    color: var(--ink-2);
+  }
+</style>
