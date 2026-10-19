@@ -1,0 +1,21 @@
+{
+  "source": "profile/01-identity.md, 02-education.md, 03-experience.md, 05-skills.md, 06-personality.md, confirmed by Safdar on 2026-09-11",
+  "allowed": ["9.19", "2022", "2024", "2025", "2026", "25"],
+  "now": {
+    "date": "2026-10",
+    "text": "finishing Wavelength, a music recommender that runs in your browser."
+  },
+  "paragraphs": [
+    "I'm a computer science graduate from Hyderabad. I work as an AI engineer at Navatej Technologies, remotely, and I spend the rest of my time building the products on this page: machine learning, computer vision and full applications, each one published with the numbers behind it.",
+    "I come from a family of doctors in Kurnool. My parents run a small nursing home and my younger brother is studying medicine. I'm the one who went into computers, and a lot of what I want to build is for people like my parents' patients: tools that just work, on whatever device they have.",
+    "I like finishing things properly. If I start something, I learn it, plan it and take it all the way, and I would rather publish the bad number than hide it."
+  ],
+  "facts": [
+    { "label": "Education", "text": "B.Tech in Computer Science and Engineering, Mahindra University, Hyderabad, 2022–2026. CGPA 9.19. Academic Scholarship all four years." },
+    { "label": "Now", "text": "AI Engineer, Navatej Technologies, remote." },
+    { "label": "Before", "text": "Technical Head of the Computer Vision Club at Mahindra University, 2024–25, and a poster on object detection for traffic surveillance at the MICA conference, 2024." },
+    { "label": "Languages", "text": "Telugu, Hindi, English, some French." }
+  ],
+  "outside": "Guitar, drawing, the gym, my mother's garden, films with the family every evening, learning to cook, snooker.",
+  "swara": null
+}
