@@ -1,0 +1,66 @@
+---
+import type { WorkEntry } from '../lib/work-schema';
+import Icon from './Icon.astro';
+
+interface Props {
+  entries: WorkEntry[];
+}
+const { entries } = Astro.props;
+// A small skyline in the eight colours: one mark per project, shaped by the building it will be.
+const heights: Record<WorkEntry['building'], number> = { hospital: 26, clinic: 14, gantry: 30, field: 8, studio: 18, towers: 40, hall: 22, depot: 12 };
+const marks = entries.map((e, i) => ({ x: i * 34, h: heights[e.building], c: e.accent, name: e.name }));
+---
+<section class="hero wrap" aria-labelledby="hero-title">
+  <div class="hero__text">
+    <h1 id="hero-title">Safdar Hussain</h1>
+    <p class="hero__line">I build products that run on your own device and publish the numbers behind them.</p>
+    <a class="hero__cue meta" href="#work">
+      <Icon name="arrow-down" size={16} />
+      Every project opens and runs right here.
+    </a>
+  </div>
+  <div id="hero-art" class="hero__art">
+    <svg class="hero__skyline" viewBox="0 0 258 44" width="258" height="44" aria-hidden="true">
+      {marks.map((m) => <rect x={m.x} y={44 - m.h} width="22" height={m.h} rx="2" fill={m.c} />)}
+    </svg>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    display: grid;
+    gap: var(--s-3);
+    min-height: min(78vh, 760px);
+    align-content: end;
+    padding-block: var(--s-5) var(--s-4);
+  }
+  .hero__text {
+    display: grid;
+    gap: var(--s-2);
+    max-width: 30ch;
+  }
+  .hero__line {
+    font-size: clamp(1.2rem, 1rem + 1.1vw, 1.55rem);
+    line-height: 1.4;
+    max-width: 34ch;
+  }
+  .hero__cue {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: fit-content;
+    text-decoration: none;
+    margin-top: var(--s-1);
+  }
+  .hero__cue:hover {
+    color: var(--ink);
+  }
+  .hero__art {
+    display: flex;
+    justify-content: flex-start;
+  }
+  .hero__skyline {
+    opacity: 0.95;
+  }
+</style>

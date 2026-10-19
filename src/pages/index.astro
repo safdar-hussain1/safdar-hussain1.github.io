@@ -1,9 +1,13 @@
 ---
+import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import Masthead from '../components/Masthead.astro';
+import Hero from '../components/Hero.astro';
+import { allEntries } from '../lib/work';
+
+const entries = allEntries((await getCollection('work')).map((e) => e.data));
 ---
 <Base>
-  <section class="wrap">
-    <h1>Safdar Hussain</h1>
-    <p>I build products that run on your own device and publish the numbers behind them.</p>
-  </section>
+  <Masthead slot="header" />
+  <Hero entries={entries} />
 </Base>

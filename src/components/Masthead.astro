@@ -1,0 +1,148 @@
+---
+import Icon from './Icon.astro';
+import { SITE } from '../data/site';
+
+interface Props {
+  home?: boolean;
+}
+const { home = true } = Astro.props;
+const prefix = home ? '' : '/';
+const links = [
+  ['Work', `${prefix}#work`],
+  ['How I work', `${prefix}#how`],
+  ['Measured', `${prefix}#measured`],
+  ['About', `${prefix}#about`],
+  ['Contact', `${prefix}#contact`],
+];
+---
+<header class="mast" slot="header">
+  <div class="mast__in wrap">
+    <a class="mast__wordmark" href="/">Safdar Hussain</a>
+    <nav class="mast__nav" aria-label="Sections">
+      {links.map(([label, href]) => <a href={href}>{label}</a>)}
+      <a href={SITE.author.github} rel="me">Source</a>
+    </nav>
+    <div class="mast__tools">
+      <button class="mast__btn" id="palette-trigger" type="button" aria-label="Open the command palette" title="Press / anywhere">
+        <Icon name="search" />
+        <kbd aria-hidden="true">/</kbd>
+      </button>
+      <button class="mast__btn" id="sound-switch" type="button" aria-label="Sound" aria-pressed="false" title="Sound is off">
+        <span class="when-off"><Icon name="sound-off" /></span>
+        <span class="when-on"><Icon name="sound-on" /></span>
+      </button>
+      <button class="mast__btn" id="theme-switch" type="button" aria-label="Switch between the dark and the light theme">
+        <span class="when-dark"><Icon name="sun" /></span>
+        <span class="when-light"><Icon name="moon" /></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<script>
+  import { toggleTheme } from '../scripts/theme';
+
+  document.getElementById('theme-switch')?.addEventListener('click', () => toggleTheme());
+</script>
+
+<style>
+  .mast {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 20;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: color-mix(in srgb, var(--ground) 70%, transparent);
+  }
+  .mast__in {
+    display: flex;
+    align-items: center;
+    gap: 1.4rem;
+    padding-block: 0.75rem;
+  }
+  .mast__wordmark {
+    font-family: var(--display);
+    font-weight: 500;
+    font-stretch: 112%;
+    letter-spacing: 0.01em;
+    font-size: 1.05rem;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .mast__nav {
+    display: flex;
+    gap: 1.1rem;
+    margin-left: auto;
+    font-family: var(--display);
+    font-size: 0.95rem;
+    font-weight: 500;
+    font-stretch: 96%;
+  }
+  .mast__nav a {
+    text-decoration: none;
+    color: var(--ink-2);
+    white-space: nowrap;
+    padding-block: 0.4rem;
+  }
+  .mast__nav a:hover {
+    color: var(--ink);
+  }
+  .mast__tools {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: auto;
+  }
+  .mast__nav + .mast__tools {
+    margin-left: 0;
+  }
+  .mast__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 0.6rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    background: var(--glass);
+    color: var(--ink);
+  }
+  .mast__btn kbd {
+    font-family: var(--display);
+    font-size: 0.75rem;
+    color: var(--ink-2);
+  }
+  .when-on,
+  .when-light {
+    display: none;
+  }
+  [aria-pressed='true'] .when-off {
+    display: none;
+  }
+  [aria-pressed='true'] .when-on {
+    display: inline;
+  }
+  :root[data-theme='light'] .when-dark {
+    display: none;
+  }
+  :root[data-theme='light'] .when-light {
+    display: inline;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme='dark']) .when-dark {
+      display: none;
+    }
+    :root:not([data-theme='dark']) .when-light {
+      display: inline;
+    }
+  }
+  @media (max-width: 760px) {
+    .mast__nav {
+      display: none;
+    }
+    .mast__btn kbd {
+      display: none;
+    }
+  }
+</style>

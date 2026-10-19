@@ -1,0 +1,36 @@
+/* Shared pieces that several components use: sections, chips, the section title rhythm. */
+.section {
+  padding-block: var(--s-5) 0;
+}
+
+.section > h2 {
+  margin-bottom: var(--s-3);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  font-family: var(--display);
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-stretch: 96%;
+  color: var(--ink-2);
+}
+
+.chip::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}

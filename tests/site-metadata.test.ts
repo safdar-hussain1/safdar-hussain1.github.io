@@ -71,3 +71,21 @@ describe('authorship marks', () => {
     expect(existsSync(join(DOCS, '.nojekyll'))).toBe(true);
   });
 });
+
+describe('masthead and hero', () => {
+  test('the masthead links every section in order', () => {
+    const nav = html.match(/<nav class="mast__nav"[^>]*>([\s\S]*?)<\/nav>/)![1];
+    const hrefs = [...nav.matchAll(/href="([^"]+)"/g)].map((m) => m[1]);
+    expect(hrefs).toEqual(['#work', '#how', '#measured', '#about', '#contact', SITE.author.github]);
+  });
+
+  test('the hero line and cue are present', () => {
+    expect(html).toContain('I build products that run on your own device and publish the numbers behind them.');
+    expect(html).toContain('Every project opens and runs right here.');
+    expect(html).toContain('id="hero-art"');
+  });
+
+  test('the switches exist for the theme, sound and palette', () => {
+    for (const id of ['theme-switch', 'sound-switch', 'palette-trigger']) expect(html).toContain(`id="${id}"`);
+  });
+});
