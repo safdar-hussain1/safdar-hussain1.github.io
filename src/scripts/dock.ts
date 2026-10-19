@@ -47,11 +47,13 @@ export function adaptFrameDocument(doc: Document, siteUrl: string, post: (messag
   });
 }
 
-export function adaptFrame(frame: HTMLIFrameElement, siteUrl: string): void {
+// The listener runs in this page's realm even though it is attached inside the frame, so
+// Escape reaches the dock directly; no window message crosses a boundary.
+export function adaptFrame(frame: HTMLIFrameElement, siteUrl: string, onMessage: (message: unknown) => void): void {
   try {
     const doc = frame.contentDocument;
     if (!doc) return;
-    adaptFrameDocument(doc, siteUrl, (m) => window.postMessage(m, '*'));
+    adaptFrameDocument(doc, siteUrl, onMessage);
   } catch {
     // A frame from another origin (a dev server without the replica) cannot be adapted;
     // the bar's own button still closes the dock.
@@ -101,7 +103,9 @@ export function createDock(opts: DockOptions): Dock {
     clearTimer();
     loading.hidden = true;
     fallback.hidden = true;
-    adaptFrame(frame, siteUrl);
+    adaptFrame(frame, siteUrl, (m) => {
+      if ((m as { type?: string })?.type === ESC_MESSAGE) void close();
+    });
     root.dispatchEvent(new CustomEvent('dock:loaded', { detail: current }));
   }
 
@@ -192,12 +196,6 @@ export function createDock(opts: DockOptions): Dock {
       }
     }
   });
-
-  if (typeof window !== 'undefined') {
-    window.addEventListener('message', (e) => {
-      if (current && e.data && (e.data as { type?: string }).type === ESC_MESSAGE) void close();
-    });
-  }
 
   const fromHash = typeof location !== 'undefined' ? parseWorkHash(location.hash) : null;
   if (fromHash && entry(fromHash) && wide()) void open(fromHash, null);
