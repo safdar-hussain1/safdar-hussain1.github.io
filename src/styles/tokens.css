@@ -1,0 +1,81 @@
+/* Layout: one 1120px column on a dark ground; the city is the only element that breaks it.
+   Dark first. Every colour is a token; the light theme redefines the same tokens twice so the
+   system setting and the switch both win. */
+:root {
+  --ground: #0b1020;
+  --raised: #121a2e;
+  --raised-2: #1a2440;
+  --line: rgba(255, 255, 255, 0.1);
+  --line-2: rgba(255, 255, 255, 0.18);
+  --ink: #eef2ff;
+  --ink-2: #aab4cf;
+  --ink-3: #7f8aa8;
+  --focus: #9ecbff;
+  --glass: rgba(18, 26, 46, 0.72);
+  --shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.8);
+  --accent: #9ecbff;
+  --accent-ink: #9ecbff;
+
+  --display: 'Archivo Variable', 'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --prose: 'Newsreader Variable', 'Newsreader', Georgia, 'Times New Roman', serif;
+
+  --max: 1120px;
+  --gutter-l: max(16px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(16px, env(safe-area-inset-right, 0px));
+
+  --step--1: 0.9rem;
+  --step-0: 1.0625rem;
+  --step-1: 1.2rem;
+  --step-2: 1.55rem;
+  --step-3: clamp(1.9rem, 1.2rem + 2.4vw, 3.2rem);
+  --step-4: clamp(2.6rem, 0.6rem + 7vw, 7rem);
+
+  --s-1: 0.5rem;
+  --s-2: 1rem;
+  --s-3: 1.75rem;
+  --s-4: 3rem;
+  --s-5: 5rem;
+  --s-6: 8rem;
+
+  --radius: 12px;
+  --radius-pill: 999px;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    --ground: #edeff4;
+    --raised: #ffffff;
+    --raised-2: #f6f7fb;
+    --line: rgba(16, 21, 35, 0.12);
+    --line-2: rgba(16, 21, 35, 0.22);
+    --ink: #101523;
+    --ink-2: #4b5569;
+    --ink-3: #6b7489;
+    --focus: #1d4ed8;
+    --glass: rgba(255, 255, 255, 0.78);
+    --shadow: 0 30px 80px -40px rgba(16, 21, 35, 0.35);
+    --accent: #1d4ed8;
+    --accent-ink: #1d4ed8;
+    color-scheme: light;
+  }
+}
+
+:root[data-theme='light'] {
+  --ground: #edeff4;
+  --raised: #ffffff;
+  --raised-2: #f6f7fb;
+  --line: rgba(16, 21, 35, 0.12);
+  --line-2: rgba(16, 21, 35, 0.22);
+  --ink: #101523;
+  --ink-2: #4b5569;
+  --ink-3: #6b7489;
+  --focus: #1d4ed8;
+  --glass: rgba(255, 255, 255, 0.78);
+  --shadow: 0 30px 80px -40px rgba(16, 21, 35, 0.35);
+  --accent: #1d4ed8;
+  --accent-ink: #1d4ed8;
+  color-scheme: light;
+}

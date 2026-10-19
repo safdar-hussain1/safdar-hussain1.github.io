@@ -1,0 +1,109 @@
+---
+import '@fontsource-variable/archivo/wdth.css';
+import '@fontsource-variable/newsreader/opsz.css';
+import archivoUrl from '@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2?url';
+import newsreaderUrl from '@fontsource-variable/newsreader/files/newsreader-latin-opsz-normal.woff2?url';
+import '../styles/tokens.css';
+import '../styles/base.css';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  ogImage?: string;
+  ogAlt?: string;
+  jsonLd?: Record<string, unknown>[];
+  bodyClass?: string;
+}
+
+const {
+  title = SITE.title,
+  description = SITE.description,
+  canonical = SITE.url,
+  ogImage = SITE.ogImage,
+  ogAlt = SITE.ogAlt,
+  jsonLd = [],
+  bodyClass = '',
+} = Astro.props;
+
+const person = {
+  '@type': 'Person',
+  '@id': `${SITE.url}#person`,
+  name: SITE.author.name,
+  url: SITE.url,
+  sameAs: [SITE.author.github, SITE.author.linkedin],
+  jobTitle: SITE.author.jobTitle,
+  worksFor: { '@type': 'Organization', name: SITE.author.employer },
+  alumniOf: { '@type': 'CollegeOrUniversity', name: SITE.author.university },
+  knowsAbout: ['Machine learning', 'Computer vision', 'Web applications'],
+};
+
+const website = {
+  '@type': 'WebSite',
+  '@id': `${SITE.url}#website`,
+  url: SITE.url,
+  name: SITE.name,
+  description: SITE.description,
+  inLanguage: 'en',
+  author: { '@id': `${SITE.url}#person` },
+};
+
+const graph = { '@context': 'https://schema.org', '@graph': [website, person, ...jsonLd] };
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content="Safdar Hussain" />
+    <meta name="google-site-verification" content={SITE.gsc} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b1020" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#edeff4" />
+    <link rel="preload" href={archivoUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={newsreaderUrl} as="font" type="font/woff2" crossorigin />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Safdar Hussain" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogAlt} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogAlt} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(graph)} />
+
+    <!-- Built by Safdar Hussain · https://github.com/safdar-hussain1 -->
+    <script is:inline>
+      (function () {
+        try {
+          var t = localStorage.getItem('portfolio.theme');
+          if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class={bodyClass}>
+    <slot name="header" />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      import '../scripts/signature';
+    </script>
+  </body>
+</html>

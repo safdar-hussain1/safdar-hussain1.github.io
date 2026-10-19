@@ -1,0 +1,25 @@
+---
+import { SITE } from '../data/site';
+---
+<footer class="foot wrap">
+  <p>
+    Built by Safdar Hussain. <a href={SITE.repo}>Source on GitHub</a>. Every number about a project
+    on this site is copied from that project's README.
+  </p>
+</footer>
+
+<style>
+  .foot {
+    margin-top: var(--s-5);
+    padding-block: var(--s-3) var(--s-4);
+    border-top: 1px solid var(--line);
+    color: var(--ink-2);
+    font-family: var(--display);
+    font-size: var(--step--1);
+    font-stretch: 96%;
+    line-height: 1.5;
+  }
+  .foot p {
+    max-width: none;
+  }
+</style>
