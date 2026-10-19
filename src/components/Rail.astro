@@ -1,0 +1,50 @@
+---
+import type { WorkEntry } from '../lib/work-schema';
+
+interface Props {
+  entries: WorkEntry[];
+}
+const { entries } = Astro.props;
+---
+<nav class="rail" aria-label="Stops in the city" hidden>
+  {entries.map((e, i) => <button type="button" data-i={i} aria-label={e.name} aria-current="false"><i /></button>)}
+</nav>
+
+<style>
+  .rail {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    flex-direction: column;
+    gap: 0.8rem;
+    z-index: 3;
+  }
+  :global(.stage-on) .rail {
+    display: flex;
+  }
+  .rail button {
+    width: 44px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    color: var(--ink-2);
+  }
+  .rail button i {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: currentColor;
+    opacity: 0.8;
+    transition: width 250ms var(--ease), opacity 250ms var(--ease);
+  }
+  .rail button.on {
+    color: var(--ink);
+  }
+  .rail button.on i {
+    width: 34px;
+    opacity: 1;
+    background: var(--accent-ink);
+  }
+</style>

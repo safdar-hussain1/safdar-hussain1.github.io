@@ -1,0 +1,141 @@
+---
+import type { WorkEntry } from '../lib/work-schema';
+import Icon from './Icon.astro';
+
+interface Props {
+  entry: WorkEntry;
+  index: number;
+  total: number;
+}
+const { entry: e, index, total } = Astro.props;
+const live = e.status === 'live';
+---
+<article
+  class="plate"
+  data-slug={e.slug}
+  data-status={e.status}
+  data-accent={e.accent}
+  data-accent-ink={e.accentInk.dark}
+  data-accent-ink-light={e.accentInk.light}
+  style={`--accent:${e.accent};--accent-ink:${e.accentInk.dark};--accent-ink-light:${e.accentInk.light}`}
+>
+  {
+    live ? (
+      <div class="plate__media">
+        <video class="loop" muted loop playsinline preload="none" poster={`/work/${e.slug}/poster.webp`} aria-hidden="true" tabindex="-1">
+          <source src={`/work/${e.slug}/loop.webm`} type="video/webm" />
+          <source src={`/work/${e.slug}/loop.mp4`} type="video/mp4" />
+        </video>
+      </div>
+    ) : (
+      <div class="plate__media plate__media--scenery" aria-hidden="true">
+        <span class="plate__mark" />
+      </div>
+    )
+  }
+  <div class="plate__text">
+    <h3 class="plate__name">
+      {e.name}
+      <span class="plate__count meta">{index + 1} of {total}</span>
+    </h3>
+    <p class="plate__tagline">{e.tagline}</p>
+    {
+      live && (
+        <div class="chips">
+          <span class="chip"><Icon name="device" size={14} />Runs on your device</span>
+          {e.needs.camera && <span class="chip"><Icon name="camera" size={14} />Uses your camera</span>}
+        </div>
+      )
+    }
+    {
+      live && (
+        <div class="plate__actions">
+          <a class="btn pri" data-dock={e.slug} href={e.live}>Use it here</a>
+          <a class="btn" href={`/work/${e.slug}/`}>Read more</a>
+        </div>
+      )
+    }
+    {e.related && <p class="plate__related meta"><a href={e.related.href}>{e.related.label}</a></p>}
+  </div>
+</article>
+
+<style>
+  .plate {
+    display: grid;
+    gap: var(--s-2);
+    padding-block: var(--s-3) var(--s-4);
+    border-top: 1px solid var(--line);
+  }
+  @media (min-width: 640px) {
+    .plate {
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      align-items: center;
+      gap: var(--s-3);
+    }
+  }
+  .plate__media {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--raised);
+    box-shadow: var(--shadow);
+  }
+  .plate__media video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .plate__media--scenery {
+    display: grid;
+    place-items: center;
+    background: color-mix(in srgb, var(--accent) 12%, var(--raised));
+    box-shadow: none;
+  }
+  .plate__mark {
+    width: 28%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--accent) 70%, white), var(--accent) 55%, transparent 72%);
+    opacity: 0.9;
+  }
+  .plate__text {
+    display: grid;
+    gap: 0.9rem;
+    min-width: 0;
+  }
+  .plate__name {
+    font-size: clamp(1.7rem, 1.2rem + 1.6vw, 2.6rem);
+    font-weight: 500;
+    font-stretch: 108%;
+    letter-spacing: -0.01em;
+    display: grid;
+    gap: 0.35rem;
+  }
+  .plate__count {
+    font-size: 0.8rem;
+    letter-spacing: 0.02em;
+  }
+  .plate__tagline {
+    font-size: var(--step-1);
+    max-width: 40ch;
+  }
+  .plate__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 0.3rem;
+  }
+  .plate__related a {
+    color: var(--ink-2);
+  }
+  :root[data-theme='light'] .plate {
+    --accent-ink: var(--accent-ink-light);
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme='dark']) .plate {
+      --accent-ink: var(--accent-ink-light);
+    }
+  }
+</style>

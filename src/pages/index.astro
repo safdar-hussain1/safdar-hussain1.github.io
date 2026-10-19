@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import Masthead from '../components/Masthead.astro';
 import Hero from '../components/Hero.astro';
+import Work from '../components/Work.astro';
 import { allEntries } from '../lib/work';
 
 const entries = allEntries((await getCollection('work')).map((e) => e.data));
@@ -10,4 +11,5 @@ const entries = allEntries((await getCollection('work')).map((e) => e.data));
 <Base>
   <Masthead slot="header" />
   <Hero entries={entries} />
+  <Work entries={entries} />
 </Base>
