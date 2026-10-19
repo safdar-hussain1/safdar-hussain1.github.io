@@ -11,7 +11,7 @@ interface Props {
 const { entries } = Astro.props;
 const live = liveEntries(entries);
 const commands: Command[] = [
-  ...live.map((e) => ({ id: `dock:${e.slug}`, label: `Use ${e.name} here`, hint: 'runs in the page', group: 'project' as const, keywords: [e.slug, e.tagline] })),
+  ...live.map((e) => ({ id: `dock:${e.slug}`, label: `Use ${e.name} here`, hint: 'runs in the page', group: 'project' as const, keywords: [e.slug] })),
   ...live.map((e) => ({ id: `go:/work/${e.slug}/`, label: `${e.name}: read more`, hint: 'its page', group: 'project' as const, keywords: [e.slug] })),
   { id: 'go:#work', label: 'Work', hint: 'section', group: 'section', keywords: ['projects', 'city'] },
   { id: 'go:#how', label: 'How I work', hint: 'section', group: 'section' },
