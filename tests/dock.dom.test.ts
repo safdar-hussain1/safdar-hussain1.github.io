@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { createDock, type DockEntry } from '../src/scripts/dock';
-import { adaptFrameDocument, escapeShouldReachPage, looksBroken } from '../src/scripts/frame';
+import { adaptFrameDocument, ESCAPE_SETTLE_MS, looksBroken, openCount } from '../src/scripts/frame';
 
 const SITE = 'https://safdar-hussain1.github.io/';
 const entries: DockEntry[] = [
@@ -122,24 +122,76 @@ describe('dock', () => {
       <a id="in" href="https://safdar-hussain1.github.io/wardos/#bills">Bills</a>
       <a id="hash" href="#measurements">Measurements</a>`;
     const posted: unknown[] = [];
+    vi.useFakeTimers();
     adaptFrameDocument(doc, SITE, () => posted.push('escape'));
     expect(doc.getElementById('gh')!.getAttribute('target')).toBe('_top');
     expect(doc.getElementById('root')!.getAttribute('target')).toBe('_top');
     expect(doc.getElementById('in')!.getAttribute('target')).toBeNull();
     expect(doc.getElementById('hash')!.getAttribute('target')).toBeNull();
     doc.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    vi.advanceTimersByTime(ESCAPE_SETTLE_MS + 5);
     expect(posted).toEqual(['escape']);
+    vi.useRealTimers();
   });
 
-  test('Escape stays with an app that has something open', () => {
+  test('Escape stays with an app that closes something, and reaches the page otherwise', () => {
+    vi.useFakeTimers();
     const doc = document.implementation.createHTMLDocument('app');
-    doc.body.innerHTML = '<button aria-expanded="true">Role</button>';
-    expect(escapeShouldReachPage(doc, new KeyboardEvent('keydown', { key: 'Escape' }))).toBe(false);
-    doc.body.innerHTML = '<button aria-expanded="false">Role</button>';
-    expect(escapeShouldReachPage(doc, new KeyboardEvent('keydown', { key: 'Escape' }))).toBe(true);
-    const prevented = new KeyboardEvent('keydown', { key: 'Escape', cancelable: true });
+    doc.body.innerHTML = '<button id="menu" aria-expanded="true">Role</button><details open><summary>Row</summary>Expanded for good</details>';
+    const reached: number[] = [];
+    adaptFrameDocument(doc, SITE, () => reached.push(1));
+    expect(openCount(doc)).toBe(2);
+    // The app closes its menu on Escape: the dock stays.
+    doc.getElementById('menu')!.addEventListener('keydown', (e) => {
+      if ((e as KeyboardEvent).key === 'Escape') doc.getElementById('menu')!.setAttribute('aria-expanded', 'false');
+    });
+    doc.getElementById('menu')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    vi.advanceTimersByTime(ESCAPE_SETTLE_MS + 5);
+    expect(reached).toEqual([]);
+    // A disclosure that stays open does not count as the app using the key.
+    doc.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    vi.advanceTimersByTime(ESCAPE_SETTLE_MS + 5);
+    expect(reached).toEqual([1]);
+    // A prevented Escape never reaches the page.
+    const prevented = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
     prevented.preventDefault();
-    expect(escapeShouldReachPage(doc, prevented)).toBe(false);
+    doc.dispatchEvent(prevented);
+    vi.advanceTimersByTime(ESCAPE_SETTLE_MS + 5);
+    expect(reached).toEqual([1]);
+    vi.useRealTimers();
+  });
+
+  test('Tab at the end of the app hands focus back to the page', () => {
+    const doc = document.implementation.createHTMLDocument('app');
+    doc.body.innerHTML = '<button id="a">A</button><button id="b">B</button>';
+    const out: string[] = [];
+    adaptFrameDocument(doc, SITE, () => {}, (d) => out.push(d));
+    const first = doc.getElementById('a') as HTMLButtonElement;
+    const last = doc.getElementById('b') as HTMLButtonElement;
+    for (const el of [first, last]) Object.defineProperty(el, 'getClientRects', { value: () => [{}] });
+    Object.defineProperty(doc, 'activeElement', { value: last, configurable: true });
+    const forward = new KeyboardEvent('keydown', { key: 'Tab', cancelable: true });
+    doc.dispatchEvent(forward);
+    expect(out).toEqual(['forward']);
+    expect(forward.defaultPrevented).toBe(true);
+    Object.defineProperty(doc, 'activeElement', { value: first, configurable: true });
+    doc.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, cancelable: true }));
+    expect(out).toEqual(['forward', 'backward']);
+    Object.defineProperty(doc, 'activeElement', { value: first, configurable: true });
+    const middle = new KeyboardEvent('keydown', { key: 'Tab', cancelable: true });
+    doc.dispatchEvent(middle);
+    expect(middle.defaultPrevented).toBe(false);
+  });
+
+  test('a bare error page is recognised as broken', () => {
+    const doc = document.implementation.createHTMLDocument('x');
+    doc.title = '';
+    doc.body.innerHTML = '404 Not Found';
+    expect(looksBroken(doc)).toBe(true);
+    const fine = document.implementation.createHTMLDocument('x');
+    fine.title = '';
+    fine.body.innerHTML = '<h1>Welcome</h1><p>A real page with a long body of text that says nothing about errors at all, and keeps going for a while.</p>';
+    expect(looksBroken(fine)).toBe(false);
   });
 
   test('a GitHub Pages 404 is recognised as broken', () => {

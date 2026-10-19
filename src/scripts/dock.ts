@@ -110,6 +110,7 @@ export function createDock(opts: DockOptions): Dock {
         if (current === slug) showFallback();
       },
       onEscape: () => void close(),
+      onTabOut: (direction) => (direction === 'forward' ? openLink : closeBtn).focus(),
     });
     root.hidden = false;
     root.classList.add('open');
@@ -172,6 +173,21 @@ export function createDock(opts: DockOptions): Dock {
         first.focus();
       }
     }
+  });
+
+  // Whatever path focus takes out of an open dock (a frame's last control in a browser that
+  // skips links, a stray click), it comes back to the bar.
+  doc.addEventListener('focusin', (e) => {
+    if (!current || !root.isConnected) return;
+    const target = e.target as Element | null;
+    if (target && !root.contains(target)) openLink.focus();
+  });
+  // Some browsers drop focus on the page body when it leaves the frame; after that Tab,
+  // carry it on in the direction it was going.
+  doc.addEventListener('keyup', (e) => {
+    if (!current || !root.isConnected || e.key !== 'Tab' || doc.activeElement !== doc.body) return;
+    if (e.shiftKey) closeBtn.focus();
+    else (mounted?.frame ?? openLink).focus();
   });
 
   const fromHash = typeof location !== 'undefined' ? parseWorkHash(location.hash) : null;

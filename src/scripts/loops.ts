@@ -37,7 +37,6 @@ export function watchLoops(root: ParentNode = document): Loops {
     v.preload = 'none';
     v.setAttribute('aria-hidden', 'true');
     v.tabIndex = -1;
-    v.poster = box.dataset.poster ?? '';
     for (const [src, type] of [
       [box.dataset.loopWebm, 'video/webm'],
       [box.dataset.loopMp4, 'video/mp4'],

@@ -11,9 +11,9 @@ interface Props {
 const { entries } = Astro.props;
 const live = liveEntries(entries);
 const commands: Command[] = [
-  ...live.map((e) => ({ id: `dock:${e.slug}`, label: `Use ${e.name} here`, hint: 'runs in the page', group: 'project' as const, keywords: [e.slug] })),
+  ...live.map((e) => ({ id: `dock:${e.slug}`, label: `Use ${e.name} here`, hint: 'opens the live app', group: 'project' as const, keywords: [e.slug] })),
   ...live.map((e) => ({ id: `go:/work/${e.slug}/`, label: `${e.name}: read more`, hint: 'its page', group: 'project' as const, keywords: [e.slug] })),
-  { id: 'go:#work', label: 'Work', hint: 'section', group: 'section', keywords: ['projects', 'city'] },
+  { id: 'go:#work', label: 'Work', hint: 'section', group: 'section', keywords: ['projects'] },
   { id: 'go:#how', label: 'How I work', hint: 'section', group: 'section' },
   { id: 'go:#measured', label: 'Measured', hint: 'section', group: 'section', keywords: ['numbers', 'github'] },
   { id: 'go:#timeline', label: 'Where I have been', hint: 'section', group: 'section', keywords: ['timeline', 'experience'] },
@@ -30,7 +30,7 @@ const commands: Command[] = [
     <label class="visually-hidden" for="palette-input">Type to jump to a project, a section or a link</label>
     <input id="palette-input" type="text" role="combobox" aria-expanded="true" aria-controls="palette-list" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="Jump to a project, a section, a link" />
     <ul id="palette-list" class="palette__list" role="listbox" aria-label="Commands"></ul>
-    <p class="palette__empty meta" data-palette-empty aria-live="polite" hidden>Nothing matches. Try a project's name.</p>
+    <p class="palette__empty meta" data-palette-empty aria-live="polite" data-text="Nothing matches. Try a project's name."></p>
     <p class="palette__keys meta"><kbd>↑</kbd><kbd>↓</kbd> move <kbd>↵</kbd> go <kbd>esc</kbd> close</p>
   </div>
   <script type="application/json" data-palette-commands set:html={jsonForHtml(commands)} />
@@ -143,6 +143,9 @@ const commands: Command[] = [
     padding: 0.7rem 1.1rem;
     border-top: 1px solid var(--line);
     font-size: 0.8rem;
+  }
+  .palette__empty:empty {
+    display: none;
   }
   .palette__keys kbd {
     display: inline-block;

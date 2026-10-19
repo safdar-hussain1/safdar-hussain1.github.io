@@ -5,7 +5,7 @@ export const SITE = {
   name: 'Safdar Hussain',
   title: 'Safdar Hussain — software that runs on your device',
   description:
-    'I build machine learning, computer vision and full products that run on your own device. Every one of them runs live on this page, with measured results.',
+    'I build machine learning, computer vision and full products that run on your own device. Each runs live inside this page on a desktop, with measured results.',
   author: {
     name: 'Safdar Hussain',
     github: 'https://github.com/safdar-hussain1',

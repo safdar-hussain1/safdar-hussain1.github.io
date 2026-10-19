@@ -86,7 +86,8 @@ open http://127.0.0.1:4300/
 
 The six project repositories are expected next to this one, each with its `docs/` built
 (their names, numbered as in the workspace, are listed at the top of `scripts/serve.mjs`).
-Without them the portfolio still serves; the dock then shows its fallback for each project.
+Without them the portfolio still serves; a project that is missing, or answers with a bare
+error page, gets the dock's fallback (its poster and a link to its own tab).
 
 ## Repository
 

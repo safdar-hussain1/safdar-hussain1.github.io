@@ -44,6 +44,8 @@ const flows = {
     await page.goto(BASE, { waitUntil: 'networkidle' });
     if ((await page.locator('h1').textContent())?.trim() !== 'Safdar Hussain') throw new Error('h1 is not the name');
     if ((await page.locator('.plate[data-status="live"]').count()) !== 6) throw new Error('expected six live cards');
+    await page.evaluate(() => document.getElementById('work').scrollIntoView());
+    await page.waitForFunction(() => [...document.querySelectorAll('video.loop')].some((v) => !v.paused && v.currentTime > 0), null, { timeout: 20000 });
     await axe(page, 'home dark');
     await page.screenshot({ path: join(SHOTS, `home-dark-${BROWSER}.png`), fullPage: true });
     await ctx.close();
@@ -109,6 +111,11 @@ const flows = {
     }, null, { timeout: 60000 });
     await axe(page, 'dock open');
     await page.screenshot({ path: join(SHOTS, `dock-wardos-${BROWSER}.png`) });
+    for (let i = 0; i < 60; i++) {
+      await page.keyboard.press('Tab');
+      const inside = await page.evaluate(() => { const a = document.activeElement; return !!a && (a.closest('#dock') !== null); });
+      if (!inside) throw new Error(`Tab ${i + 1} left the dock`);
+    }
     await page.keyboard.press('Escape');
     await page.waitForSelector('#dock[hidden]', { state: 'attached' });
     if (await page.evaluate(() => location.hash)) throw new Error('hash not cleared on close');
@@ -143,8 +150,8 @@ const flows = {
     await page.goto(BASE, { waitUntil: 'networkidle' });
     await page.evaluate(() => document.getElementById('work').scrollIntoView());
     await page.waitForTimeout(1500);
-    const playing = await page.evaluate(() => [...document.querySelectorAll('video.loop')].filter((v) => !v.paused).length);
-    if (playing) throw new Error(`${playing} loop(s) playing under reduced motion`);
+    const videos = await page.evaluate(() => document.querySelectorAll('video.loop').length);
+    if (videos) throw new Error(`${videos} loop(s) created under reduced motion`);
     const stage = await page.evaluate(() => window.__stage);
     if (!stage || (stage.started && document.body.classList.contains('stage-on'))) throw new Error('the 3D stage ran under reduced motion');
     await ctx.close();

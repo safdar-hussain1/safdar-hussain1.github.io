@@ -6,7 +6,7 @@ interface Props {
 }
 const { entries } = Astro.props;
 ---
-<nav class="rail" aria-label="Stops in the city" hidden>
+<nav class="rail" aria-label="Projects" hidden>
   {entries.map((e, i) => <button type="button" data-i={i} aria-label={e.name} aria-current="false"><i /></button>)}
 </nav>
 

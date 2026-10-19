@@ -12,7 +12,7 @@ const commands: Command[] = [
 function mount() {
   document.body.innerHTML = `
     <button id="trigger">open</button>
-    <div id="palette" hidden><div role="dialog"><input id="palette-input" /><ul role="listbox"></ul><p data-palette-empty hidden>Nothing matches</p></div></div>`;
+    <div id="palette" hidden><div role="dialog"><input id="palette-input" /><ul role="listbox"></ul><p data-palette-empty data-text="Nothing matches"></p></div></div>`;
   return { root: document.getElementById('palette')!, trigger: document.getElementById('trigger')! };
 }
 
@@ -56,7 +56,7 @@ describe('palette', () => {
     const input = root.querySelector('input')!;
     input.value = 'zzzz';
     input.dispatchEvent(new Event('input'));
-    expect(root.querySelector<HTMLElement>('[data-palette-empty]')!.hidden).toBe(false);
+    expect(root.querySelector<HTMLElement>('[data-palette-empty]')!.textContent).toBe('Nothing matches');
     input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
     expect(ran).toEqual([]);
     expect(palette.isOpen()).toBe(true);

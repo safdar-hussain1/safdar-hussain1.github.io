@@ -55,7 +55,7 @@ export function createPalette(opts: PaletteOptions): Palette {
         return li;
       }),
     );
-    empty.hidden = shown.length > 0;
+    empty.textContent = shown.length > 0 ? '' : empty.dataset.text ?? 'Nothing matches.';
     input.setAttribute('aria-activedescendant', shown.length ? `palette-item-${active}` : '');
     list.querySelector('.is-active')?.scrollIntoView?.({ block: 'nearest' });
   }
