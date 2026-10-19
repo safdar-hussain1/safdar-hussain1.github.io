@@ -4,9 +4,9 @@ import { framePath } from '../src/lib/url';
 
 describe('data embedded in the page', () => {
   test('jsonForHtml cannot close a script block or open a tag', () => {
-    const out = jsonForHtml({ a: '</script><img src=x onerror=1>', b: '& ' });
-    expect(out).not.toMatch(/[<>&  ]/);
-    expect(JSON.parse(out)).toEqual({ a: '</script><img src=x onerror=1>', b: '& ' });
+    const out = jsonForHtml({ a: '</script><img src=x onerror=1>', b: '&\u2028' });
+    expect(out).not.toMatch(/[<>&\u2028\u2029]/);
+    expect(JSON.parse(out)).toEqual({ a: '</script><img src=x onerror=1>', b: '&\u2028' });
   });
 
   test('framePath never yields a protocol-relative path and compares origins', () => {

@@ -1,5 +1,6 @@
 // Quick screenshots of a URL in dark, light and at 390px: node scripts/shot.mjs URL OUTDIR
 import { mkdirSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { launch } from './lib/chrome.mjs';
 

@@ -1,0 +1,62 @@
+{
+  "wardos": {
+    "capturedAt": "2026-10-19T18:03:13.496Z",
+    "title": "WardOS — Hospital Management System in Your Browser",
+    "poster": {
+      "bytes": 76610
+    },
+    "loop": {
+      "seconds": 8,
+      "webmBytes": 289340,
+      "mp4Bytes": 165848
+    }
+  },
+  "nightingale": {
+    "capturedAt": "2026-10-19T18:01:28.061Z",
+    "title": "Nightingale — Disease Risk Prediction in Your Browser",
+    "poster": {
+      "bytes": 85970
+    },
+    "loop": {
+      "seconds": 8,
+      "webmBytes": 1345834,
+      "mp4Bytes": 1162753
+    }
+  },
+  "trafficlens": {
+    "capturedAt": "2026-10-19T18:05:25.851Z",
+    "title": "TrafficLens — vehicle counting that runs in your browser",
+    "poster": {
+      "bytes": 64146
+    },
+    "loop": {
+      "seconds": 8,
+      "webmBytes": 716676,
+      "mp4Bytes": 493633
+    }
+  },
+  "red-light-green-light-cv": {
+    "capturedAt": "2026-10-19T18:06:32.727Z",
+    "title": "Red Light, Green Light — computer-vision Squid Game referee",
+    "poster": {
+      "bytes": 54640
+    },
+    "loop": {
+      "seconds": 8,
+      "webmBytes": 475407,
+      "mp4Bytes": 408885
+    }
+  },
+  "carmine": {
+    "capturedAt": "2026-10-19T18:08:34.141Z",
+    "title": "Carmine — virtual makeup try-on that keeps skin texture",
+    "poster": {
+      "bytes": 86342
+    },
+    "loop": {
+      "seconds": 8,
+      "webmBytes": 979569,
+      "mp4Bytes": 620589
+    }
+  }
+}

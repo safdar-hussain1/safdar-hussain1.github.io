@@ -6,6 +6,7 @@
 //   node scripts/e2e.mjs [--url http://127.0.0.1:4300/] [--only dock,palette] [--shots DIR]
 import { mkdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
+import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { launch } from './lib/chrome.mjs';
