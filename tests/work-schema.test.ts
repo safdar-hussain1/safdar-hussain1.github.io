@@ -60,3 +60,20 @@ describe('work collection', () => {
     expect(w.related?.href).toBe('https://github.com/safdar-hussain1/health-haven');
   });
 });
+
+describe('entry links are https only', () => {
+  test('the schema rejects other schemes and other README hosts', () => {
+    const w = entries.find((e) => e.slug === 'wardos')!;
+    expect(() => workSchema.parse({ ...w, live: 'javascript:alert(1)' })).toThrow();
+    expect(() => workSchema.parse({ ...w, readme: 'https://example.com/README.md' })).toThrow();
+    expect(() => workSchema.parse({ ...w, related: { label: 'x', href: 'http://example.com/' } })).toThrow();
+  });
+
+  test('every link in every entry, scenery included, is https', () => {
+    for (const e of entries) {
+      for (const u of [e.live, e.repo, e.readme, ...e.facts.map((f) => f.source), e.related?.href].filter(Boolean) as string[]) {
+        expect(u.startsWith('https://'), `${e.slug}: ${u}`).toBe(true);
+      }
+    }
+  });
+});
