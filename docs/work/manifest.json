@@ -60,15 +60,15 @@
     }
   },
   "homecast": {
-    "capturedAt": "2026-10-19T18:17:32.351Z",
+    "capturedAt": "2026-10-19T18:21:21.248Z",
     "title": "HomeCast — Property Price Prediction for Gurgaon, India",
     "poster": {
       "bytes": 77094
     },
     "loop": {
       "seconds": 8,
-      "webmBytes": 322463,
-      "mp4Bytes": 188289
+      "webmBytes": 317509,
+      "mp4Bytes": 188272
     }
   }
 }

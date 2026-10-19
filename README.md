@@ -71,7 +71,7 @@ node scripts/shot.mjs URL OUTDIR         # dark, light and 390 px screenshots of
 
 `npm test` reads `docs/`, so build first. `snapshot-github.mjs`, `still.mjs` and `capture.mjs`
 overwrite committed inputs; run them on purpose and commit what they write. The captures take
-about twenty minutes for all six and need Chrome, `ffmpeg` and the projects' live pages.
+about four minutes for all six and need Chrome with its GPU, a full `ffmpeg` and the live pages.
 
 ## How to view it
 

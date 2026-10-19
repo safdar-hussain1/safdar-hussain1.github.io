@@ -1,7 +1,7 @@
 // Captures each live project's real page: a poster in the dark scheme, a poster in the light
-// scheme, and an eight-second loop of the page moving. The cards use them as pictures and the
-// city's facade screens play the loops. They are inputs, committed under public/work/<slug>/,
-// and regenerated on purpose only:
+// scheme, and an eight-second loop of the page moving. The project cards use the posters as their
+// pictures and the 3D scene plays the loops on its screens. They are inputs, committed under
+// public/work/<slug>/, and regenerated on purpose only:
 //
 //   node scripts/capture.mjs                    every live project
 //   node scripts/capture.mjs carmine homecast   only these
@@ -10,10 +10,10 @@
 // with the wrong frame rates baked in. So Chrome is launched with its graphics hardware on and
 // no software-rendering flags, and the run refuses to start if WebGL reports a software renderer.
 //
-// The loop is filmed with the browser's own screencast, the mechanism a context's recordVideo
-// uses, and encoded straight from its frames by a full ffmpeg. That skips the lossy VP8 file
-// recordVideo would write first, and it needs no extra ffmpeg download: Playwright's build
-// cannot write H.264 and has to be fetched separately for each Playwright release.
+// The loop is filmed with the browser's own screencast (what a context's recordVideo is built on)
+// and encoded straight from its frames by a full ffmpeg. recordVideo would first write a lossy
+// VP8 file, using an ffmpeg that Playwright downloads separately for each release and that can
+// write neither H.264 nor VP9.
 
 import { execFile } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, realpathSync } from 'node:fs';
@@ -57,6 +57,22 @@ function liveProjects() {
     .map((f) => JSON.parse(readFileSync(join(dir, f), 'utf8')))
     .filter((entry) => entry.status === 'live')
     .sort((a, b) => a.order - b.order);
+}
+
+/** A full ffmpeg is needed: Playwright's own build writes neither H.264 nor VP9. */
+async function checkFfmpeg() {
+  let encoders;
+  try {
+    ({ stdout: encoders } = await run(FFMPEG, ['-hide_banner', '-encoders']));
+    await run(FFPROBE, ['-version']);
+  } catch (error) {
+    throw new Error(`ffmpeg and ffprobe are needed (looked for ${FFMPEG}): ${error.message}`);
+  }
+  for (const encoder of ['libvpx-vp9', 'libx264']) {
+    if (!encoders.includes(encoder)) {
+      throw new Error(`${FFMPEG} cannot encode with ${encoder}; install a full ffmpeg (brew install ffmpeg)`);
+    }
+  }
 }
 
 async function launch() {
@@ -297,6 +313,7 @@ async function main(slugs) {
     return;
   }
   const chosen = live.filter((e) => slugs.length === 0 || slugs.includes(e.slug));
+  await checkFfmpeg();
   const browser = await launch();
   const failed = [];
   try {
@@ -320,5 +337,11 @@ async function main(slugs) {
 }
 
 if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url))) {
-  await main(process.argv.slice(2));
+  try {
+    await main(process.argv.slice(2));
+  } catch (error) {
+    // A missing tool or a software renderer is a setup problem: say so plainly, without a stack.
+    console.error(error.message);
+    process.exitCode = 1;
+  }
 }
