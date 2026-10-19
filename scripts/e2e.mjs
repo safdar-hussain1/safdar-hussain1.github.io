@@ -75,10 +75,19 @@ const flows = {
     const page = await ctx.newPage();
     await page.goto(`${BASE}work/wardos/`, { waitUntil: 'networkidle' });
     if ((await page.locator('h1').textContent())?.trim() !== 'WardOS') throw new Error('project h1');
-    const src = await page.locator('[data-inline-app] iframe').getAttribute('src');
-    if (!src?.endsWith('/wardos/')) throw new Error(`inline frame src is ${src}`);
-    const box = await page.locator('[data-inline-app] iframe').boundingBox();
-    if (!box || box.width < 900 || box.height < 500) throw new Error(`inline frame is ${box?.width}x${box?.height}`);
+    // With the project sites mounted (locally) the app is framed full size; without them (CI)
+    // the frame gives way to the poster and the note, which is the fallback the page promises.
+    await page.waitForFunction(() => !!document.querySelector('[data-inline-app] iframe') || !document.querySelector('[data-app-note]').hidden, null, { timeout: 30000 });
+    if (await page.locator('[data-inline-app] iframe').count()) {
+      const src = await page.locator('[data-inline-app] iframe').getAttribute('src');
+      if (!src?.endsWith('/wardos/')) throw new Error(`inline frame src is ${src}`);
+      const box = await page.locator('[data-inline-app] iframe').boundingBox();
+      if (!box || box.width < 900 || box.height < 500) throw new Error(`inline frame is ${box?.width}x${box?.height}`);
+      console.log('     the app is framed');
+    } else {
+      if (!(await page.locator('[data-app-poster]').isVisible())) throw new Error('neither the app nor its poster is shown');
+      console.log('     no project site here, the poster fallback is shown');
+    }
     await axe(page, 'project page dark');
     await page.screenshot({ path: join(SHOTS, `project-wardos-${BROWSER}.png`), fullPage: true });
     await ctx.close();
