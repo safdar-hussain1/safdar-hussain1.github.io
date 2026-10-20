@@ -19,7 +19,7 @@ export const SITE = {
   gsc: '0SIEfExLTSQj1qvnHWF5A5fY58KVl2lpIEnePP9CtI0',
   lastmod: '2026-10-19',
   ogImage: 'https://safdar-hussain1.github.io/og-image.png',
-  ogAlt: 'Safdar Hussain, set in wide light type over a dark ground, with a row of the colours of his eight projects',
+  ogAlt: 'Safdar Hussain, set in wide light type behind a glass lens, over a small night city whose buildings carry his projects',
 } as const;
 
 export const SIGNATURE = 'Safdar Hussain · https://github.com/safdar-hussain1';

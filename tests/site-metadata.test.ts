@@ -83,6 +83,8 @@ describe('masthead and hero', () => {
     expect(html).toContain('I build products that run on your own device and publish the numbers behind them.');
     expect(html).toContain('Every project runs live. Scroll.');
     expect(html).toContain('id="hero-art"');
+    expect(html).toMatch(/<img[^>]*class="hero__still"[^>]*src="\/hero-still-sm\.webp"[^>]*fetchpriority="high"/);
+    expect(html).toMatch(/hero__still[^>]*alt="A small night city on a round plinth: 8 buildings along one road, each with a lit screen on its facade"/);
   });
 
   test('the switches exist for the theme, sound and palette', () => {

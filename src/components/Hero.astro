@@ -6,23 +6,33 @@ interface Props {
   entries: WorkEntry[];
 }
 const { entries } = Astro.props;
-// A small skyline in the eight colours: one mark per project, shaped by the building it will be.
-const heights: Record<WorkEntry['building'], number> = { hospital: 26, clinic: 14, gantry: 30, field: 8, studio: 18, towers: 40, hall: 22, depot: 12 };
-const marks = entries.map((e, i) => ({ x: i * 34, h: heights[e.building], c: e.accent, name: e.name }));
+// The flat hero shows a picture of the city; where the city itself runs, the picture gives way
+// to it. The alt names what the picture is of without listing the projects (the cards do that).
+const stillAlt = `A small night city on a round plinth: ${entries.length} buildings along one road, each with a lit screen on its facade`;
 ---
 <section class="hero wrap" aria-labelledby="hero-title">
   <div class="hero__text">
     <h1 id="hero-title">Safdar Hussain</h1>
-    <p class="hero__line">I build products that run on your own device and publish the numbers behind them.</p>
-    <a class="hero__cue meta" href="#work">
-      <Icon name="arrow-down" size={16} />
-      Every project runs live. Scroll.
-    </a>
+    <div class="hero__copy">
+      <p class="hero__line">I build products that run on your own device and publish the numbers behind them.</p>
+      <a class="hero__cue meta" href="#work">
+        <Icon name="arrow-down" size={16} />
+        Every project runs live. Scroll.
+      </a>
+    </div>
   </div>
   <div id="hero-art" class="hero__art">
-    <svg class="hero__skyline" viewBox="0 0 258 44" width="258" height="44" aria-hidden="true">
-      {marks.map((m) => <rect x={m.x} y={44 - m.h} width="22" height={m.h} rx="2" fill={m.c} />)}
-    </svg>
+    <img
+      class="hero__still"
+      src="/hero-still-sm.webp"
+      srcset="/hero-still-sm.webp 800w, /hero-still.webp 1600w"
+      sizes="(min-width: 900px) 56vw, 100vw"
+      width="1600"
+      height="1000"
+      fetchpriority="high"
+      decoding="async"
+      alt={stillAlt}
+    />
   </div>
 </section>
 
@@ -35,7 +45,15 @@ const marks = entries.map((e, i) => ({ x: i * 34, h: heights[e.building], c: e.a
     align-content: end;
     padding-block: var(--s-5) var(--s-4);
   }
-  .hero__text {
+  @media (min-width: 900px) {
+    .hero {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+      align-items: end;
+      gap: var(--s-4);
+    }
+  }
+  .hero__text,
+  .hero__copy {
     display: grid;
     gap: var(--s-2);
     max-width: 30ch;
@@ -57,10 +75,16 @@ const marks = entries.map((e, i) => ({ x: i * 34, h: heights[e.building], c: e.a
     color: var(--ink);
   }
   .hero__art {
-    display: flex;
-    justify-content: flex-start;
+    aspect-ratio: 16 / 10;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--raised);
+    box-shadow: var(--shadow);
   }
-  .hero__skyline {
-    opacity: 0.95;
+  .hero__still {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 </style>

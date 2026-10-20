@@ -37,6 +37,19 @@ describe('robots, sitemap, 404 and the preview pictures', () => {
     expect(statSync(p).size).toBeLessThan(500 * 1024);
   });
 
+  test('the hero still exists at 1600x1000 under 240 KB, with an 800x500 version under 80 KB', async () => {
+    const big = join(docs, 'hero-still.webp');
+    const small = join(docs, 'hero-still-sm.webp');
+    expect(existsSync(big)).toBe(true);
+    expect(existsSync(small)).toBe(true);
+    const m = await sharp(big).metadata();
+    expect([m.width, m.height]).toEqual([1600, 1000]);
+    expect(statSync(big).size).toBeLessThan(240 * 1024);
+    const s = await sharp(small).metadata();
+    expect([s.width, s.height]).toEqual([800, 500]);
+    expect(statSync(small).size).toBeLessThan(80 * 1024);
+  });
+
   test('each live project page has its own 1200x630 preview', async () => {
     for (const s of LIVE) {
       const p = join(docs, 'work', s, 'og.png');

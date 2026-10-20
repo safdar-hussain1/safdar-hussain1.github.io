@@ -195,10 +195,10 @@ html[data-still='hero'] .hero h1 {
 html[data-still='hero'] .hero__line {
   font-size: 30px;
 }
-html[data-still='hero'] .hero__cue {
+html[data-still='hero'] .hero__cue,
+html[data-still='hero'] .hero__art {
   display: none;
 }
-html[data-still='hero'] .hero__skyline {
-  transform: scale(1.5);
-  transform-origin: left bottom;
+html[data-still='hero'] .hero {
+  grid-template-columns: 1fr;
 }
