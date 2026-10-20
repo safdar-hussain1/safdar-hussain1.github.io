@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { seeded, smoothstep, stopLayout, type LadderStep } from './math';
 import { skyTexture, studioTexture } from './windows';
 import { paletteFor, type CityPalette } from './palette';
+import { GLOW } from './materials';
 import { createLens, type LensHandle } from './lens';
 import { createNamePlane, nameTexture, swapName } from './name';
 import { buildCity, type CityHandle } from './city';
@@ -25,6 +26,8 @@ export interface StageOptions {
   captions: Captions;
   still: 'hero' | 'city' | null;
   wrapLeft(): number;
+  /** The page's h1 box as fractions of the canvas (lens mode), or null. */
+  anchor?(): { x: number; y: number; w: number; h: number } | null;
   sound?: { play(cue: 'tick' | 'hum-start' | 'hum-stop' | 'focus'): void } | null;
   doc?: Document;
 }
@@ -58,11 +61,12 @@ export function startStage(opts: StageOptions): StageHandle {
   const city = mode === 'city';
   let theme = opts.theme();
   let palette = paletteFor(theme);
+  GLOW.scale = palette.glow;
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(win.devicePixelRatio || 1, city ? 2 : 1.5));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.1;
+  renderer.toneMappingExposure = theme === 'light' ? 1.0 : 1.1;
   renderer.shadowMap.enabled = city;
   renderer.shadowMap.type = THREE.PCFShadowMap;
   const scene = new THREE.Scene();
@@ -85,7 +89,8 @@ export function startStage(opts: StageOptions): StageHandle {
   paintSky();
 
   // The name and the glass.
-  const name = createNamePlane(nameTexture(NAME_LINES, palette.ink), NAME_W);
+  let nameArt = nameTexture(NAME_LINES, palette.ink);
+  const name = createNamePlane(nameArt, NAME_W);
   scene.add(name);
   const lens: LensHandle = createLens(scene, palette);
   lens.mesh.material.envMap = env;
@@ -146,23 +151,38 @@ export function startStage(opts: StageOptions): StageHandle {
     const dName = 7.5;
     const halfH = dName * tanH;
     const halfW = halfH * camera.aspect;
-    const leftFrac = Math.min(0.2, opts.wrapLeft() / w);
-    const maxFrac = city ? 0.66 : 0.9;
-    const scale = Math.min(1, (maxFrac * 2 * halfW) / NAME_W);
-    name.scale.setScalar(scale);
-    const nameW = NAME_W * scale;
-    const rightOff = -halfW + leftFrac * 2 * halfW + nameW / 2;
-    const upOff = (0.5 - (city ? 0.47 : 0.42)) * 2 * halfH;
-    name.position.copy(heroPos).addScaledVector(forward, dName).addScaledVector(right, rightOff).addScaledVector(up, upOff);
-    name.quaternion.setFromRotationMatrix(new THREE.Matrix4().lookAt(heroPos, name.position, up));
-
     const dLens = 3.2;
     const lhH = dLens * tanH;
     const lhW = lhH * camera.aspect;
-    const narrow = camera.aspect < 1;
-    const radius = narrow ? lhW * 0.54 : Math.min(lhH * 0.56, lhW * 0.6);
-    const lensRight = narrow ? (0.66 - 0.5) * 2 * lhW : (leftFrac + (nameW / (2 * halfW)) * 0.78 - 0.5) * 2 * lhW;
-    const lensUp = (0.5 - (narrow ? 0.45 : 0.47)) * 2 * lhH;
+    const box = city ? null : opts.anchor?.() ?? null;
+    let nameW: number;
+    let rightOff: number;
+    let upOff: number;
+    let radius: number;
+    let lensRight: number;
+    let lensUp: number;
+    if (box) {
+      // Lens mode: the glass name sits on the page's own name, a little taller than its box.
+      const nameH = box.h * 1.3 * 2 * halfH;
+      nameW = nameH * nameArt.aspect;
+      const nameWFrac = nameW / (2 * halfW);
+      rightOff = (box.x + nameWFrac / 2 - 0.5) * 2 * halfW;
+      upOff = (0.5 - (box.y + box.h * 0.5)) * 2 * halfH;
+      radius = (nameH / (2 * halfH)) * 0.62 * 2 * lhH;
+      lensRight = (box.x + nameWFrac * 0.74 - 0.5) * 2 * lhW;
+      lensUp = (0.5 - (box.y + box.h * 0.38)) * 2 * lhH;
+    } else {
+      const leftFrac = Math.min(0.2, opts.wrapLeft() / w);
+      nameW = Math.min(NAME_W, 0.66 * 2 * halfW);
+      rightOff = -halfW + leftFrac * 2 * halfW + nameW / 2;
+      upOff = (0.5 - 0.47) * 2 * halfH;
+      radius = Math.min(lhH * 0.56, lhW * 0.6);
+      lensRight = (leftFrac + (nameW / (2 * halfW)) * 0.78 - 0.5) * 2 * lhW;
+      lensUp = (0.5 - 0.47) * 2 * lhH;
+    }
+    name.scale.setScalar(nameW / NAME_W);
+    name.position.copy(heroPos).addScaledVector(forward, dName).addScaledVector(right, rightOff).addScaledVector(up, upOff);
+    name.quaternion.setFromRotationMatrix(new THREE.Matrix4().lookAt(heroPos, name.position, up));
     lens.group.position.copy(heroPos).addScaledVector(forward, dLens).addScaledVector(right, lensRight).addScaledVector(up, lensUp);
     lens.group.quaternion.setFromRotationMatrix(new THREE.Matrix4().lookAt(heroPos, lens.group.position, up));
     lens.setRadius(radius);
@@ -252,13 +272,15 @@ export function startStage(opts: StageOptions): StageHandle {
     if (t === theme) return;
     theme = t;
     palette = paletteFor(t);
-    swapName(name, nameTexture(NAME_LINES, palette.ink), NAME_W);
+    GLOW.scale = palette.glow;
+    nameArt = nameTexture(NAME_LINES, palette.ink);
+    swapName(name, nameArt, NAME_W);
     lens.setPalette(palette);
     paintSky();
     cityHandle?.setPalette(palette);
     scenery?.setPalette(palette);
     buildings.forEach((b) => b.setPalette(palette));
-    renderer.toneMappingExposure = t === 'light' ? 1.2 : 1.1;
+    renderer.toneMappingExposure = t === 'light' ? 1.0 : 1.1;
   }
 
   // The loop.
@@ -338,18 +360,25 @@ export function startStage(opts: StageOptions): StageHandle {
     if (frames === 1) resolveReady();
   }
   renderer.setAnimationLoop(frame);
-  const onVisibility = () => renderer.setAnimationLoop(doc.hidden ? null : frame);
+  const onVisibility = () => {
+    if (opts.still) return;
+    renderer.setAnimationLoop(doc.hidden ? null : frame);
+  };
   doc.addEventListener('visibilitychange', onVisibility);
 
   // The focus pull on load; stills skip straight to sharp.
   void ready.then(() => {
     if (opts.still) {
+      // One sharp frame, then the loop stops: a still is a still, and costs nothing after.
       lens.sharp();
       let n = 0;
       const tick = () => {
         n += 1;
         if (n < 6) requestAnimationFrame(tick);
-        else doc.title = 'STILL READY';
+        else {
+          renderer.setAnimationLoop(null);
+          doc.title = 'STILL READY';
+        }
       };
       requestAnimationFrame(tick);
       return;

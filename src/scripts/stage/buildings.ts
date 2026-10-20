@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { box, glass, lit, matte, mirror, shadowed } from './materials';
+import { GLOW, box, glass, lit, matte, mirror, shadowed } from './materials';
 import { signTexture, windowTexture } from './windows';
 import { ROAD_WIDTH, PAVEMENT } from './city';
 import type { CityPalette } from './palette';
@@ -159,8 +159,8 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
       screenMount,
       bay,
       setFocus(k) {
-        (crossGlow.material as THREE.MeshBasicMaterial).opacity = 0.08 + 0.35 * k;
-        (s.glow.material as THREE.MeshBasicMaterial).opacity = 0.05 + 0.3 * k;
+        (crossGlow.material as THREE.MeshBasicMaterial).opacity = (0.08 + 0.35 * k) * GLOW.scale;
+        (s.glow.material as THREE.MeshBasicMaterial).opacity = (0.05 + 0.3 * k) * GLOW.scale;
       },
       update() {},
       setPalette(p) {
@@ -213,7 +213,7 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
       screenMount,
       lookAtLocal: new THREE.Vector3(0.1, 2.2, 0.25),
       setFocus(k) {
-        (s.glow.material as THREE.MeshBasicMaterial).opacity = 0.05 + 0.25 * k;
+        (s.glow.material as THREE.MeshBasicMaterial).opacity = (0.05 + 0.25 * k) * GLOW.scale;
       },
       update(t) {
         dots.forEach((d, i) => {
@@ -280,7 +280,7 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
       anchorOffset: new THREE.Vector3(-7.0, 1.8, 0),
       lookAtLocal: new THREE.Vector3(-0.1, 2.25, (nearZ + farZ) / 2 + 0.2),
       setFocus(k) {
-        (s.glow.material as THREE.MeshBasicMaterial).opacity = 0.05 + 0.25 * k;
+        (s.glow.material as THREE.MeshBasicMaterial).opacity = (0.05 + 0.25 * k) * GLOW.scale;
       },
       update(t) {
         (rec.material as THREE.MeshStandardMaterial).emissiveIntensity = Math.floor(t * 2) % 2 === 0 ? 2.2 : 0.2;
@@ -364,7 +364,7 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
       anchorOffset: new THREE.Vector3(-3.0, 1.9, 0.6),
       lookAtLocal: new THREE.Vector3(0, 1.35, 2.4),
       setFocus(k) {
-        (s.glow.material as THREE.MeshBasicMaterial).opacity = 0.05 + 0.25 * k;
+        (s.glow.material as THREE.MeshBasicMaterial).opacity = (0.05 + 0.25 * k) * GLOW.scale;
       },
       update(t) {
         const cycle = t % 9;
@@ -420,7 +420,7 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
       group,
       screenMount,
       setFocus(k) {
-        (s.glow.material as THREE.MeshBasicMaterial).opacity = 0.12 + 0.45 * k;
+        (s.glow.material as THREE.MeshBasicMaterial).opacity = (0.12 + 0.45 * k) * GLOW.scale;
         s.mat.emissiveIntensity = 1.0 + 0.5 * k;
       },
       update() {},
@@ -472,7 +472,7 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
       screenMount,
       lookAtLocal: new THREE.Vector3(0.3, 1.25, 0.12),
       setFocus(k) {
-        (s.glow.material as THREE.MeshBasicMaterial).opacity = 0.05 + 0.25 * k;
+        (s.glow.material as THREE.MeshBasicMaterial).opacity = (0.05 + 0.25 * k) * GLOW.scale;
       },
       update(t) {
         beacons.forEach((b, i) => ((b.material as THREE.MeshStandardMaterial).emissiveIntensity = Math.floor(t * 1.2 + i * 0.4) % 2 === 0 ? 2.2 : 0.2));
@@ -519,7 +519,7 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
       screenMount: null,
       lookAtLocal: new THREE.Vector3(0, 1.2, 0),
       setFocus(k) {
-        (s.glow.material as THREE.MeshBasicMaterial).opacity = 0.1 + 0.3 * k;
+        (s.glow.material as THREE.MeshBasicMaterial).opacity = (0.1 + 0.3 * k) * GLOW.scale;
       },
       update(t) {
         bars.forEach((b, i) => {
@@ -572,11 +572,11 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
       screenMount: null,
       lookAtLocal: new THREE.Vector3(0.1, 1.0, 0),
       setFocus(k) {
-        glowMat.opacity = 0.15 + 0.3 * k;
-        (s.glow.material as THREE.MeshBasicMaterial).opacity = 0.05 + 0.25 * k;
+        glowMat.opacity = (0.15 + 0.3 * k) * GLOW.scale;
+        (s.glow.material as THREE.MeshBasicMaterial).opacity = (0.05 + 0.25 * k) * GLOW.scale;
       },
       update(t) {
-        glowMat.opacity = Math.max(glowMat.opacity, 0.15) + Math.sin(t * 1.5) * 0.03;
+        glowMat.opacity = Math.max(glowMat.opacity, 0.15 * GLOW.scale) + Math.sin(t * 1.5) * 0.03 * GLOW.scale;
       },
       setPalette(p) {
         body.mats.faces.emissiveIntensity = p.windowIntensity;

@@ -18,11 +18,15 @@ export function canRunStage(env: StageEnv): { ok: boolean; reason?: StageReason 
   return { ok: true };
 }
 
-// The lens alone may run on a narrow screen; the city may not.
+// The lens alone may run on a screen too narrow for the city, down to a tablet's width; a
+// phone keeps the still (the glass costs about two seconds of a slow phone's main thread).
+export const LENS_MIN_WIDTH = 600;
+
 export function canRunLens(env: StageEnv): { ok: boolean; reason?: StageReason } {
   if (env.reducedMotion) return { ok: false, reason: 'reduced-motion' };
   if (env.saveData) return { ok: false, reason: 'save-data' };
   if (!env.webgl2) return { ok: false, reason: 'no-webgl2' };
+  if (env.width < LENS_MIN_WIDTH) return { ok: false, reason: 'narrow' };
   return { ok: true };
 }
 

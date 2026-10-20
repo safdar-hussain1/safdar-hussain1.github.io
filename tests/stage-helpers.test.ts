@@ -13,9 +13,10 @@ describe('stage helpers', () => {
     expect(canRunStage({ ...ok, saveData: true }).reason).toBe('save-data');
   });
 
-  test('canRunLens allows narrow screens', () => {
-    expect(canRunLens({ ...ok, width: 390 })).toEqual({ ok: true });
-    expect(canRunLens({ ...ok, width: 390, reducedMotion: true }).reason).toBe('reduced-motion');
+  test('canRunLens allows a tablet, not a phone', () => {
+    expect(canRunLens({ ...ok, width: 768 })).toEqual({ ok: true });
+    expect(canRunLens({ ...ok, width: 390 }).reason).toBe('narrow');
+    expect(canRunLens({ ...ok, width: 768, reducedMotion: true }).reason).toBe('reduced-motion');
   });
 
   test('ladderStep thresholds', () => {

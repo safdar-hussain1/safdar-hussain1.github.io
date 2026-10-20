@@ -21,6 +21,8 @@ export interface CityHandle {
   walkLight: THREE.PointLight;
   accentLight: THREE.SpotLight;
   materials: { plinth: THREE.MeshStandardMaterial; top: THREE.MeshStandardMaterial; road: THREE.MeshStandardMaterial; kerb: THREE.MeshStandardMaterial; lampHead: THREE.MeshStandardMaterial };
+  /** How strong the accent spot may be under this palette. */
+  accentScale: number;
   setPalette(p: CityPalette): void;
   setShadows(on: boolean): void;
 }
@@ -123,7 +125,7 @@ export function buildCity(scene: THREE.Scene, palette: CityPalette): CityHandle 
   scene.fog = new THREE.Fog(palette.fogColor, palette.fog[0], palette.fog[1]);
 
   const materials = { plinth: plinthMat, top: topMat, road: roadMat, kerb: kerbMat, lampHead: lampHeadMat };
-  return {
+  const handle: CityHandle = {
     group,
     road: ROAD,
     lamps,
@@ -133,13 +135,15 @@ export function buildCity(scene: THREE.Scene, palette: CityPalette): CityHandle 
     walkLight,
     accentLight,
     materials,
+    accentScale: palette.accent,
     setPalette(p) {
+      handle.accentScale = p.accent;
       plinthMat.color.set(p.plinth);
       topMat.color.set(p.top);
       roadMat.color.set(p.road);
       kerbMat.color.set(p.kerb);
       lampHeadMat.emissiveIntensity = p.lampIntensity;
-      haloMat.opacity = p.lampIntensity > 1 ? 0.55 : 0.2;
+      haloMat.opacity = p.lampIntensity >= 1 ? 0.55 * p.glow : 0;
       moon.color.set(p.moonColor);
       moon.intensity = p.moonIntensity;
       hemi.color.set(p.hemiSky);
@@ -155,6 +159,8 @@ export function buildCity(scene: THREE.Scene, palette: CityPalette): CityHandle 
       moon.castShadow = on;
     },
   };
+  haloMat.opacity = palette.lampIntensity >= 1 ? 0.55 * palette.glow : 0;
+  return handle;
 }
 
 export { shadowed };

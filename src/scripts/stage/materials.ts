@@ -30,6 +30,9 @@ export function shadowed(mesh: THREE.Mesh, cast = true, receive = true): THREE.M
   return mesh;
 }
 
+// The one dial every glow reads, set from the palette when the theme changes.
+export const GLOW = { scale: 1 };
+
 export function tint(hex: string, towards: THREE.ColorRepresentation, amount: number): THREE.Color {
   return new THREE.Color(hex).lerp(new THREE.Color(towards), amount);
 }

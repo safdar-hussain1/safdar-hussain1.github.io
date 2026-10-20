@@ -58,7 +58,12 @@ function anyWebGL2(): boolean {
 function decide(): { mode: 'lens' | 'city' | null; reason?: string } {
   if (still === 'og' || params.get('stage') === 'off') return { mode: null, reason: still === 'og' ? 'still' : 'off' };
   const e = env();
-  if (still) return e.webgl2 ? { mode: 'city' } : { mode: null, reason: 'no-webgl2' };
+  // A still is one frame of the city at any width, but it still respects reduced motion and
+  // Save-Data: the still script sets neither, a visitor who does gets the flat page.
+  if (still) {
+    const g = canRunLens({ ...e, width: 1e4 });
+    return g.ok ? { mode: 'city' } : { mode: null, reason: g.reason };
+  }
   const cityRun = canRunStage(e);
   if (cityRun.ok) return { mode: 'city' };
   if (cityRun.reason === 'no-webgl2' && anyWebGL2()) return { mode: null, reason: 'software-gl' };
@@ -85,8 +90,10 @@ async function start(): Promise<void> {
   const canvas = document.createElement('canvas');
   canvas.className = 'stage-canvas';
   canvas.setAttribute('aria-hidden', 'true');
+  const textBlock = hero.querySelector<HTMLElement>('.hero__text');
+  const h1 = hero.querySelector<HTMLElement>('h1');
   if (mode === 'city') document.body.prepend(canvas);
-  else hero.prepend(canvas);
+  else (textBlock ?? hero).prepend(canvas);
   document.body.classList.add(mode === 'city' ? 'stage-pending' : 'lens-pending');
 
   const { startStage } = await import('./stage/entry');
@@ -99,6 +106,14 @@ async function start(): Promise<void> {
     captions: createCaptions(document.body),
     still: still === 'hero' || still === 'city' ? still : null,
     wrapLeft: () => Math.max(16, (window.innerWidth - 1120) / 2),
+    // Where the page's own name sits, as fractions of the canvas, so the glass name lands on it.
+    anchor: () => {
+      if (!h1) return null;
+      const r = h1.getBoundingClientRect();
+      const c = canvas.getBoundingClientRect();
+      if (!c.width || !c.height || !r.width) return null;
+      return { x: (r.left - c.left) / c.width, y: (r.top - c.top) / c.height, w: r.width / c.width, h: r.height / c.height };
+    },
     sound: w.__sound ?? null,
   });
   await stage.ready;

@@ -41,9 +41,10 @@ const stillAlt = `A small night city on a round plinth: ${entries.length} buildi
     position: relative;
     display: grid;
     gap: var(--s-3);
-    min-height: min(78vh, 760px);
+    min-height: calc(100vh - 4rem);
+    min-height: calc(100svh - 4rem);
     align-content: end;
-    padding-block: var(--s-5) var(--s-4);
+    padding-block: var(--s-5) 8vh;
   }
   @media (min-width: 900px) {
     .hero {
@@ -54,9 +55,15 @@ const stillAlt = `A small night city on a round plinth: ${entries.length} buildi
   }
   .hero__text,
   .hero__copy {
+    position: relative;
     display: grid;
     gap: var(--s-2);
     max-width: 30ch;
+  }
+  .hero h1,
+  .hero__copy {
+    position: relative;
+    z-index: 1;
   }
   .hero__line {
     font-size: clamp(1.2rem, 1rem + 1.1vw, 1.55rem);

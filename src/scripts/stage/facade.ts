@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { matte } from './materials';
+import { GLOW, matte } from './materials';
 import { glowTexture } from './windows';
 
 // The screen on a facade: a thin bevelled frame, the project's own moving page as a video
@@ -91,7 +91,7 @@ export function attachFacade(mount: THREE.Object3D, opts: { video: HTMLVideoElem
       if (video && !video.paused) video.pause();
     },
     setFocus(k) {
-      glowMat.opacity = 0.18 + 0.5 * k;
+      glowMat.opacity = (0.18 + 0.5 * k) * GLOW.scale;
       screenMat.color.setScalar(0.72 + 0.28 * k);
     },
     usePoster() {

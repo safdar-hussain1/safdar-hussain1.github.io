@@ -166,7 +166,7 @@ export function createTour(opts: TourOptions): Tour {
     const focused = stops[tp.focus];
     if (focused && landed) {
       city.accentLight.color.set(focused.entry.accent);
-      city.accentLight.intensity = 70 * tp.near;
+      city.accentLight.intensity = 70 * tp.near * city.accentScale;
       city.accentLight.position.set(focused.x - 1.4, 4.6, focused.lookAt.z - focused.side * 1.2);
       city.accentLight.target.position.copy(focused.lookAt);
       city.accentLight.target.updateMatrixWorld();
