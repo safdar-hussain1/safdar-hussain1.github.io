@@ -66,7 +66,7 @@ npm run check                            # astro check: types in .astro and .ts 
 npm run build                            # writes docs/
 #   8 page(s) built in 1.49s · Complete!
 npm test                                 # vitest over the helpers and the built docs/
-#   Test Files  25 passed (25) · Tests  346 passed (346)
+#   Test Files  26 passed (26) · Tests  350 passed (350)
 node scripts/serve.mjs --port 4300       # the site at / and each project at /<repo>/
 #   Serving http://127.0.0.1:4300  / -> docs  /homecast/ -> ../1-homecast/docs  /nightingale/ -> ../2-nightingale/docs  /red-light-green-light-cv/ -> ../3-red-light-green-light-cv/docs  /wardos/ -> ../4-wardos/docs  /carmine/ -> ../5-carmine/docs  /trafficlens/ -> ../6-trafficlens/docs
 node scripts/e2e.mjs                     # browser flows + axe against the running server
