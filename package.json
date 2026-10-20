@@ -11,6 +11,7 @@
     "serve": "node scripts/serve.mjs",
     "capture": "node scripts/capture.mjs",
     "snapshot": "node scripts/snapshot-github.mjs",
+    "snapshot:leetcode": "node scripts/snapshot-leetcode.mjs",
     "still": "node scripts/still.mjs",
     "shot": "node scripts/shot.mjs"
   },

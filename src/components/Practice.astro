@@ -1,0 +1,218 @@
+---
+import snapshot from '../data/leetcode-snapshot.json';
+import { shortIsoDate } from '../lib/format';
+import Icon from './Icon.astro';
+
+// Problem solving, in LeetCode's own figures: taken by a script, dated, shown as they are.
+const s = snapshot;
+const pct = (n: number) => (s.solved.all ? Math.round((n / s.solved.all) * 100) : 0);
+const tags = s.tags.slice(0, 6);
+const maxTag = Math.max(1, ...tags.map((t) => t.solved));
+---
+<section id="practice" class="practice section section--ruled wrap" aria-labelledby="practice-title">
+  <div class="sec__head" data-reveal>
+    <p class="eyebrow"><span class="eyebrow__n">06</span>Practice</p>
+    <h2 id="practice-title">Problems solved, <em class="em">counted</em> by LeetCode</h2>
+    <p class="sec__lede">The figures are LeetCode's own for my profile, taken on {shortIsoDate(s.fetchedAt)}. Nothing here is rounded or restated.</p>
+  </div>
+  <div class="practice__grid">
+    <a class="card practice__total" href={s.url} data-reveal>
+      <span class="practice__big num">{s.solved.all}</span>
+      <span class="practice__label">problems solved</span>
+      <span class="practice__bar" aria-hidden="true">
+        <i class="practice__seg practice__seg--easy" style={`--w:${pct(s.solved.easy)}%`}></i>
+        <i class="practice__seg practice__seg--medium" style={`--w:${pct(s.solved.medium)}%`}></i>
+        <i class="practice__seg practice__seg--hard" style={`--w:${pct(s.solved.hard)}%`}></i>
+      </span>
+      <ul class="practice__split">
+        <li><i class="practice__seg--easy"></i><b class="num">{s.solved.easy}</b> easy</li>
+        <li><i class="practice__seg--medium"></i><b class="num">{s.solved.medium}</b> medium</li>
+        <li><i class="practice__seg--hard"></i><b class="num">{s.solved.hard}</b> hard</li>
+      </ul>
+      <span class="practice__link"><Icon name="external" size={14} /> See the profile</span>
+    </a>
+    <div class="card practice__panel" data-reveal data-reveal-delay="80">
+      <h3>Topics</h3>
+      <ol class="practice__tags">
+        {
+          tags.map((t) => (
+            <li>
+              <span>{t.name}</span>
+              <i aria-hidden="true" style={`--w:${Math.round((t.solved / maxTag) * 100)}%`}></i>
+              <b class="num">{t.solved}</b>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+    <div class="card practice__panel" data-reveal data-reveal-delay="160">
+      <h3>Languages</h3>
+      <ol class="practice__langs">
+        {
+          s.languages.map((l) => (
+            <li>
+              <span>{l.name}</span>
+              <b class="num">{l.solved}</b>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .practice__grid {
+    display: grid;
+    gap: 1rem;
+  }
+  @media (min-width: 820px) {
+    .practice__grid {
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 0.9fr);
+      align-items: stretch;
+    }
+  }
+  .practice__total {
+    display: grid;
+    gap: 0.6rem;
+    align-content: start;
+    padding: 1.4rem 1.5rem 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 200ms var(--ease), box-shadow 200ms var(--ease);
+  }
+  .practice__total:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+    color: inherit;
+  }
+  .practice__big {
+    font-family: var(--display);
+    font-size: clamp(3rem, 2rem + 3vw, 4.6rem);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+  .practice__label {
+    font-family: var(--display);
+    color: var(--ink-2);
+    font-weight: 500;
+  }
+  .practice__bar {
+    display: flex;
+    height: 10px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--ink) 8%, transparent);
+    margin-top: 0.6rem;
+  }
+  .practice__bar .practice__seg {
+    width: var(--w);
+    height: 100%;
+  }
+  .practice__seg--easy {
+    background: var(--good);
+  }
+  .practice__seg--medium {
+    background: #e2a93b;
+  }
+  .practice__seg--hard {
+    background: var(--bad);
+  }
+  .practice__split {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.1rem;
+    font-family: var(--display);
+    font-size: 0.9rem;
+    color: var(--ink-2);
+  }
+  .practice__split li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .practice__split i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+  }
+  .practice__split b {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .practice__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: auto;
+    padding-top: 0.9rem;
+    font-family: var(--display);
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: var(--brand-ink);
+  }
+  .practice__panel {
+    display: grid;
+    gap: 0.9rem;
+    align-content: start;
+    padding: 1.3rem 1.4rem 1.4rem;
+  }
+  .practice__panel h3 {
+    font-size: 1rem;
+  }
+  .practice__tags,
+  .practice__langs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.55rem;
+    font-family: var(--display);
+    font-size: 0.9rem;
+  }
+  .practice__tags li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 90px auto;
+    align-items: center;
+    gap: 0.7rem;
+    color: var(--ink-2);
+  }
+  .practice__tags i {
+    display: block;
+    height: 6px;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--ink) 8%, transparent);
+    position: relative;
+    overflow: hidden;
+  }
+  .practice__tags i::after {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--w);
+    background: var(--brand);
+    border-radius: 4px;
+  }
+  .practice__tags b,
+  .practice__langs b {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .practice__langs li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink-2);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .practice__total {
+      transition: none;
+    }
+  }
+</style>

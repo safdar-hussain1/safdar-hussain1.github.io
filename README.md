@@ -24,12 +24,15 @@ files.
 | **Projects** | One card per live project, with a loop of the real page, its stack, and two actions: *Use it here* (docks the live app in the page on a desktop; opens it on a phone) and *Read more* (a page per project with the app at the top and the measured facts under it) |
 | **How I work** | Four numbered rules, each with one measured fact and the README line it is quoted from |
 | **Measured** | A ledger, one row per project: the README's figures on the left, quoted word for word, and GitHub's own figures on the right, fetched live with a dated snapshot as the fallback |
-| **Experience**, **Skills**, **About**, **Contact** | A CV newest first, the tools grouped by the work they do with the certificates, the facts about me at a glance, and a contact band with the email, the links and a form that opens your mail app |
+| **Experience** | A CV newest first, with the role, the dates and the confirmed points of each entry |
+| **Skills** | The tools in three tiers, graded the way I would grade myself: could teach (each with the product on this page that proves it), every week, have shipped with; and the certificates |
+| **Practice** | The problems I have solved, in LeetCode's own figures from a dated snapshot: the total split by difficulty, the topics, the languages, and a link to the profile |
+| **About**, **Contact** | One line of mine, the story and a profile card with the facts; then a contact band with the email, the links and a form that opens your mail app |
 | **The city** (`/city/`) | On a wide screen with a GPU: the lens over the name, then one building per project along a road, its live page on the facade screen, the cards as captions, a rail of stops at the right (arrow keys and digits move along it). The frame rate is measured once after the start; a slow machine loses the shadows, then the moving traffic, then the city itself and keeps the cards |
 | **The palette** | Press `/` anywhere (or Ctrl/Cmd-K) to jump to any project, section or link, switch the theme or the sound |
 
-The site is dark; a switch turns it light (paper, near-black ink, hairlines) and the choice is
-remembered. The city is lit at night on the dark theme and stands in daylight on the light one. Sound is off until you turn
+The site is dark; a switch turns it light (white surfaces, slate ink, the same gradient; the
+contact band and the footer stay dark) and the choice is remembered. The city is lit at night on the dark theme and stands in daylight on the light one. Sound is off until you turn
 it on. Phones open the live sites directly instead of framing them, and on the city page they
 keep the cards; a tablet gets the lens alone; reduced motion, Save-Data and a browser without
 hardware WebGL2 also keep the cards. Every word on every page is in the HTML whether or not
@@ -82,6 +85,9 @@ E2E_GL=1 node scripts/stage-walk.mjs              # frames of the dive, the road
 node scripts/snapshot-github.mjs         # refresh src/data/github-snapshot.json through gh
 #   homecast  stars 1  issues 0  MIT  passing  pushed 2026-10-06T19:11:09Z   (one line per repo)
 #   Wrote src/data/github-snapshot.json: 6 repositories, fetched 2026-10-19T18:16:20.504Z
+node scripts/snapshot-leetcode.mjs       # refresh src/data/leetcode-snapshot.json from LeetCode's public figures
+#   safdar-hussain1: 55 solved (28 easy, 26 medium, 1 hard) of 4086; Java 53, C++ 2, Python 1
+#   Wrote src/data/leetcode-snapshot.json, fetched 2026-10-20T09:27:53.594Z
 node scripts/still.mjs [home|<slug>…]    # preview pictures from the city (needs the GPU): og-image.png, hero-still.webp and work/<slug>/og.png
 #   public/og-image.png  75 KB · public/hero-still.webp  47 KB · public/hero-still-sm.webp  19 KB · public/work/carmine/og.png  236 KB · … (nine files)
 node scripts/capture.mjs [<slug>…]       # posters and 8 s loops of the live pages, on the GPU
@@ -89,7 +95,7 @@ node scripts/capture.mjs [<slug>…]       # posters and 8 s loops of the live p
 node scripts/shot.mjs URL OUTDIR         # dark, light and 390 px screenshots of any page
 ```
 
-`npm test` reads `docs/`, so build first. `snapshot-github.mjs`, `still.mjs` and `capture.mjs`
+`npm test` reads `docs/`, so build first. The two snapshot scripts, `still.mjs` and `capture.mjs`
 overwrite committed inputs; run them on purpose and commit what they write. The captures take
 about four minutes for all six and need Chrome with its GPU, a full `ffmpeg` and the live pages.
 The city's own checks (`E2E_GL=1`) need the GPU too: without one, Chrome renders WebGL in
@@ -116,9 +122,9 @@ error page, gets the dock's fallback (its poster and a link to its own tab).
 src/
   content/work/      one JSON entry per project: facts quoted from its README, links, accent
   content.config.ts  the collection and its schema (src/lib/work-schema.ts)
-  data/              facts about me, the timeline, certificates, skills, the GitHub snapshot
+  data/              facts about me, the timeline, certificates, skills, the GitHub and LeetCode snapshots
   layouts/Base.astro the head of every page: metadata, fonts, theme, authorship marks
-  components/        masthead, hero, project cards, dock, the ledger, experience, skills, about, contact, palette
+  components/        masthead, hero, project cards, dock, the ledger, experience, skills, practice, about, contact, palette
   pages/             the home page, the city page, a page per project, robots.txt, sitemap.xml, the 404 page
   scripts/           browser modules: theme, dock, palette, sound, GitHub board, selftest
   scripts/stage/     the city: the lens, the name, the ground, the buildings, the facade screens,
@@ -127,7 +133,7 @@ src/
   lib/               pure helpers with tests
   styles/            tokens (both themes), the base styles, the stage's styles
 public/              favicon, the preview pictures, the hero picture, work/<slug>/ posters and loops
-scripts/             capture, snapshot, serve, e2e (browser flows + axe), still, shot, stage-shot, stage-walk
+scripts/             capture, the two snapshots, serve, e2e (browser flows + axe), still, shot, stage-shot, stage-walk
 tests/               vitest: schema, numbers, metadata, guards, dock, palette, flows' helpers
 docs/                the built site, committed, served by GitHub Pages
 ```

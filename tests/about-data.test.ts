@@ -20,12 +20,15 @@ describe('facts about Safdar', () => {
   test('every number in about and timeline text is allowed', () => {
     const texts = [
       ...about.paragraphs,
+      about.quote.text,
       ...about.facts.map((f) => f.text),
       about.outside,
       about.now.text,
       ...timeline.map((t) => `${t.title} ${t.role} ${t.text} ${'points' in t ? (t.points as string[]).join(' ') : ''}`),
       ...certificates.map((c) => `${c.name} ${c.issuer}`),
-      ...skills.flatMap((g) => [g.name, ...g.items]),
+      ...skills.teach.flatMap((s) => [s.name, s.line]),
+      ...skills.weekly.flatMap((g) => [g.name, ...g.items]),
+      ...skills.also,
     ];
     for (const text of texts) {
       for (const n of extractNumbers(text)) expect(about.allowed, `"${n}" in "${text}"`).toContain(n);

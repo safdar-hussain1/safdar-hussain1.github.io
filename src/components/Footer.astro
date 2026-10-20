@@ -2,108 +2,148 @@
 import { SITE } from '../data/site';
 import Icon from './Icon.astro';
 ---
-<footer class="foot">
+<footer class="foot band">
   <div class="wrap foot__in">
     <div class="foot__brand">
       <b><span class="foot__dot" aria-hidden="true"></span>Safdar Hussain</b>
-      <p>AI engineer. Products that run on your own device, with the numbers behind them.</p>
+      <p>AI engineer in Hyderabad. Products that run on your own device, with the numbers behind them.</p>
+      <a class="foot__top" href="#top"><Icon name="arrow-down" size={14} /> Back to the top</a>
     </div>
-    <nav class="foot__nav" aria-label="Footer">
+    <nav class="foot__col" aria-label="Footer">
+      <p class="foot__head">On this page</p>
       <a href="/#projects">Projects</a>
+      <a href="/#how">How I work</a>
+      <a href="/#measured">Measured</a>
       <a href="/#experience">Experience</a>
       <a href="/#skills">Skills</a>
+      <a href="/#practice">Practice</a>
       <a href="/#about">About</a>
       <a href="/#contact">Contact</a>
-      <a href="/city/"><Icon name="cube" size={14} /> 3D city</a>
     </nav>
-    <div class="foot__links">
-      <a href={SITE.author.github}><Icon name="github" size={16} /> GitHub</a>
-      <a href={SITE.author.linkedin}><Icon name="linkedin" size={16} /> LinkedIn</a>
-      <a href={`mailto:${SITE.author.email}`}><Icon name="mail" size={16} /> Email</a>
-      <a href={SITE.repo}><Icon name="code" size={16} /> Source</a>
+    <div class="foot__col">
+      <p class="foot__head">Elsewhere</p>
+      <a href={SITE.author.github}><Icon name="github" size={15} /> GitHub</a>
+      <a href={SITE.author.linkedin}><Icon name="linkedin" size={15} /> LinkedIn</a>
+      <a href="https://leetcode.com/u/safdar-hussain1/"><Icon name="code" size={15} /> LeetCode</a>
+      <a href={`mailto:${SITE.author.email}`}><Icon name="mail" size={15} /> Email</a>
+    </div>
+    <div class="foot__col">
+      <p class="foot__head">The site</p>
+      <a href="/city/"><Icon name="cube" size={15} /> The 3D city</a>
+      <a href={SITE.repo}><Icon name="git" size={15} /> Source on GitHub</a>
+      <p class="foot__small">Every figure about a project is a quote from its README.</p>
     </div>
   </div>
   <div class="wrap foot__legal">
     <p class="foot__copy">© {SITE.copyrightYear} Safdar Hussain. All rights reserved.</p>
-    <p class="foot__credit">Designed and built by Safdar Hussain in Hyderabad.</p>
+    <p class="foot__credit">Designed and built by Safdar Hussain.</p>
   </div>
   <p class="foot__mark wrap" aria-hidden="true" data-mark="Safdar Hussain"></p>
 </footer>
 
 <style>
   .foot {
-    padding-block: var(--s-4) 0;
-    color: var(--ink-2);
+    padding-block: var(--s-5) 0;
     font-family: var(--display);
     font-size: var(--step--1);
     line-height: 1.5;
     overflow: hidden;
+    border-top: 1px solid color-mix(in srgb, var(--band-ink) 12%, transparent);
   }
   .foot__in {
     display: grid;
-    gap: var(--s-3);
+    gap: var(--s-4);
   }
-  @media (min-width: 760px) {
+  @media (min-width: 820px) {
     .foot__in {
-      grid-template-columns: minmax(0, 1.3fr) auto auto;
+      grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
       gap: var(--s-4);
       align-items: start;
     }
   }
   .foot__brand {
     display: grid;
-    gap: 0.5rem;
+    gap: 0.7rem;
+    align-content: start;
   }
   .foot__brand b {
     display: inline-flex;
     align-items: center;
     gap: 0.6rem;
-    color: var(--ink);
-    font-size: 1rem;
+    font-size: 1.05rem;
     font-weight: 600;
   }
   .foot__dot {
-    width: 9px;
-    height: 9px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    background: var(--grad);
+    background: linear-gradient(120deg, #7aa2ff, #c084fc 55%, #f0abfc);
   }
   .foot__brand p {
-    max-width: 36ch;
+    max-width: 34ch;
+    opacity: 0.8;
   }
-  .foot__nav,
-  .foot__links {
+  .foot__top {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    width: fit-content;
+    margin-top: 0.3rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid color-mix(in srgb, var(--band-ink) 25%, transparent);
+    text-decoration: none;
+    color: inherit;
+    font-weight: 500;
+  }
+  .foot__top .icon {
+    transform: rotate(180deg);
+  }
+  .foot__top:hover {
+    border-color: var(--band-ink);
+    color: var(--band-ink);
+  }
+  .foot__col {
     display: grid;
-    gap: 0.5rem;
+    gap: 0.55rem;
+    align-content: start;
   }
-  .foot__nav a,
-  .foot__links a {
+  .foot__head {
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+  .foot__col a {
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
     text-decoration: none;
-    color: var(--ink-2);
+    color: inherit;
+    opacity: 0.78;
     width: fit-content;
+    transition: opacity 150ms var(--ease);
   }
-  .foot__nav a:hover,
-  .foot__links a:hover {
-    color: var(--ink);
+  .foot__col a:hover {
+    opacity: 1;
+    color: var(--band-ink);
+  }
+  .foot__small {
+    margin-top: 0.4rem;
+    opacity: 0.6;
+    max-width: 24ch;
   }
   .foot__legal {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     gap: 0.5rem 1.5rem;
-    margin-top: var(--s-3);
+    margin-top: var(--s-4);
     padding-top: var(--s-2);
-    border-top: 1px solid var(--line);
+    border-top: 1px solid color-mix(in srgb, var(--band-ink) 12%, transparent);
     font-size: 0.85rem;
   }
   .foot__legal p {
     max-width: none;
-  }
-  .foot__copy {
-    color: var(--ink);
+    opacity: 0.85;
   }
   /* The name, set very large and cut by the bottom of the page: the site's signature. */
   .foot__mark::before {
@@ -117,8 +157,8 @@ import Icon from './Icon.astro';
     letter-spacing: -0.045em;
     line-height: 0.95;
     white-space: nowrap;
-    color: var(--ink);
-    opacity: 0.08;
+    color: var(--band-ink);
+    opacity: 0.07;
     user-select: none;
   }
 </style>

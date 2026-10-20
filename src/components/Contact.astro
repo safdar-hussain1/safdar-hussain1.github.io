@@ -5,7 +5,7 @@ import Icon from './Icon.astro';
 <section id="contact" class="contact section band" aria-labelledby="contact-title">
   <div class="wrap contact__in">
     <div class="contact__head" data-reveal>
-      <p class="eyebrow"><span class="eyebrow__n">07</span>Contact</p>
+      <p class="eyebrow"><span class="eyebrow__n">08</span>Contact</p>
       <h2 id="contact-title">Let's build something that runs on <em class="em">your device</em>.</h2>
       <p class="contact__lede">Whether it is a role, a contract or a question about one of the products, write to me. Email is best; I read it every day.</p>
       <dl class="contact__details">
@@ -66,7 +66,7 @@ import Icon from './Icon.astro';
 <style>
   .contact {
     margin-top: var(--s-6);
-    padding-block: var(--s-6);
+    padding-block: var(--s-6) var(--s-5);
   }
   .contact__in {
     display: grid;
@@ -87,6 +87,20 @@ import Icon from './Icon.astro';
   .contact__head .eyebrow {
     color: var(--band-ink);
     opacity: 0.75;
+  }
+  .contact__head .eyebrow__n {
+    color: #9ec1ff;
+  }
+  .contact .btn.cta {
+    background: var(--grad);
+    color: #0a0e1c;
+  }
+  :root[data-theme='light'] .contact .btn.cta {
+    background: linear-gradient(120deg, #7aa2ff 0%, #c084fc 55%, #f0abfc 100%);
+    color: #0a0e1c;
+  }
+  .contact :global(:focus-visible) {
+    outline-color: #9ec1ff;
   }
   .contact__head h2 {
     font-size: clamp(2rem, 1.2rem + 2.6vw, 3.3rem);
@@ -180,7 +194,7 @@ import Icon from './Icon.astro';
     padding: 1.6rem;
     border-radius: var(--radius-lg);
     border: 1px solid color-mix(in srgb, currentColor 16%, transparent);
-    background: color-mix(in srgb, var(--ground) 55%, transparent);
+    background: color-mix(in srgb, currentColor 6%, transparent);
   }
   .contact__form-title {
     font-family: var(--display);
@@ -216,7 +230,7 @@ import Icon from './Icon.astro';
     padding: 0.75rem 0.9rem;
     border-radius: 12px;
     border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
-    background: color-mix(in srgb, var(--ground) 70%, transparent);
+    background: color-mix(in srgb, var(--band) 70%, transparent);
     transition: border-color 150ms var(--ease);
   }
   .contact__fields textarea::placeholder,

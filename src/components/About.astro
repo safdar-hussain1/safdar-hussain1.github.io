@@ -1,16 +1,24 @@
 ---
 import { aboutData as about } from '../lib/about';
 import { longDate } from '../lib/dates';
+import { SITE } from '../data/site';
+import Icon from './Icon.astro';
+
+const outside = about.outside.replace(/\.$/, '').split(', ');
+const languages = (about.facts.find((f) => f.label === 'Languages')?.text ?? '').replace(/\.$/, '').split(', ');
+const fact = (label: string) => about.facts.find((f) => f.label === label)?.text ?? '';
 ---
 <section id="about" class="about section section--ruled wrap" aria-labelledby="about-title">
   <div class="sec__head" data-reveal>
-    <p class="eyebrow"><span class="eyebrow__n">06</span>About</p>
+    <p class="eyebrow"><span class="eyebrow__n">07</span>About</p>
     <h2 id="about-title">The person <em class="em">behind</em> the products</h2>
   </div>
   <div class="about__grid">
     <div class="about__story" data-reveal>
+      <blockquote class="about__quote">
+        <p>“{about.quote.text}”</p>
+      </blockquote>
       {about.paragraphs.map((p, i) => <p class={i === 0 ? 'about__lede' : undefined}>{p}</p>)}
-      <p class="about__outside"><b>Outside work.</b> {about.outside}</p>
       {
         about.swara && (
           <p>
@@ -19,10 +27,36 @@ import { longDate } from '../lib/dates';
         )
       }
     </div>
-    <aside class="about__glance" data-reveal data-reveal-delay="120">
+    <aside class="about__card card" data-reveal data-reveal-delay="120">
+      <div class="about__id">
+        <span class="about__mono" aria-hidden="true">SH</span>
+        <div>
+          <b>Safdar Hussain</b>
+          <span>{SITE.author.jobTitle} · {SITE.author.employer}</span>
+          <span><Icon name="pin" size={13} /> Hyderabad, India</span>
+        </div>
+      </div>
+      <dl class="about__facts">
+        <div class="about__fact">
+          <dt>Education</dt>
+          <dd>{fact('Education')}</dd>
+        </div>
+        <div class="about__fact">
+          <dt>Before</dt>
+          <dd>{fact('Before')}</dd>
+        </div>
+        <div class="about__fact">
+          <dt>Languages</dt>
+          <dd><ul class="chips">{languages.map((l) => <li class="chip chip--plain">{l}</li>)}</ul></dd>
+        </div>
+        <div class="about__fact">
+          <dt>Outside work</dt>
+          <dd><ul class="chips">{outside.map((o) => <li class="chip chip--plain">{o}</li>)}</ul></dd>
+        </div>
+      </dl>
       <div class="about__now">
         <div class="about__wave" aria-hidden="true">
-          {Array.from({ length: 14 }, (_, k) => (
+          {Array.from({ length: 16 }, (_, k) => (
             <i style={`--k:${k}`} />
           ))}
         </div>
@@ -31,16 +65,6 @@ import { longDate } from '../lib/dates';
           <span class="about__now-text">{longDate(about.now.date)} · {about.now.text}</span>
         </p>
       </div>
-      <dl class="about__facts">
-        {
-          about.facts.map((f) => (
-            <div class="about__fact">
-              <dt>{f.label}</dt>
-              <dd>{f.text}</dd>
-            </div>
-          ))
-        }
-      </dl>
     </aside>
   </div>
 </section>
@@ -52,7 +76,7 @@ import { longDate } from '../lib/dates';
   }
   @media (min-width: 900px) {
     .about__grid {
-      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
       gap: var(--s-5);
       align-items: start;
     }
@@ -62,53 +86,127 @@ import { longDate } from '../lib/dates';
     gap: 1.2rem;
     align-content: start;
   }
+  /* One line of his, large, in the serif italic, with a rule in the accent beside it. */
+  .about__quote {
+    margin: 0 0 0.6rem;
+    padding-left: 1.3rem;
+    border-left: 3px solid var(--brand);
+  }
+  .about__quote p {
+    font-family: var(--prose);
+    font-style: italic;
+    font-size: clamp(1.45rem, 1.1rem + 1.2vw, 2rem);
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    max-width: 24ch;
+  }
   .about__story > p {
     font-size: var(--step-1);
     max-width: 54ch;
     color: var(--ink-2);
   }
   .about__story > p.about__lede {
-    font-size: clamp(1.35rem, 1.1rem + 0.9vw, 1.7rem);
-    line-height: 1.4;
-    color: var(--ink);
-    letter-spacing: -0.005em;
-  }
-  .about__outside {
-    padding-top: 1rem;
-    border-top: 1px solid var(--line);
-  }
-  .about__outside b {
-    font-family: var(--display);
-    font-weight: 600;
-    font-size: 0.9em;
     color: var(--ink);
   }
-  .about__glance {
+  /* The card: a small identity block, the facts, then what is on the bench now. */
+  .about__card {
     display: grid;
-    gap: 1.2rem;
-    align-content: start;
+    gap: 1.1rem;
+    padding: 1.3rem 1.4rem 1.4rem;
+    border-radius: var(--radius-lg);
   }
-  /* What is on the bench right now, with a waveform for the music recommender being built. */
+  .about__id {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .about__mono {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: var(--grad);
+    color: #0a0e1c;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: -0.02em;
+    flex: none;
+  }
+  :root[data-theme='light'] .about__mono {
+    color: #ffffff;
+  }
+  .about__id div {
+    display: grid;
+    gap: 0.15rem;
+    font-family: var(--display);
+    font-size: 0.9rem;
+    color: var(--ink-2);
+  }
+  .about__id b {
+    color: var(--ink);
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+  .about__id span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .about__facts {
+    margin: 0;
+    display: grid;
+    gap: 0;
+  }
+  .about__fact {
+    display: grid;
+    gap: 0.45rem;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--display);
+    font-size: 0.93rem;
+    line-height: 1.5;
+  }
+  .about__fact dt {
+    font-weight: 600;
+    color: var(--ink);
+    font-size: 0.82rem;
+  }
+  .about__fact dd {
+    margin: 0;
+    color: var(--ink-2);
+  }
+  .about__fact .chips {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 0.4rem;
+  }
+  .about__fact .chip {
+    padding: 0.28rem 0.65rem;
+    font-size: 0.8rem;
+  }
   .about__now {
     display: grid;
-    gap: 0.8rem;
-    padding: 1.1rem 1.2rem 1.2rem;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    background: var(--raised);
+    gap: 0.7rem;
+    padding-top: 0.3rem;
   }
   .about__wave {
     display: flex;
     align-items: flex-end;
     gap: 4px;
-    height: 34px;
+    height: 30px;
   }
   .about__wave i {
     flex: 1;
     height: 30%;
     border-radius: 2px;
     background: var(--brand);
-    opacity: 0.8;
+    opacity: 0.85;
     animation: wave 1.6s ease-in-out infinite;
     animation-delay: calc(var(--k) * -0.11s);
   }
@@ -138,32 +236,6 @@ import { longDate } from '../lib/dates';
   }
   .about__now-head b {
     font-weight: 600;
-  }
-  .about__facts {
-    margin: 0;
-    border-top: 1px solid var(--line);
-  }
-  .about__fact {
-    display: grid;
-    gap: 0.4rem 1.2rem;
-    padding: 0.9rem 0;
-    border-bottom: 1px solid var(--line);
-    font-family: var(--display);
-    font-size: 0.95rem;
-    line-height: 1.5;
-  }
-  @media (min-width: 480px) {
-    .about__fact {
-      grid-template-columns: 110px minmax(0, 1fr);
-    }
-  }
-  .about__fact dt {
-    font-weight: 600;
-    color: var(--ink);
-  }
-  .about__fact dd {
-    margin: 0;
-    color: var(--ink-2);
   }
   @media (prefers-reduced-motion: reduce) {
     .about__wave i {

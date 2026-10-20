@@ -1,7 +1,115 @@
-[
-  { "name": "Machine learning", "items": ["Python", "scikit-learn", "PyTorch", "XGBoost", "pandas", "NumPy", "calibration and leakage-free evaluation"] },
-  { "name": "Language models", "items": ["LangChain", "LangGraph", "retrieval-augmented generation", "Ollama", "Hugging Face Transformers"] },
-  { "name": "Computer vision", "items": ["OpenCV", "YOLO", "MediaPipe", "ONNX Runtime", "WebGL"] },
-  { "name": "Web", "items": ["TypeScript", "React", "Astro", "Three.js", "SQLite in the browser", "Vitest"] },
-  { "name": "Backend and cloud", "items": ["FastAPI", "PostgreSQL", "Node.js", "Docker", "AWS", "GitHub Actions", "Java"] }
-]
+{
+  "source": "his own tiers, confirmed 2026-09-11, and the resume of 2026-04-16",
+  "teach": [
+    {
+      "name": "Python",
+      "line": "The language of every model on this page and of the services at work.",
+      "proof": [
+        "homecast",
+        "nightingale",
+        "trafficlens"
+      ]
+    },
+    {
+      "name": "scikit-learn and classical ML",
+      "line": "Regression, classification, cross-validation, leakage, calibration.",
+      "proof": [
+        "homecast",
+        "nightingale"
+      ]
+    },
+    {
+      "name": "OpenCV and YOLO",
+      "line": "Detection, tracking and homography, on a webcam or a traffic clip.",
+      "proof": [
+        "red-light-green-light-cv",
+        "trafficlens"
+      ]
+    },
+    {
+      "name": "PyTorch and deep learning",
+      "line": "Deep networks trained in PyTorch, held to the same evaluation discipline as the classical models.",
+      "proof": []
+    }
+  ],
+  "weekly": [
+    {
+      "name": "Backend",
+      "items": [
+        "Python",
+        "FastAPI",
+        "Pydantic",
+        "SQLAlchemy",
+        "Alembic",
+        "Java"
+      ]
+    },
+    {
+      "name": "Frontend",
+      "items": [
+        "TypeScript",
+        "React",
+        "Zustand"
+      ]
+    },
+    {
+      "name": "Data",
+      "items": [
+        "PostgreSQL with pgvector",
+        "SQLite",
+        "ChromaDB"
+      ]
+    },
+    {
+      "name": "Cloud",
+      "items": [
+        "AWS S3, EC2 and Lambda",
+        "RDS",
+        "Load balancing and auto scaling",
+        "CloudWatch",
+        "Docker"
+      ]
+    },
+    {
+      "name": "Language models",
+      "items": [
+        "LangChain",
+        "LangGraph",
+        "OpenAI API",
+        "Ollama",
+        "Hugging Face Transformers"
+      ]
+    },
+    {
+      "name": "Geospatial",
+      "items": [
+        "GeoPandas",
+        "QGIS"
+      ]
+    }
+  ],
+  "also": [
+    "Node.js",
+    "Express",
+    "MongoDB",
+    "MySQL",
+    "React Native",
+    "Kubernetes",
+    "Streamlit",
+    "Jupyter",
+    "MediaPipe",
+    "dlib",
+    "RDKit",
+    "DeepChem",
+    "Three.js",
+    "Astro",
+    "Vitest",
+    "WebGL",
+    "SQLite as WebAssembly",
+    "Maven and JUnit",
+    "Celery",
+    "Model Context Protocol",
+    "C",
+    "Git"
+  ]
+}

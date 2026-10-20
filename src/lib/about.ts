@@ -6,6 +6,8 @@ export interface About {
   source: string;
   allowed: string[];
   now: { date: string; text: string };
+  /** One line in his own words; the source names where it was said. */
+  quote: { text: string; source: string };
   paragraphs: string[];
   facts: Array<{ label: string; text: string }>;
   outside: string;

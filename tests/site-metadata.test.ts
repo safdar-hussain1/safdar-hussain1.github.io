@@ -77,9 +77,9 @@ describe('masthead and hero', () => {
   test('the masthead links every section in order', () => {
     const nav = html.match(/<nav class="mast__nav"[^>]*>([\s\S]*?)<\/nav>/)![1];
     const hrefs = [...nav.matchAll(/href="([^"]+)"/g)].map((m) => m[1]);
-    expect(hrefs).toEqual(['#projects', '#experience', '#skills', '#about', '#contact', '/city/']);
+    expect(hrefs).toEqual(['#projects', '#experience', '#skills', '#practice', '#about', '#contact', '/city/']);
     const labels = [...nav.matchAll(/<a [^>]*>([\s\S]*?)<\/a>/g)].map((m) => m[1].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim());
-    expect(labels).toEqual(['Projects', 'Experience', 'Skills', 'About', 'Contact', '3D city']);
+    expect(labels).toEqual(['Projects', 'Experience', 'Skills', 'Practice', 'About', 'Contact', '3D city']);
   });
 
   test('the hero has the pitch, the calls to action and the picture of the city', () => {

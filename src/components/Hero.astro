@@ -122,7 +122,8 @@ const stillAlt = `A small night city on a round plinth: ${entries.length} buildi
     opacity: 0.7;
   }
   :root[data-theme='light'] .hero__glow {
-    display: none;
+    opacity: 0.55;
+    filter: blur(48px);
   }
   .hero__text {
     position: relative;
@@ -256,7 +257,7 @@ const stillAlt = `A small night city on a round plinth: ${entries.length} buildi
     margin-left: 0.5rem;
     padding: 0.2rem 0.7rem;
     border-radius: var(--radius-pill);
-    background: var(--ground);
+    background: var(--ground-2);
     font-family: var(--display);
     font-size: 0.74rem;
     color: var(--ink-2);

@@ -33,19 +33,28 @@ describe('how I work, experience, skills, about and contact', () => {
     expect(tl).toContain('exp__row--now');
   });
 
-  test('skills shows every group as chips and every certificate', () => {
+  test('skills shows the three tiers, the proofs, every chip and every certificate', () => {
     const sk = section('skills');
-    for (const g of ['Machine learning', 'Language models', 'Computer vision', 'Web', 'Backend and cloud']) expect(sk).toContain(`>${g}</h3>`);
-    for (const item of ['PyTorch', 'LangGraph', 'OpenCV', 'Three.js', 'FastAPI']) expect(sk).toContain(`>${item}</li>`);
-    expect((sk.match(/<li class="chip chip--plain"/g) ?? []).length).toBe(skills.reduce((n, g) => n + g.items.length, 0));
+    for (const t of ['Could teach', 'Every week', 'Have shipped with']) expect(sk).toContain(`>${t}</h3>`);
+    for (const s of skills.teach) expect(sk).toContain(`>${s.name.replace(/'/g, '&#39;')}</h4>`);
+    for (const g of skills.weekly) expect(sk).toContain(`>${g.name}</h4>`);
+    for (const item of ['LangGraph', 'FastAPI', 'Three.js', 'GeoPandas']) expect(sk).toContain(`>${item}</li>`);
+    const chips = (sk.match(/<li class="chip chip--plain/g) ?? []).length;
+    expect(chips).toBe(skills.weekly.reduce((n, g) => n + g.items.length, 0) + skills.also.length);
+    // Each proof is a live project on this page, linked by its page.
+    expect(sk).toContain('href="/work/homecast/"');
+    expect(sk).toContain('href="/work/trafficlens/"');
+    expect(sk).not.toContain('/work/sightline/');
     for (const c of ['Advanced Learning Algorithms', 'CS50&#39;s Introduction to Programming with Python', 'Harvard']) expect(sk).toContain(c);
   });
 
-  test('about shows the dated note, CGPA 9.19 and the scholarship, and no phone number', () => {
+  test('about shows his line, the dated note, CGPA 9.19 and the scholarship, and no phone number', () => {
     const ab = section('about');
     expect(ab).toContain(`October 2026 · ${about.now.text}`);
+    expect(ab).toContain(about.quote.text);
     expect(ab).toContain('CGPA 9.19');
     expect(ab).toContain('Academic Scholarship all four years');
+    for (const l of ['Telugu', 'Hindi', 'English']) expect(ab).toContain(`>${l}</li>`);
     expect(privateRuns(html)).toEqual([]);
   });
 
@@ -69,9 +78,10 @@ describe('how I work, experience, skills, about and contact', () => {
   });
 
   test('the footer carries the sections, the links and the credit', () => {
-    const foot = html.match(/<footer class="foot"[\s\S]*?<\/footer>/)![0];
-    for (const h of ['/#projects', '/#experience', '/#skills', '/#about', '/#contact', '/city/']) expect(foot).toContain(`href="${h}"`);
-    expect(foot).toMatch(/Source<\/a>/);
+    const foot = html.match(/<footer class="foot[^"]*"[\s\S]*?<\/footer>/)![0];
+    for (const h of ['/#projects', '/#experience', '/#skills', '/#practice', '/#about', '/#contact', '/city/']) expect(foot).toContain(`href="${h}"`);
+    expect(foot).toContain('href="https://leetcode.com/u/safdar-hussain1/"');
+    expect(foot).toMatch(/Source on GitHub<\/a>/);
     expect(foot).toMatch(/built by Safdar Hussain/i);
     expect(foot).toContain('All rights reserved.');
   });

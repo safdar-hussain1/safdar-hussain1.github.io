@@ -1,0 +1,65 @@
+{
+  "fetchedAt": "2026-10-20T09:27:53.594Z",
+  "username": "safdar-hussain1",
+  "url": "https://leetcode.com/u/safdar-hussain1/",
+  "solved": {
+    "all": 55,
+    "easy": 28,
+    "medium": 26,
+    "hard": 1
+  },
+  "total": {
+    "all": 4086,
+    "easy": 972,
+    "medium": 2130,
+    "hard": 984
+  },
+  "languages": [
+    {
+      "name": "Java",
+      "solved": 53
+    },
+    {
+      "name": "C++",
+      "solved": 2
+    },
+    {
+      "name": "Python",
+      "solved": 1
+    }
+  ],
+  "tags": [
+    {
+      "name": "Array",
+      "solved": 22
+    },
+    {
+      "name": "Tree",
+      "solved": 18
+    },
+    {
+      "name": "Binary Tree",
+      "solved": 18
+    },
+    {
+      "name": "Depth-First Search",
+      "solved": 15
+    },
+    {
+      "name": "Two Pointers",
+      "solved": 13
+    },
+    {
+      "name": "Breadth-First Search",
+      "solved": 10
+    },
+    {
+      "name": "Math",
+      "solved": 9
+    },
+    {
+      "name": "Stack",
+      "solved": 8
+    }
+  ]
+}

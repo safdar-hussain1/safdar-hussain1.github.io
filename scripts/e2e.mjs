@@ -62,7 +62,7 @@ const flows = {
     await page.evaluate(() => document.getElementById('projects').scrollIntoView());
     await page.waitForFunction(() => [...document.querySelectorAll('video.loop')].some((v) => !v.paused && v.currentTime > 0), null, { timeout: 20000 });
     const nav = await page.evaluate(() => [...document.querySelectorAll('.mast__nav a')].map((a) => a.textContent.trim()));
-    if (nav.join('|') !== 'Projects|Experience|Skills|About|Contact|3D city') throw new Error(`nav reads ${nav.join('|')}`);
+    if (nav.join('|') !== 'Projects|Experience|Skills|Practice|About|Contact|3D city') throw new Error(`nav reads ${nav.join('|')}`);
     await axe(page, 'home dark');
     await revealAll(page);
     await page.screenshot({ path: join(SHOTS, `home-dark-${BROWSER}.png`), fullPage: true });

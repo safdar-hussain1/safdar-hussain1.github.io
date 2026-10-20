@@ -4,6 +4,11 @@
   box-sizing: border-box;
 }
 
+/* A paragraph's measure in a wide column. */
+.measure {
+  max-width: 60ch;
+}
+
 /* Fallback faces sized to the real ones (widths measured in Chrome at text sizes; the serif's
    optical size makes it narrower than Georgia there), so the text wraps the same before and
    after the web fonts arrive and nothing on the page moves. */
@@ -234,6 +239,14 @@ code {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   box-shadow: var(--shadow-2);
+}
+
+/* Inside a dark band, surfaces are tints of the band's ink, so both themes read. */
+.band:not(.band--2) .card,
+.band:not(.band--2) .surface {
+  background: color-mix(in srgb, var(--band-ink) 6%, transparent);
+  border-color: color-mix(in srgb, var(--band-ink) 14%, transparent);
+  box-shadow: none;
 }
 
 .card--hover {
