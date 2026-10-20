@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { GLOW, box, glass, lit, matte, mirror, shadowed } from './materials';
-import { signTexture, windowTexture } from './windows';
+import { GLOW, box, glass, groupedBox, lit, matte, matteShared, mirror, shadowed } from './materials';
+import { glowTexture, signTexture, windowTexture } from './windows';
 import { ROAD_WIDTH, PAVEMENT } from './city';
 import type { CityPalette } from './palette';
 
@@ -35,15 +35,14 @@ export interface Building {
   bay: THREE.Group | null;
   /** 0..1: the accent glow of signs and lights while in focus. */
   setFocus(k: number): void;
-  /** Ambient animation: blinking, breathing, the game's red and green. */
-  update(t: number): void;
+  /** Ambient animation: blinking, breathing, the game's red and green; dt in seconds. */
+  update(t: number, dt: number): void;
   setPalette(p: CityPalette): void;
 }
 
 export interface BuildContext {
   rand: () => number;
   palette: CityPalette;
-  theme: 'dark' | 'light';
 }
 
 /** The front wall's distance from the road's centre line. */
@@ -56,27 +55,37 @@ interface Parts {
   anchorOffset?: THREE.Vector3;
   lookAtLocal?: THREE.Vector3;
   setFocus(k: number): void;
-  update(t: number): void;
+  update(t: number, dt: number): void;
   setPalette(p: CityPalette): void;
-  focusMats?: THREE.MeshStandardMaterial[];
 }
 
 type WindowFaces = { faces: THREE.MeshStandardMaterial; wall: THREE.MeshStandardMaterial };
 
-function windowed(ctx: BuildContext, cols: number, rows: number, tintWall?: string): WindowFaces {
-  const wall = tintWall ?? ctx.palette.bldg;
-  const tex = windowTexture(ctx.rand, { cols, rows, wall });
-  const faces = new THREE.MeshStandardMaterial({ map: tex, emissiveMap: tex, emissive: 0xffffff, emissiveIntensity: ctx.palette.windowIntensity, roughness: 0.9, metalness: 0, flatShading: true });
-  return { faces, wall: matte(wall) };
+// The wall colour lives in the materials, so a theme switch repaints it; the windows are an
+// emissive map of lit cells on a clear ground.
+export function windowed(rand: () => number, palette: CityPalette, cols: number, rows: number): WindowFaces {
+  const tex = windowTexture(rand, { cols, rows });
+  const faces = new THREE.MeshStandardMaterial({ color: palette.bldg, emissiveMap: tex, emissive: 0xffffff, emissiveIntensity: palette.windowIntensity, roughness: 0.9, metalness: 0, flatShading: true });
+  return { faces, wall: matte(palette.bldg) };
 }
 
-// A box with windows on the four walls and a plain roof and floor.
-function block(ctx: BuildContext, w: number, h: number, d: number, x: number, z: number, cols = 4, rows = 6, opts: { front?: boolean; wall?: string } = {}): { mesh: THREE.Mesh; mats: WindowFaces } {
-  const mats = windowed(ctx, cols, rows, opts.wall);
-  const front = opts.front === false ? mats.wall : mats.faces;
-  const mesh = box(w, h, d, [mats.faces, mats.faces, mats.wall, mats.wall, mats.wall, front], x, 0, z + d / 2);
+export function repaint(mats: WindowFaces, p: CityPalette): void {
+  mats.faces.color.set(p.bldg);
+  mats.faces.emissiveIntensity = p.windowIntensity;
+  mats.wall.color.set(p.bldg);
+}
+
+// A box with windows on the walls (the front too unless told otherwise) and a plain roof and
+// floor: two materials, drawn in runs rather than once per face.
+function block(ctx: BuildContext, w: number, h: number, d: number, x: number, z: number, cols = 4, rows = 6, opts: { front?: boolean } = {}): { mesh: THREE.Mesh; mats: WindowFaces } {
+  const mats = windowed(ctx.rand, ctx.palette, cols, rows);
+  const mesh = groupedBox(w, h, d, [0, 0, 1, 1, 0, opts.front === false ? 1 : 0], [mats.faces, mats.wall], x, 0, z + d / 2);
   shadowed(mesh);
   return { mesh, mats };
+}
+
+function glowMaterial(color: string, opacity = 0): THREE.MeshBasicMaterial {
+  return new THREE.MeshBasicMaterial({ map: glowTexture(), color, transparent: true, opacity, blending: THREE.AdditiveBlending, depthWrite: false });
 }
 
 // A lit sign with the project's name; the plate is dark with the name in the accent, or the
@@ -87,11 +96,11 @@ function sign(entry: StageEntry, width: number, inverse: boolean, ctx: BuildCont
   const { tex, aspect } = signTexture(entry.name, ink, back);
   const h = width / aspect;
   const mat = new THREE.MeshStandardMaterial({ map: tex, emissiveMap: tex, emissive: 0xffffff, emissiveIntensity: inverse ? 1.1 : 1.3, roughness: 0.6, metalness: 0 });
-  const plate = new THREE.Mesh(new THREE.BoxGeometry(width, h, 0.06), [matte(0x1a2240), matte(0x1a2240), matte(0x1a2240), matte(0x1a2240), matte(0x1a2240), mat]);
+  const plate = groupedBox(width, h, 0.06, [0, 0, 0, 0, 0, 1], [matteShared(0x1a2240), mat]);
+  plate.position.y = 0;
   const group = new THREE.Group();
   group.add(plate);
-  const glowMat = new THREE.MeshBasicMaterial({ color: entry.accent, transparent: true, opacity: 0.0, blending: THREE.AdditiveBlending, depthWrite: false });
-  const glow = new THREE.Mesh(new THREE.PlaneGeometry(width * 1.6, h * 3), glowMat);
+  const glow = new THREE.Mesh(new THREE.PlaneGeometry(width * 1.6, h * 3), glowMaterial(entry.accent));
   glow.position.z = 0.045;
   glow.rotation.y = Math.PI;
   group.add(glow);
@@ -106,7 +115,7 @@ function beacon(color: string, r = 0.06): THREE.Mesh {
 }
 
 function post(h: number, r = 0.04, color: THREE.ColorRepresentation = 0x2a3350): THREE.Mesh {
-  const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r * 1.2, h, 8), matte(color));
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r * 1.2, h, 8), matteShared(color));
   m.position.y = h / 2;
   m.castShadow = true;
   return m;
@@ -144,7 +153,7 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
     cross.add(box(0.4, 0.11, 0.1, crossMat, 0, 0.145, 0), box(0.11, 0.4, 0.1, crossMat, 0, 0, 0));
     cross.position.set(0.5, 2.78, 0.9);
     group.add(cross);
-    const crossGlow = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 1.2), new THREE.MeshBasicMaterial({ color: '#9ecbff', transparent: true, opacity: 0.0, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false }));
+    const crossGlow = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 1.2), glowMaterial('#9ecbff'));
     crossGlow.position.set(0.5, 2.98, 0.95);
     crossGlow.rotation.y = Math.PI;
     group.add(crossGlow);
@@ -164,8 +173,7 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
       },
       update() {},
       setPalette(p) {
-        main.mats.faces.emissiveIntensity = p.windowIntensity;
-        main.mats.wall.color.set(p.bldg);
+        repaint(main.mats, p);
       },
     };
   },
@@ -222,8 +230,7 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
         });
       },
       setPalette(p) {
-        body.mats.faces.emissiveIntensity = p.windowIntensity;
-        body.mats.wall.color.set(p.bldg);
+        repaint(body.mats, p);
       },
     };
   },
@@ -300,20 +307,17 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
     group.add(pitch);
     const line = lit('#f4f4f4', 0.35, { color: 0xbdbdbd });
     group.add(box(3.0, 0.012, 0.06, line, 0, 0.06, 0.3), box(3.0, 0.012, 0.06, line, 0, 0.06, 2.2));
-    // Fence posts along three sides.
-    for (let i = 0; i <= 8; i++) {
-      const x = -1.7 + i * 0.425;
-      const p = post(0.4, 0.015, 0x6b7489);
-      p.position.set(x, 0.2, 2.48);
-      group.add(p);
-    }
-    for (const x of [-1.7, 1.7]) {
-      for (let i = 0; i <= 5; i++) {
-        const p = post(0.4, 0.015, 0x6b7489);
-        p.position.set(x, 0.2, 0.05 + i * 0.485);
-        group.add(p);
-      }
-    }
+    // Fence posts along three sides, one instanced mesh.
+    const spots: Array<[number, number]> = [];
+    for (let i = 0; i <= 8; i++) spots.push([-1.7 + i * 0.425, 2.48]);
+    for (const x of [-1.7, 1.7]) for (let i = 0; i <= 5; i++) spots.push([x, 0.05 + i * 0.485]);
+    const fence = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.015, 0.018, 0.4, 5), matteShared(0x6b7489), spots.length);
+    const m = new THREE.Matrix4();
+    spots.forEach(([x, z], i) => {
+      m.makeTranslation(x, 0.2, z);
+      fence.setMatrixAt(i, m);
+    });
+    group.add(fence);
     // The signal pole with the two lamps and a small hood.
     const pole = post(1.9, 0.03, 0x2a3350);
     pole.position.set(1.5, 0.95, 2.1);
@@ -366,14 +370,14 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
       setFocus(k) {
         (s.glow.material as THREE.MeshBasicMaterial).opacity = (0.05 + 0.25 * k) * GLOW.scale;
       },
-      update(t) {
+      update(t, dt) {
         const cycle = t % 9;
         const greenOn = cycle < 5;
         (green.material as THREE.MeshStandardMaterial).emissiveIntensity = greenOn ? 2.4 : 0.15;
         (red.material as THREE.MeshStandardMaterial).emissiveIntensity = greenOn ? 0.15 : 2.4;
         if (greenOn) {
           runners.forEach((r, i) => {
-            r.position.z = Math.min(2.05, r.position.z + 0.004 * (1 + ((i * 7 + Math.floor(t)) % 3)));
+            r.position.z = Math.min(2.05, r.position.z + 0.24 * dt * (1 + ((i * 7 + Math.floor(t)) % 3)));
             r.position.y = 0.21 + Math.abs(Math.sin(t * 9 + i)) * 0.03;
           });
         } else if (cycle > 8.5 && phase !== Math.floor(t / 9)) {
@@ -425,8 +429,7 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
       },
       update() {},
       setPalette(p) {
-        body.mats.faces.emissiveIntensity = p.windowIntensity;
-        body.mats.wall.color.set(p.bldg);
+        repaint(body.mats, p);
       },
     };
   },
@@ -478,10 +481,7 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
         beacons.forEach((b, i) => ((b.material as THREE.MeshStandardMaterial).emissiveIntensity = Math.floor(t * 1.2 + i * 0.4) % 2 === 0 ? 2.2 : 0.2));
       },
       setPalette(p) {
-        towers.forEach((tw) => {
-          tw.mats.faces.emissiveIntensity = p.windowIntensity;
-          tw.mats.wall.color.set(p.bldg);
-        });
+        towers.forEach((tw) => repaint(tw.mats, p));
         (podium.material as THREE.MeshStandardMaterial).color.set(p.bldg);
       },
     };
@@ -529,8 +529,7 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
         });
       },
       setPalette(p) {
-        body.mats.faces.emissiveIntensity = p.windowIntensity;
-        body.mats.wall.color.set(p.bldg);
+        repaint(body.mats, p);
       },
     };
   },
@@ -549,7 +548,7 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
     }
     const slit = box(1.5, 0.05, 0.03, lit(entry.accentInk.dark, 2.2), 0.1, 0.02, -0.03);
     group.add(slit);
-    const glowMat = new THREE.MeshBasicMaterial({ color: entry.accent, transparent: true, opacity: 0.2, blending: THREE.AdditiveBlending, depthWrite: false });
+    const glowMat = glowMaterial(entry.accent, 0.2);
     const glow = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 0.9), glowMat);
     glow.rotation.x = -Math.PI / 2;
     glow.position.set(0.1, 0.02, -0.4);
@@ -564,23 +563,23 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
     s.group.position.set(0.1, 1.55, -0.06);
     s.group.scale.setScalar(0.8);
     group.add(s.group);
-    const sensor = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 0.12, 10), matte(0x2a3350));
+    const sensor = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 0.12, 10), matteShared(0x2a3350));
     sensor.position.set(-1.0, 1.81, 0.4);
     group.add(sensor);
+    let focus = 0;
     return {
       group,
       screenMount: null,
       lookAtLocal: new THREE.Vector3(0.1, 1.0, 0),
       setFocus(k) {
-        glowMat.opacity = (0.15 + 0.3 * k) * GLOW.scale;
+        focus = k;
         (s.glow.material as THREE.MeshBasicMaterial).opacity = (0.05 + 0.25 * k) * GLOW.scale;
       },
       update(t) {
-        glowMat.opacity = Math.max(glowMat.opacity, 0.15 * GLOW.scale) + Math.sin(t * 1.5) * 0.03 * GLOW.scale;
+        glowMat.opacity = (0.15 + 0.3 * focus + 0.03 * Math.sin(t * 1.5)) * GLOW.scale;
       },
       setPalette(p) {
-        body.mats.faces.emissiveIntensity = p.windowIntensity;
-        body.mats.wall.color.set(p.bldg);
+        repaint(body.mats, p);
       },
     };
   },
@@ -591,7 +590,7 @@ export function buildBuilding(entry: StageEntry, x: number, side: 1 | -1, ctx: B
   const group = parts.group;
   group.name = `building:${entry.slug}`;
   const isGantry = entry.building === 'gantry';
-  group.position.set(x, 0, isGantry ? side * FRONT_Z : side * FRONT_Z);
+  group.position.set(x, 0, side * FRONT_Z);
   if (side === -1) group.rotation.y = Math.PI;
   group.updateMatrixWorld(true);
 

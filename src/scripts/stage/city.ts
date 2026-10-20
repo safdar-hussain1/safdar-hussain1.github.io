@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import type { CityPalette } from './palette';
-import { box, matte, lit, shadowed } from './materials';
+import { box, matte, lit } from './materials';
 import { glowTexture } from './windows';
 import type { Road } from './math';
 
@@ -20,7 +20,6 @@ export interface CityHandle {
   hemi: THREE.HemisphereLight;
   walkLight: THREE.PointLight;
   accentLight: THREE.SpotLight;
-  materials: { plinth: THREE.MeshStandardMaterial; top: THREE.MeshStandardMaterial; road: THREE.MeshStandardMaterial; kerb: THREE.MeshStandardMaterial; lampHead: THREE.MeshStandardMaterial };
   /** How strong the accent spot may be under this palette. */
   accentScale: number;
   setPalette(p: CityPalette): void;
@@ -69,7 +68,8 @@ export function buildCity(scene: THREE.Scene, palette: CityPalette): CityHandle 
   }
   group.add(dash);
 
-  // Street lamps every 2.6 units, alternating sides: a slim post, an arm over the road and a lit head.
+  // Street lamps every four units, between the stops and alternating sides, so none stands
+  // before a facade: a slim post, an arm over the road and a lit head with a soft halo.
   // Lamps stand between the stops, never before a facade: x = -12, -8, ... 16.
   const lampCount = 8;
   const postGeo = new THREE.CylinderGeometry(0.035, 0.05, 2.3, 6);
@@ -114,7 +114,7 @@ export function buildCity(scene: THREE.Scene, palette: CityPalette): CityHandle 
   moon.shadow.normalBias = 0.02;
   moon.shadow.radius = 4;
   const hemi = new THREE.HemisphereLight(palette.hemiSky, palette.hemiGround, palette.hemiIntensity);
-  const walkLight = new THREE.PointLight('#ffd2a0', 6, 7, 1.6);
+  const walkLight = new THREE.PointLight('#ffd2a0', palette.lampIntensity * 4, 7, 1.6);
   walkLight.position.set(0, 2.2, 0);
   const accentLight = new THREE.SpotLight('#ffffff', 0, 12, Math.PI / 5, 0.6, 1.2);
   accentLight.position.set(0, 4.5, 0);
@@ -124,7 +124,6 @@ export function buildCity(scene: THREE.Scene, palette: CityPalette): CityHandle 
   scene.add(group);
   scene.fog = new THREE.Fog(palette.fogColor, palette.fog[0], palette.fog[1]);
 
-  const materials = { plinth: plinthMat, top: topMat, road: roadMat, kerb: kerbMat, lampHead: lampHeadMat };
   const handle: CityHandle = {
     group,
     road: ROAD,
@@ -134,7 +133,6 @@ export function buildCity(scene: THREE.Scene, palette: CityPalette): CityHandle 
     hemi,
     walkLight,
     accentLight,
-    materials,
     accentScale: palette.accent,
     setPalette(p) {
       handle.accentScale = p.accent;
@@ -162,5 +160,3 @@ export function buildCity(scene: THREE.Scene, palette: CityPalette): CityHandle 
   haloMat.opacity = palette.lampIntensity >= 1 ? 0.55 * palette.glow : 0;
   return handle;
 }
-
-export { shadowed };

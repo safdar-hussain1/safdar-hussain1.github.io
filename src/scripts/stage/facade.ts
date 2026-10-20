@@ -17,6 +17,8 @@ export interface Facade {
   /** For stills: show the poster even if the video could play. */
   usePoster(): void;
   video: HTMLVideoElement | null;
+  /** Resolves once the poster texture has arrived (or failed), so a still is never black. */
+  ready: Promise<void>;
 }
 
 let sharedGlow: THREE.CanvasTexture | null = null;
@@ -45,7 +47,9 @@ export function attachFacade(mount: THREE.Object3D, opts: { video: HTMLVideoElem
   }
 
   const loader = new THREE.TextureLoader();
-  const posterTex = loader.load(opts.poster);
+  let settle: () => void = () => {};
+  const ready = new Promise<void>((r) => (settle = r));
+  const posterTex = loader.load(opts.poster, () => settle(), undefined, () => settle());
   posterTex.colorSpace = THREE.SRGBColorSpace;
   posterTex.anisotropy = 8;
   const screenMat = new THREE.MeshBasicMaterial({ map: posterTex, toneMapped: false, color: 0xbfbfbf });
@@ -84,6 +88,7 @@ export function attachFacade(mount: THREE.Object3D, opts: { video: HTMLVideoElem
     screen,
     glow,
     video,
+    ready,
     play() {
       if (video && video.paused && !posterOnly) video.play().catch(() => {});
     },

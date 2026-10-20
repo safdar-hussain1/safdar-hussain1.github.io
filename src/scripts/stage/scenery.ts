@@ -1,18 +1,18 @@
 import * as THREE from 'three';
 import { PLINTH_RADIUS, ROAD_WIDTH, PAVEMENT, type CityHandle } from './city';
-import { matte, lit } from './materials';
-import { windowTexture } from './windows';
+import { groupedBox, lit, matte } from './materials';
+import { repaint, windowed } from './buildings';
+import { stopLayout } from './math';
 import type { CityPalette } from './palette';
 
 // Everything that is not a project: trees along the pavements and the far blocks whose
 // windows make the skyline behind the stops. All of it inside the plinth, none of it on a stop.
 export interface SceneryHandle {
   group: THREE.Group;
-  blocks: THREE.Mesh[];
   setPalette(p: CityPalette): void;
 }
 
-const STOP_XS = [-14, -10, -6, -2, 2, 6, 10, 14];
+const STOP_XS = stopLayout(8).map((s) => s.x);
 
 function nearAStop(x: number, z: number): boolean {
   const lane = ROAD_WIDTH / 2 + PAVEMENT + 0.2;
@@ -53,8 +53,7 @@ export function addScenery(city: CityHandle, rand: () => number, palette: CityPa
   group.add(trees, trunks);
 
   // Far blocks: nine towers of lit windows behind the stops, never on the road.
-  const blocks: THREE.Mesh[] = [];
-  const wallMat = matte(palette.bldg);
+  const blocks: Array<ReturnType<typeof windowed>> = [];
   const spots: Array<[number, number, number, number]> = [
     [-9, 7.5, 1.6, 3.2],
     [-3.5, 8.5, 2.0, 4.6],
@@ -67,15 +66,13 @@ export function addScenery(city: CityHandle, rand: () => number, palette: CityPa
     [13.5, -7, 1.4, 2.6],
   ];
   for (const [x, z, w, h] of spots) {
-    const tex = windowTexture(rand, { cols: Math.max(3, Math.round(w * 3)), rows: Math.max(6, Math.round(h * 3)), wall: palette.bldg });
-    const faces = new THREE.MeshStandardMaterial({ map: tex, emissiveMap: tex, emissive: 0xffffff, emissiveIntensity: palette.windowIntensity, roughness: 0.9, metalness: 0, flatShading: true });
-    const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, w * 0.9), [faces, faces, wallMat, wallMat, faces, faces]);
-    mesh.position.set(x, h / 2, z);
+    const mats = windowed(rand, palette, Math.max(3, Math.round(w * 3)), Math.max(6, Math.round(h * 3)));
+    const mesh = groupedBox(w, h, w * 0.9, [0, 0, 1, 1, 0, 0], [mats.faces, mats.wall], x, 0, z);
     mesh.rotation.y = (rand() - 0.5) * 0.5;
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     group.add(mesh);
-    blocks.push(mesh);
+    blocks.push(mats);
     // A roof light on the taller ones.
     if (h > 4) {
       const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.06, 6, 5), lit('#ff6b6b', 1.5));
@@ -88,14 +85,9 @@ export function addScenery(city: CityHandle, rand: () => number, palette: CityPa
   city.group.add(group);
   return {
     group,
-    blocks,
     setPalette(p) {
       treeMat.color.set(p.tree);
-      wallMat.color.set(p.bldg);
-      for (const b of blocks) {
-        const mats = b.material as THREE.MeshStandardMaterial[];
-        mats[0].emissiveIntensity = p.windowIntensity;
-      }
+      for (const b of blocks) repaint(b, p);
     },
   };
 }

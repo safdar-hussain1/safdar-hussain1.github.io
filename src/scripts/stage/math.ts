@@ -3,6 +3,8 @@
 
 export interface StageEnv {
   width: number;
+  /** The viewport's height; a phone held sideways is wide but has no room for the city. */
+  height?: number;
   reducedMotion: boolean;
   webgl2: boolean;
   saveData: boolean;
@@ -14,7 +16,7 @@ export function canRunStage(env: StageEnv): { ok: boolean; reason?: StageReason 
   if (env.reducedMotion) return { ok: false, reason: 'reduced-motion' };
   if (env.saveData) return { ok: false, reason: 'save-data' };
   if (!env.webgl2) return { ok: false, reason: 'no-webgl2' };
-  if (env.width < 900) return { ok: false, reason: 'narrow' };
+  if (env.width < 900 || (env.height !== undefined && env.height < 500)) return { ok: false, reason: 'narrow' };
   return { ok: true };
 }
 
@@ -59,7 +61,8 @@ export function seeded(seed: number): () => number {
   };
 }
 
-// The stops along the road: four units apart, alternating sides, the first on the left.
+// The stops along the road: four units apart, alternating sides, the first on the camera's
+// right (+z) as it travels along +x.
 export const STOP_GAP = 4;
 export const STOP_X0 = -14;
 

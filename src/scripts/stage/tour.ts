@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { clamp, lerp, progressForStop, smoothstep, tourProgress, type TourProgress } from './math';
+import { clamp, lerp, progressForStop, smoothstep, tourProgress } from './math';
 import type { Building } from './buildings';
 import type { Facade } from './facade';
 import type { CityHandle } from './city';
@@ -21,8 +21,13 @@ export interface TourOptions {
   pointer: { x: number; y: number };
 }
 
-export interface TourFrame extends TourProgress {
+export interface TourFrame {
   p: number;
+  dive: number;
+  road: number;
+  idx: number;
+  focus: number;
+  near: number;
   fade: number;
   inTour: boolean;
 }
@@ -43,6 +48,9 @@ export interface Tour {
 
 const LAG = 0.22; // seconds: the time constant of the scroll lag
 const LANDED = 0.9995; // the dive counts as finished from here (floating point never reaches 1 exactly)
+const LOOK_RIGHT = -0.85; // the screen sits right of centre, leaving the caption its room at the left
+const UP = new THREE.Vector3(0, 1, 0);
+const WARM = new THREE.Color('#ffd2a0');
 
 export function createTour(opts: TourOptions): Tour {
   const { camera, hero, stops, facades, captions, city, doc } = opts;
@@ -55,11 +63,14 @@ export function createTour(opts: TourOptions): Tour {
   let p = 0;
   let following = true;
   let lastFocus = -1;
-  let inTour = false;
+  let litFocus = -1;
   let curve = new THREE.CatmullRomCurve3([hero.pos, hero.pos, hero.pos, hero.pos]);
   const pos = new THREE.Vector3();
   const look = new THREE.Vector3();
-  const tmp = new THREE.Vector3();
+  const forward = new THREE.Vector3();
+  const right = new THREE.Vector3();
+  const accent = new THREE.Color();
+  const frame: TourFrame = { p: 0, dive: 0, road: 0, idx: 0, focus: 0, near: 1, fade: 1, inTour: false };
 
   function layout(): void {
     const work = doc.getElementById('work');
@@ -101,50 +112,67 @@ export function createTour(opts: TourOptions): Tour {
     p = target;
   }
 
+  // Arrows and digits move along the road; the browser's own shortcuts (Back, tab switching)
+  // and anything typed into a field, the dock or the palette are left alone.
   function onKey(e: KeyboardEvent): void {
-    if (!inTour || !following) return;
+    if (!frame.inTour || !following) return;
+    if (e.altKey || e.metaKey || e.ctrlKey || e.defaultPrevented) return;
     const t = e.target as HTMLElement | null;
     if (t && (t.closest('input, textarea, select, [contenteditable]') || t.closest('#dock, #palette'))) return;
     if (doc.body.classList.contains('dock-open')) return;
-    const i = lastFocus < 0 ? 0 : lastFocus;
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' && e.shiftKey) {
+    if (e.key === 'ArrowRight') {
       e.preventDefault();
-      goTo(i + 1);
+      goTo(lastFocus < 0 ? 0 : lastFocus + 1);
     } else if (e.key === 'ArrowLeft') {
       e.preventDefault();
-      goTo(i - 1);
+      goTo(lastFocus < 0 ? 0 : lastFocus - 1);
     } else if (/^[1-9]$/.test(e.key) && Number(e.key) <= n) {
       goTo(Number(e.key) - 1);
     }
   }
 
   const rail = doc.querySelector<HTMLElement>('.rail');
-  rail?.addEventListener('click', (e) => {
+  const onRail = (e: Event) => {
     const b = (e.target as HTMLElement).closest<HTMLElement>('button[data-i]');
     if (b) goTo(Number(b.dataset.i));
-  });
+  };
+  rail?.addEventListener('click', onRail);
   win.addEventListener('scroll', readScroll, { passive: true });
   doc.addEventListener('keydown', onKey);
+  // The keyboard landing in a caption brings the camera to its stop.
+  captions.onFocus((slug) => {
+    const i = stops.findIndex((b) => b.entry.slug === slug);
+    if (i >= 0) jumpTo(i);
+  });
   layout();
   p = target;
+
+  function aimRight(amount: number): void {
+    forward.subVectors(look, pos).normalize();
+    right.crossVectors(forward, UP).normalize();
+    look.addScaledVector(right, amount);
+  }
 
   function update(now: number, dt: number): TourFrame {
     if (following) p += (target - p) * (1 - Math.exp(-dt / LAG));
     const pTour = clamp(p / tailStart);
     const tp = tourProgress(pTour, n, diveEnd / tailStart);
     const fade = 1 - smoothstep(tailStart, 1, p);
-    inTour = p > 0.001 && p < tailStart;
-
     const landed = tp.dive >= LANDED;
+    const dive = landed ? 1 : tp.dive;
+    const inTour = p > 0.001 && fade > 0.5;
+
     if (following) {
       if (!landed) {
         const e = smoothstep(0, 1, tp.dive);
         curve.getPointAt(e, pos);
         look.copy(hero.look).lerp(stops[0].lookAt, smoothstep(0.3, 1, tp.dive));
-        // The pointer sways the hero view a little; the sway dies with the dive.
+        // The pointer sways the hero view a little; the sway dies with the dive. The look
+        // offset of the stops eases in over the last stretch, so landing changes nothing.
         const sway = 1 - tp.dive;
         pos.z += opts.pointer.x * 0.18 * sway;
         pos.y += opts.pointer.y * 0.1 * sway;
+        aimRight(LOOK_RIGHT * smoothstep(0.7, 1, tp.dive));
       } else {
         const i0 = Math.floor(tp.idx);
         const i1 = Math.min(n - 1, i0 + 1);
@@ -152,34 +180,38 @@ export function createTour(opts: TourOptions): Tour {
         pos.copy(stops[i0].anchor).lerp(stops[i1].anchor, f);
         look.copy(stops[i0].lookAt).lerp(stops[i1].lookAt, f);
         pos.y += Math.sin(now / 2600) * 0.015;
-        // The screen sits right of centre, leaving the caption its room at the left.
-        tmp.subVectors(look, pos).normalize();
-        const right = new THREE.Vector3().crossVectors(tmp, new THREE.Vector3(0, 1, 0)).normalize();
-        look.addScaledVector(right, -0.85);
+        aimRight(LOOK_RIGHT);
       }
       camera.position.copy(pos);
       camera.lookAt(look);
     }
 
-    // Lights: the warm pool walks beside the camera, the accent spot lights the stop in focus.
-    city.walkLight.position.set(camera.position.x + 0.8, 2.3, camera.position.z);
+    // Lights: the warm pool walks beside the camera and leans toward the accent of the stop in
+    // focus; the accent spot fades in with the landing and lights the stop's facade.
     const focused = stops[tp.focus];
-    if (focused && landed) {
-      city.accentLight.color.set(focused.entry.accent);
-      city.accentLight.intensity = 70 * tp.near * city.accentScale;
+    const landing = smoothstep(0.85, 1, dive);
+    city.walkLight.position.set(camera.position.x + 0.8, 2.3, camera.position.z);
+    if (focused && landing > 0) {
+      if (litFocus !== tp.focus) {
+        litFocus = tp.focus;
+        accent.set(focused.entry.accent);
+        city.accentLight.color.copy(accent);
+      }
+      city.accentLight.intensity = 70 * tp.near * landing * city.accentScale;
       city.accentLight.position.set(focused.x - 1.4, 4.6, focused.lookAt.z - focused.side * 1.2);
       city.accentLight.target.position.copy(focused.lookAt);
       city.accentLight.target.updateMatrixWorld();
+      city.walkLight.color.lerpColors(WARM, accent, 0.55 * tp.near * landing);
     } else {
       city.accentLight.intensity = 0;
+      city.walkLight.color.copy(WARM);
     }
 
     // Captions and facades: the stop in focus is told so; its neighbours keep their loops warm.
-    const settled = landed && pTour > diveEnd / tailStart - 0.002;
-    if (settled) {
+    if (landed && inTour) {
       if (lastFocus !== tp.focus) {
         lastFocus = tp.focus;
-        captions.setActive(tp.focus);
+        captions.setActive(focused.entry.slug);
         opts.onFocus?.(tp.focus);
       }
     } else if (lastFocus !== -1) {
@@ -196,7 +228,15 @@ export function createTour(opts: TourOptions): Tour {
       if (warm) facade.play();
       else facade.pause();
     });
-    return { ...tp, dive: landed ? 1 : tp.dive, p, fade, inTour };
+    frame.p = p;
+    frame.dive = dive;
+    frame.road = tp.road;
+    frame.idx = tp.idx;
+    frame.focus = tp.focus;
+    frame.near = tp.near;
+    frame.fade = fade;
+    frame.inTour = inTour;
+    return frame;
   }
 
   return {
@@ -216,6 +256,8 @@ export function createTour(opts: TourOptions): Tour {
     destroy() {
       win.removeEventListener('scroll', readScroll);
       doc.removeEventListener('keydown', onKey);
+      rail?.removeEventListener('click', onRail);
+      captions.onFocus(() => {});
     },
   };
 }

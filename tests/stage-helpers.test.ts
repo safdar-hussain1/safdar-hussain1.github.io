@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { canRunLens, canRunStage, ladderStep, lifeClock, progressForStop, seeded, smoothstep, steer, stopLayout, tourProgress } from '../src/scripts/stage/math';
 import { PALETTES } from '../src/scripts/stage/palette';
+import { fpsFromDeltas } from '../src/scripts/stage/perf';
 
 const ok = { width: 1440, reducedMotion: false, webgl2: true, saveData: false };
 
@@ -11,6 +12,24 @@ describe('stage helpers', () => {
     expect(canRunStage({ ...ok, reducedMotion: true }).reason).toBe('reduced-motion');
     expect(canRunStage({ ...ok, webgl2: false }).reason).toBe('no-webgl2');
     expect(canRunStage({ ...ok, saveData: true }).reason).toBe('save-data');
+    // A phone held sideways is wide enough but has no room for the city.
+    expect(canRunStage({ ...ok, width: 932, height: 430 }).reason).toBe('narrow');
+    expect(canRunStage({ ...ok, width: 1024, height: 768 })).toEqual({ ok: true });
+  });
+
+  test('fpsFromDeltas reads the 75th percentile interval and ignores pauses', () => {
+    const steady = Array.from({ length: 90 }, () => 16.7);
+    expect(fpsFromDeltas(steady)).toBeCloseTo(60, 0);
+    // One long task inside the window is not slowness.
+    const paused = [...steady.slice(0, 40), 1200, ...steady.slice(40)];
+    expect(fpsFromDeltas(paused)).toBeCloseTo(60, 0);
+    // A machine that really runs at 30 reads as 30.
+    expect(fpsFromDeltas(Array.from({ length: 90 }, () => 33.3))).toBeCloseTo(30, 0);
+    // A quarter of slow frames moves the figure, as it should.
+    const uneven = [...Array.from({ length: 60 }, () => 16.7), ...Array.from({ length: 30 }, () => 40)];
+    expect(fpsFromDeltas(uneven)).toBeCloseTo(25, 0);
+    // Too few frames is no verdict.
+    expect(fpsFromDeltas(steady.slice(0, 10))).toBeNull();
   });
 
   test('canRunLens allows a tablet, not a phone', () => {

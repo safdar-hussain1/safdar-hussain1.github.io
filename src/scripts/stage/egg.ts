@@ -8,6 +8,8 @@ export interface Drive {
   stop(): void;
   active(): boolean;
   update(dt: number): void;
+  /** Stops the drive and forgets the typed word. */
+  destroy(): void;
 }
 
 export interface DriveOptions {
@@ -45,8 +47,11 @@ export function createDrive(opts: DriveOptions): Drive {
     return false;
   }
 
+  // While a project is docked or the palette is open, the keys are theirs.
+  const elsewhere = () => doc.body.classList.contains('dock-open') || !(doc.getElementById('palette')?.hidden ?? true);
+
   function onDown(e: KeyboardEvent): void {
-    if (!on) return;
+    if (!on || elsewhere()) return;
     if (e.key === 'Escape') {
       e.preventDefault();
       stop();
@@ -62,9 +67,9 @@ export function createDrive(opts: DriveOptions): Drive {
   let buffer = '';
   let lastAt = 0;
   function onType(e: KeyboardEvent): void {
-    if (on || e.metaKey || e.ctrlKey || e.altKey || e.key.length !== 1) return;
+    if (on || e.metaKey || e.ctrlKey || e.altKey || e.key.length !== 1 || elsewhere()) return;
     const t = e.target as HTMLElement | null;
-    if (t && t.closest('input, textarea, select, [contenteditable]')) return;
+    if (t && t.closest('input, textarea, select, [contenteditable], #dock, #palette')) return;
     const now = performance.now();
     if (now - lastAt > 2500) buffer = '';
     lastAt = now;
@@ -95,6 +100,10 @@ export function createDrive(opts: DriveOptions): Drive {
     start,
     stop,
     active: () => on,
+    destroy() {
+      stop();
+      doc.removeEventListener('keydown', onType);
+    },
     update(dt) {
       if (!on) return;
       state = steer(state, keys, dt, road);

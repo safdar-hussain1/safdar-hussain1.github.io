@@ -76,10 +76,11 @@ const commands: Command[] = [
         }
       },
     });
-    // The city's hidden drive is listed only once the city runs.
+    // The city's hidden drive is listed only while the city runs.
     document.addEventListener('stage:started', () => {
       if (w.__stage?.drive) palette.setCommands([...commands, { id: 'drive', label: 'Drive', hint: 'arrow keys, Esc to stop', group: 'action', keywords: ['car', 'city'] }]);
     });
+    document.addEventListener('stage:ended', () => palette.setCommands(commands));
     document.getElementById('palette-trigger')?.addEventListener('click', (e) => palette.open(e.currentTarget as HTMLElement));
     w.__palette = palette;
   }

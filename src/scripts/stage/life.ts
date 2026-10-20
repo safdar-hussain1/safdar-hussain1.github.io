@@ -57,7 +57,7 @@ export function createLife(scene: THREE.Scene, road: Road, buildings: Building[]
         ambulance.group.position.z = -Math.sin(Math.PI * u) * 1.4;
         if (ambulance.beacon) (ambulance.beacon.material as THREE.MeshStandardMaterial).emissiveIntensity = life.ambulanceOut && life.blink ? 3 : 0.3;
       }
-      for (const b of buildings) b.update(t);
+      for (const b of buildings) b.update(t, dt);
     },
     setEnabled(v) {
       on = v;

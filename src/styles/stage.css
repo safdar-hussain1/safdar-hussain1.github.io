@@ -56,7 +56,8 @@ body.stage-on .work__head {
   white-space: nowrap;
 }
 body.stage-on .hero__art {
-  display: none;
+  opacity: 0;
+  transition: opacity 700ms var(--ease);
 }
 body.stage-on .hero__line {
   max-width: 30ch;
@@ -92,17 +93,15 @@ body.stage-on .plate {
   -webkit-backdrop-filter: blur(18px) saturate(1.25);
   box-shadow: var(--shadow);
   opacity: 0;
-  visibility: hidden;
   transform: translateY(14px);
   pointer-events: none;
-  transition: opacity 420ms var(--ease), transform 520ms var(--ease), visibility 0s linear 420ms;
+  transition: opacity 420ms var(--ease), transform 520ms var(--ease);
 }
 body.stage-on .plate.on {
   opacity: 1;
-  visibility: visible;
   transform: none;
   pointer-events: auto;
-  transition: opacity 420ms var(--ease) 80ms, transform 520ms var(--ease) 80ms, visibility 0s;
+  transition: opacity 420ms var(--ease) 80ms, transform 520ms var(--ease) 80ms;
 }
 body.stage-on .plate__media {
   display: none;
@@ -125,10 +124,10 @@ body.stage-on .rail {
 body.stage-on.tour-on .rail {
   display: flex;
 }
-body.drive-on .plate,
-body.drive-on .rail,
-body.fly-on .plate,
-body.fly-on .rail {
+body.stage-on.drive-on .plate,
+body.stage-on.drive-on .rail,
+body.stage-on.fly-on .plate,
+body.stage-on.fly-on .rail {
   display: none;
 }
 
@@ -139,7 +138,7 @@ body.lens-on .stage-canvas {
   top: -36%;
   left: -10%;
   width: 170%;
-  height: 150%;
+  height: 136%;
   z-index: 0;
 }
 

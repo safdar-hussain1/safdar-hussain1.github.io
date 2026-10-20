@@ -1,25 +1,23 @@
 import * as THREE from 'three';
 
-// A facade of lit windows, drawn once per seed: a dark wall with a grid of cells, most of them
-// warm, some cool, a few dark. Used as the colour map and the emissive map of the blocks.
+// A facade of lit windows, drawn once per seed: a grid of cells on a clear ground, most of them
+// warm, some cool, a few dark. It is the emissive map of a block whose wall colour comes from
+// the material, so the theme can repaint the wall without redrawing the windows.
 export interface WindowOptions {
   cols?: number;
   rows?: number;
-  wall?: string;
   litShare?: number;
 }
 
 export function windowTexture(rand: () => number, opts: WindowOptions = {}): THREE.CanvasTexture {
   const cols = opts.cols ?? 6;
   const rows = opts.rows ?? 14;
-  const wall = opts.wall ?? '#0a0f1f';
   const litShare = opts.litShare ?? 0.62;
   const canvas = document.createElement('canvas');
   canvas.width = 128;
   canvas.height = 256;
   const c = canvas.getContext('2d')!;
-  c.fillStyle = wall;
-  c.fillRect(0, 0, canvas.width, canvas.height);
+  c.clearRect(0, 0, canvas.width, canvas.height);
   const cw = canvas.width / cols;
   const ch = canvas.height / rows;
   for (let r = 0; r < rows; r++) {
@@ -41,8 +39,10 @@ export function windowTexture(rand: () => number, opts: WindowOptions = {}): THR
 }
 
 // A soft radial glow for the accent light behind a screen or a sign; additive, so colour is
-// given by the material.
+// given by the material. One texture serves every glow.
+let glow: THREE.CanvasTexture | null = null;
 export function glowTexture(): THREE.CanvasTexture {
+  if (glow) return glow;
   const canvas = document.createElement('canvas');
   canvas.width = 256;
   canvas.height = 256;
@@ -53,9 +53,9 @@ export function glowTexture(): THREE.CanvasTexture {
   g.addColorStop(1, 'rgba(255,255,255,0)');
   c.fillStyle = g;
   c.fillRect(0, 0, 256, 256);
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  return tex;
+  glow = new THREE.CanvasTexture(canvas);
+  glow.colorSpace = THREE.SRGBColorSpace;
+  return glow;
 }
 
 // A lit sign with a project's name, drawn in the display face; the canvas is sized to the text.

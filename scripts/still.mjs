@@ -45,7 +45,7 @@ async function savePng(buffer, out) {
 
 // Waits for the stage to render its still, or to say it cannot; true when the city is in the picture.
 async function stageStill(page) {
-  await page.waitForFunction(() => document.title === 'STILL READY' || (window.__stage && window.__stage.started === false && window.__stage.reason !== 'still'), null, { timeout: 40000 });
+  await page.waitForFunction(() => document.title === 'STILL READY' || (window.__stage && window.__stage.started === false && !['still', 'pending'].includes(window.__stage.reason)), null, { timeout: 40000 });
   await page.evaluate(() => document.fonts.ready);
   return page.evaluate(() => document.title === 'STILL READY');
 }

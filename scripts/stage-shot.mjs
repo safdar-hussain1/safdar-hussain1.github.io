@@ -30,7 +30,7 @@ async function shot(query, name, settleMs = 2600) {
   const url = `${BASE}?${[query, extra].filter(Boolean).join('&')}`;
   await page.goto(url, { waitUntil: 'networkidle' });
   const started = await page
-    .waitForFunction(() => document.body.classList.contains('stage-on') || document.body.classList.contains('lens-on') || (window.__stage && window.__stage.started === false && window.__stage.reason), null, { timeout: 30000 })
+    .waitForFunction(() => document.body.classList.contains('stage-on') || document.body.classList.contains('lens-on') || (window.__stage && window.__stage.started === false && window.__stage.reason && window.__stage.reason !== 'pending'), null, { timeout: 30000 })
     .then(() => page.evaluate(() => window.__stage));
   if (!started?.started) {
     console.log(`stage did not start: ${JSON.stringify(started)}`);

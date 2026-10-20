@@ -13,6 +13,7 @@ export interface SelftestResult {
   failures: string[];
 }
 
+// 'pending' and 'error' are not among them: a stage that never decided, or failed, fails this check.
 const STAGE_REASONS = ['narrow', 'reduced-motion', 'no-webgl2', 'software-gl', 'save-data', 'slow', 'still', 'off'];
 
 function loadImage(src: string): Promise<boolean> {

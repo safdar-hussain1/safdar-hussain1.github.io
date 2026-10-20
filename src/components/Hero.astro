@@ -8,7 +8,7 @@ interface Props {
 const { entries } = Astro.props;
 // The flat hero shows a picture of the city; where the city itself runs, the picture gives way
 // to it. The alt names what the picture is of without listing the projects (the cards do that).
-const stillAlt = `A small night city on a round plinth: ${entries.length} buildings along one road, each with a lit screen on its facade`;
+const stillAlt = `A small night city on a round plinth: ${entries.length} buildings along one road, ${entries.filter((e) => e.status === 'live').length} of them with a lit screen on the facade`;
 ---
 <section class="hero wrap" aria-labelledby="hero-title">
   <div class="hero__text">

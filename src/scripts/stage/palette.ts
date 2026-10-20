@@ -62,7 +62,7 @@ export const PALETTES: Record<'dark' | 'light', CityPalette> = {
     bldg: '#ece6df',
     tree: '#5e8f78',
     lampIntensity: 0.5,
-    windowIntensity: 0.4,
+    windowIntensity: 0.7,
     moonIntensity: 2.6,
     moonColor: '#ffd9a8',
     hemiIntensity: 1.6,

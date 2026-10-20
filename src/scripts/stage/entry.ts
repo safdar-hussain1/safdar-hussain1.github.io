@@ -3,6 +3,7 @@ import { seeded, smoothstep, stopLayout, type LadderStep } from './math';
 import { skyTexture, studioTexture } from './windows';
 import { paletteFor, type CityPalette } from './palette';
 import { GLOW } from './materials';
+import { glowTexture } from './windows';
 import { createLens, type LensHandle } from './lens';
 import { createNamePlane, nameTexture, swapName } from './name';
 import { buildCity, type CityHandle } from './city';
@@ -16,8 +17,8 @@ import { createDrive, type Drive } from './egg';
 import type { Captions } from '../captions';
 
 // The stage: one canvas behind the page, one scene, one camera. In 'lens' mode only the glass
-// and the name exist (phones); in 'city' mode the whole city lies below and the scroll drives
-// the camera through the lens and along the road.
+// and the name exist (tablets, inside the hero's text block); in 'city' mode the whole city
+// lies below and the scroll drives the camera through the lens and along the road.
 export interface StageOptions {
   canvas: HTMLCanvasElement;
   mode: 'lens' | 'city';
@@ -29,6 +30,8 @@ export interface StageOptions {
   /** The page's h1 box as fractions of the canvas (lens mode), or null. */
   anchor?(): { x: number; y: number; w: number; h: number } | null;
   sound?: { play(cue: 'tick' | 'hum-start' | 'hum-stop' | 'focus'): void } | null;
+  /** The stage ended itself (the ladder, or reduced motion turned on); the page is flat again. */
+  onEnd?(reason: 'slow' | 'reduced-motion'): void;
   doc?: Document;
 }
 
@@ -115,13 +118,13 @@ export function startStage(opts: StageOptions): StageHandle {
     const ordered = [...opts.entries].sort((a, b) => stopOrder(a) - stopOrder(b));
     const layout = stopLayout(ordered.length);
     ordered.forEach((entry, i) => {
-      const b = buildBuilding(entry, layout[i].x, layout[i].side, { rand, palette, theme });
+      const b = buildBuilding(entry, layout[i].x, layout[i].side, { rand, palette });
       cityHandle!.group.add(b.group);
       buildings.push(b);
       if (entry.status === 'live' && b.screenMount) {
         const video = opts.still ? null : facadeVideo(doc, entry.slug);
         if (video) media.append(video);
-        const facade = attachFacade(b.screenMount, { video, poster: `/work/${entry.slug}/poster.webp`, accent: entry.accent });
+        const facade = attachFacade(b.screenMount, { video, poster: `/work/${entry.slug}/poster-sm.webp`, accent: entry.accent });
         if (opts.still) facade.usePoster();
         facades.set(entry.slug, facade);
       }
@@ -213,6 +216,7 @@ export function startStage(opts: StageOptions): StageHandle {
     const dock = (win as unknown as { __dock?: Dock }).__dock;
     dock?.setHooks({
       async beforeOpen(slug) {
+        drive?.stop();
         const b = buildings.find((x) => x.entry.slug === slug);
         if (!b || !tour || lastFrame.fade < 0.05) return;
         tour.setFollowing(false);
@@ -253,6 +257,22 @@ export function startStage(opts: StageOptions): StageHandle {
   }
   compose();
 
+  // While a project is docked the dock covers the screen: the city stops rendering and its
+  // loops pause, and both come back the moment the dock closes (before the camera flies back).
+  const dockEl = doc.getElementById('dock');
+  let docked = false;
+  const onDockOpen = () => {
+    docked = true;
+    renderer.setAnimationLoop(null);
+    facades.forEach((f) => f.pause());
+  };
+  const onDockClose = () => {
+    docked = false;
+    if (!destroyed && !doc.hidden && onScreen) renderer.setAnimationLoop(frame);
+  };
+  dockEl?.addEventListener('dock:open', onDockOpen);
+  dockEl?.addEventListener('dock:close', onDockClose);
+
   // Pointer, resize, visibility and theme.
   const onPointer = (e: PointerEvent) => {
     pointer.tx = (e.clientX / win.innerWidth) * 2 - 1;
@@ -267,6 +287,23 @@ export function startStage(opts: StageOptions): StageHandle {
   const mq = win.matchMedia('(prefers-color-scheme: dark)');
   const onScheme = () => setTheme(opts.theme());
   mq.addEventListener('change', onScheme);
+  // Reduced motion turned on while the page is open ends the stage; the flat page remains.
+  const motionQuery = win.matchMedia('(prefers-reduced-motion: reduce)');
+  const onMotion = () => {
+    if (motionQuery.matches) {
+      destroy();
+      opts.onEnd?.('reduced-motion');
+    }
+  };
+  motionQuery.addEventListener('change', onMotion);
+  // The lens alone sleeps while its canvas is off screen.
+  let onScreen = true;
+  const io = new IntersectionObserver((records) => {
+    onScreen = records.some((r) => r.isIntersecting);
+    if (destroyed || docked || doc.hidden) return;
+    renderer.setAnimationLoop(onScreen ? frame : null);
+  });
+  if (!city) io.observe(canvas);
 
   function setTheme(t: 'dark' | 'light'): void {
     if (t === theme) return;
@@ -281,6 +318,7 @@ export function startStage(opts: StageOptions): StageHandle {
     scenery?.setPalette(palette);
     buildings.forEach((b) => b.setPalette(palette));
     renderer.toneMappingExposure = t === 'light' ? 1.0 : 1.1;
+    opts.captions.refresh();
   }
 
   // The loop.
@@ -361,26 +399,29 @@ export function startStage(opts: StageOptions): StageHandle {
   }
   renderer.setAnimationLoop(frame);
   const onVisibility = () => {
-    if (opts.still) return;
-    renderer.setAnimationLoop(doc.hidden ? null : frame);
+    if (opts.still || destroyed) return;
+    renderer.setAnimationLoop(doc.hidden || docked || !onScreen ? null : frame);
   };
   doc.addEventListener('visibilitychange', onVisibility);
 
   // The focus pull on load; stills skip straight to sharp.
   void ready.then(() => {
     if (opts.still) {
-      // One sharp frame, then the loop stops: a still is a still, and costs nothing after.
+      // One sharp frame once every poster has arrived, then the loop stops: a still is a
+      // still, and costs nothing after.
       lens.sharp();
-      let n = 0;
-      const tick = () => {
-        n += 1;
-        if (n < 6) requestAnimationFrame(tick);
-        else {
-          renderer.setAnimationLoop(null);
-          doc.title = 'STILL READY';
-        }
-      };
-      requestAnimationFrame(tick);
+      void Promise.all([...facades.values()].map((f) => f.ready)).then(() => {
+        let n = 0;
+        const tick = () => {
+          n += 1;
+          if (n < 6) requestAnimationFrame(tick);
+          else {
+            renderer.setAnimationLoop(null);
+            doc.title = 'STILL READY';
+          }
+        };
+        requestAnimationFrame(tick);
+      });
       return;
     }
     opts.sound?.play('hum-start');
@@ -394,6 +435,7 @@ export function startStage(opts: StageOptions): StageHandle {
     life?.setEnabled(false);
     if (step === 'no-life') return;
     destroy();
+    opts.onEnd?.('slow');
   }
 
   function destroy(): void {
@@ -406,26 +448,46 @@ export function startStage(opts: StageOptions): StageHandle {
     themeObserver.disconnect();
     mq.removeEventListener('change', onScheme);
     doc.removeEventListener('visibilitychange', onVisibility);
+    motionQuery.removeEventListener('change', onMotion);
+    io.disconnect();
+    dockEl?.removeEventListener('dock:open', onDockOpen);
+    dockEl?.removeEventListener('dock:close', onDockClose);
     tour?.destroy();
-    drive?.stop();
+    drive?.destroy();
     (win as unknown as { __dock?: Dock }).__dock?.setHooks({});
     opts.captions.clear();
     if (heroText) {
       heroText.style.removeProperty('opacity');
       heroText.style.removeProperty('visibility');
     }
-    sky?.dispose();
-    studio.dispose();
+    media.querySelectorAll('video').forEach((v) => {
+      v.pause();
+      v.removeAttribute('src');
+      v.querySelectorAll('source').forEach((s) => s.remove());
+      v.load();
+    });
     media.remove();
+    // Every GPU resource goes: geometries, materials and their textures, the environment,
+    // then the context itself.
+    const textures = new Set<THREE.Texture>([env, studio, glowTexture()]);
+    if (sky) textures.add(sky);
     scene.traverse((o) => {
       const m = o as THREE.Mesh;
       if (m.geometry) m.geometry.dispose();
       const mats = Array.isArray(m.material) ? m.material : m.material ? [m.material] : [];
-      mats.forEach((mat) => mat.dispose());
+      for (const mat of mats) {
+        for (const key of ['map', 'emissiveMap', 'alphaMap', 'envMap'] as const) {
+          const t = (mat as unknown as Record<string, unknown>)[key];
+          if (t instanceof THREE.Texture) textures.add(t);
+        }
+        mat.dispose();
+      }
     });
+    textures.forEach((t) => t.dispose());
     renderer.dispose();
+    renderer.forceContextLoss();
     canvas.remove();
-    doc.body.classList.remove('stage-on', 'lens-on', 'tour-on', 'drive-on');
+    doc.body.classList.remove('stage-on', 'lens-on', 'tour-on', 'drive-on', 'fly-on');
   }
 
   return { mode, ready, renderer, tour, drive, setTheme, applyLadder, destroy, relayout: compose };

@@ -43,12 +43,17 @@ export function createLens(scene: THREE.Scene, palette: CityPalette): LensHandle
     clearcoat: 0.5,
     clearcoatRoughness: 0.06,
     specularIntensity: 1,
-    envMapIntensity: palette.lensEnv * 1.5,
-    attenuationColor: new THREE.Color(0xe4ecff),
-    attenuationDistance: 10,
     iridescence: 0.12,
     iridescenceIOR: 1.3,
   });
+  // By night the glass is near clear; by day it carries a faint cool tint, so it reads on a
+  // pale sky. The same values apply at creation and on a theme switch.
+  const applyPalette = (p: CityPalette) => {
+    material.envMapIntensity = p.lensEnv * 1.5;
+    material.attenuationColor.set(p.lensEnv < 0.8 ? 0xcfe0ff : 0xe4ecff);
+    material.attenuationDistance = p.lensEnv < 0.8 ? 4 : 10;
+  };
+  applyPalette(palette);
   const mesh = new THREE.Mesh(geometry, material);
   const group = new THREE.Group();
   group.add(mesh);
@@ -82,10 +87,6 @@ export function createLens(scene: THREE.Scene, palette: CityPalette): LensHandle
       radius = r;
       group.scale.setScalar(radius * pulled);
     },
-    setPalette(p) {
-      material.envMapIntensity = p.lensEnv * 1.5;
-      material.attenuationColor.set(p.lensEnv < 0.8 ? 0xcfe0ff : 0xe4ecff);
-      material.attenuationDistance = p.lensEnv < 0.8 ? 4 : 10;
-    },
+    setPalette: applyPalette,
   };
 }
