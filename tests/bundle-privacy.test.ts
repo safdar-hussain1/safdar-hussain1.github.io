@@ -11,6 +11,10 @@ const ALLOWED = [
   'https://www.linkedin.com/in/safdar-hussain-a8a61b248',
   'http://www.w3.org/',
   'https://raw.githubusercontent.com/safdar-hussain1/',
+  // Credits inside the 3D libraries' own code: a paper cited in a shader, the animation
+  // library's home. Strings, never fetched.
+  'https://jcgt.org/published/',
+  'https://gsap.com',
 ];
 
 describe('bundle privacy', () => {

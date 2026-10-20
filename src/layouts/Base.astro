@@ -6,6 +6,7 @@ import newsreaderUrl from '@fontsource-variable/newsreader/files/newsreader-lati
 import '../styles/tokens.css';
 import '../styles/base.css';
 import '../styles/components.css';
+import '../styles/stage.css';
 import Footer from '../components/Footer.astro';
 import { SITE } from '../data/site';
 
@@ -98,7 +99,7 @@ const graph = { '@context': 'https://schema.org', '@graph': [website, person, ..
           var t = localStorage.getItem('portfolio.theme');
           if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
         } catch (e) {}
-        var still = /[?&]still=(hero|og)\b/.exec(location.search);
+        var still = /[?&]still=(hero|og|city)\b/.exec(location.search);
         if (still) document.documentElement.dataset.still = still[1];
       })();
     </script>

@@ -3,14 +3,17 @@ import type { WorkEntry } from '../lib/work-schema';
 import { liveEntries } from '../lib/work';
 import WorkCard from './WorkCard.astro';
 import Rail from './Rail.astro';
+import { jsonForHtml } from '../lib/json';
 
 interface Props {
   entries: WorkEntry[];
 }
 const { entries } = Astro.props;
 const live = liveEntries(entries);
+// The city needs every entry, scenery included: one building each.
+const stageEntries = entries.map((e) => ({ slug: e.slug, name: e.name, building: e.building, accent: e.accent, accentInk: e.accentInk, status: e.status, tagline: e.tagline }));
 ---
-<section id="work" class="work section wrap" aria-labelledby="work-title">
+<section id="work" class="work section wrap" aria-labelledby="work-title" style={`--stops:${live.length}`}>
   <div class="work__head">
     <h2 id="work-title">Work</h2>
     <p class="work__lede">Each one is a complete product that runs on your own device. On a desktop, <em>Use it here</em> opens it inside this page.</p>
@@ -19,6 +22,7 @@ const live = liveEntries(entries);
     {live.map((e, i) => <WorkCard entry={e} index={i} total={live.length} />)}
   </div>
   <Rail entries={live} />
+  <script type="application/json" data-stage-entries set:html={jsonForHtml(stageEntries)} />
 </section>
 
 <script>

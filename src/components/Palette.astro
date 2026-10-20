@@ -43,7 +43,12 @@ const commands: Command[] = [
   const root = document.getElementById('palette');
   if (root) {
     const commands = JSON.parse(root.querySelector('[data-palette-commands]')?.textContent ?? '[]');
-    const w = window as unknown as { __dock?: { open(slug: string): Promise<void> }; __sound?: { toggle(): boolean; play(cue: string): void }; __palette?: unknown };
+    const w = window as unknown as {
+      __dock?: { open(slug: string): Promise<void> };
+      __sound?: { toggle(): boolean; play(cue: string): void };
+      __palette?: unknown;
+      __stage?: { started: boolean; drive?: { start(): void } | null };
+    };
     const palette = createPalette({
       root,
       commands,
@@ -66,8 +71,14 @@ const commands: Command[] = [
           toggleTheme();
         } else if (id === 'sound') {
           w.__sound?.toggle();
+        } else if (id === 'drive') {
+          w.__stage?.drive?.start();
         }
       },
+    });
+    // The city's hidden drive is listed only once the city runs.
+    document.addEventListener('stage:started', () => {
+      if (w.__stage?.drive) palette.setCommands([...commands, { id: 'drive', label: 'Drive', hint: 'arrow keys, Esc to stop', group: 'action', keywords: ['car', 'city'] }]);
     });
     document.getElementById('palette-trigger')?.addEventListener('click', (e) => palette.open(e.currentTarget as HTMLElement));
     w.__palette = palette;

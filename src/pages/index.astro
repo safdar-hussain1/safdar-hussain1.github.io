@@ -27,6 +27,7 @@ const entries = allEntries((await getCollection('work')).map((e) => e.data));
   <Dock entries={entries} />
   <Palette entries={entries} />
   <script>
+    import '../scripts/stage-loader';
     import '../scripts/selftest-entry';
   </script>
 </Base>

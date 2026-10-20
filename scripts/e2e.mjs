@@ -165,6 +165,78 @@ const flows = {
     if (!stage || (stage.started && document.body.classList.contains('stage-on'))) throw new Error('the 3D stage ran under reduced motion');
     await ctx.close();
   },
+  // The 3D stage needs the real GPU; without E2E_GL these two flows report themselves skipped.
+  async stage(browser) {
+    if (!process.env.E2E_GL) {
+      console.log('     stage: skipped (needs E2E_GL=1 and a GPU)');
+      return;
+    }
+    const ctx = await browser.newContext({ viewport: WIDE, colorScheme: 'dark' });
+    const page = await ctx.newPage();
+    await page.goto(BASE, { waitUntil: 'networkidle' });
+    await page.waitForFunction(() => document.body.classList.contains('stage-on'), null, { timeout: 30000 });
+    const seen = await page.evaluate(() => ({
+      canvases: document.querySelectorAll('canvas.stage-canvas').length,
+      h1: document.querySelectorAll('h1').length,
+      stage: { ...window.__stage, tour: undefined, drive: undefined },
+    }));
+    if (seen.canvases !== 1) throw new Error(`expected one stage canvas, saw ${seen.canvases}`);
+    if (seen.h1 !== 1) throw new Error('the h1 must stay in the DOM under the stage');
+    if (!seen.stage.started || seen.stage.mode !== 'city') throw new Error(`stage did not start: ${JSON.stringify(seen.stage)}`);
+    await page.waitForTimeout(2200);
+    await axe(page, 'home with the stage');
+    await page.screenshot({ path: join(SHOTS, `stage-hero-${BROWSER}.png`) });
+    // The ladder: a forced 35 fps keeps the city without shadows; a forced 10 fps returns the
+    // flat site and says why.
+    await page.goto(`${BASE}?fps=35`, { waitUntil: 'networkidle' });
+    await page.waitForFunction(() => window.__stage && window.__stage.step === 'no-shadows', null, { timeout: 30000 });
+    const dim = await page.evaluate(() => ({ canvases: document.querySelectorAll('canvas.stage-canvas').length, on: document.body.classList.contains('stage-on'), started: window.__stage.started }));
+    if (dim.canvases !== 1 || !dim.on || !dim.started) throw new Error(`the city should stay on without shadows: ${JSON.stringify(dim)}`);
+    await page.goto(`${BASE}?fps=10`, { waitUntil: 'networkidle' });
+    await page.waitForFunction(() => window.__stage && window.__stage.reason === 'slow', null, { timeout: 30000 });
+    const flat = await page.evaluate(() => ({ canvases: document.querySelectorAll('canvas.stage-canvas').length, on: document.body.classList.contains('stage-on') }));
+    if (flat.canvases !== 0 || flat.on) throw new Error('the flat site did not return after the ladder');
+    // The selftest with the stage running.
+    await page.goto(`${BASE}?selftest=1`, { waitUntil: 'networkidle' });
+    await page.waitForFunction(() => document.title.startsWith('PORTFOLIO SELFTEST'), null, { timeout: 60000 });
+    const title = await page.title();
+    if (!title.startsWith('PORTFOLIO SELFTEST PASS')) throw new Error(title);
+    await ctx.close();
+  },
+  async tour(browser) {
+    if (!process.env.E2E_GL) {
+      console.log('     tour: skipped (needs E2E_GL=1 and a GPU)');
+      return;
+    }
+    const ctx = await browser.newContext({ viewport: WIDE, colorScheme: 'dark' });
+    const page = await ctx.newPage();
+    await page.goto(BASE, { waitUntil: 'networkidle' });
+    await page.waitForFunction(() => document.body.classList.contains('stage-on'), null, { timeout: 30000 });
+    await page.waitForTimeout(1500);
+    await page.evaluate(() => window.__stage.tour.jumpTo(3));
+    await page.waitForFunction(() => document.querySelector('.plate.on')?.dataset.slug === 'red-light-green-light-cv', null, { timeout: 10000 });
+    const tick = await page.evaluate(() => document.querySelector('.rail button[aria-current="true"]')?.dataset.i);
+    if (tick !== '3') throw new Error(`rail tick is ${tick}, expected 3`);
+    await page.waitForTimeout(1200);
+    await page.screenshot({ path: join(SHOTS, `stage-stop-4-${BROWSER}.png`) });
+    await axe(page, 'a stop in the city');
+    // The keyboard moves along the road.
+    await page.keyboard.press('ArrowRight');
+    await page.waitForFunction(() => document.querySelector('.plate.on')?.dataset.slug === 'carmine', null, { timeout: 10000 });
+    // The dock opens from the facade and the caption returns after.
+    await page.waitForTimeout(800);
+    await page.click('.plate.on [data-dock]');
+    await page.waitForSelector('#dock iframe', { timeout: 15000 });
+    const src = await page.getAttribute('#dock iframe', 'src');
+    if (!src?.endsWith('/carmine/')) throw new Error(`dock framed ${src}`);
+    await page.click('[data-dock-close]');
+    await page.waitForFunction(() => document.querySelector('.plate.on')?.dataset.slug === 'carmine' && !document.body.classList.contains('fly-on'), null, { timeout: 10000 });
+    // Back to the top: the lens is back and the captions are gone.
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+    await page.evaluate(() => window.__stage.tour.snap());
+    await page.waitForFunction(() => !document.querySelector('.plate.on') && !document.body.classList.contains('tour-on'), null, { timeout: 10000 });
+    await ctx.close();
+  },
   async selftest(browser) {
     const ctx = await browser.newContext({ viewport: WIDE, colorScheme: 'dark' });
     const page = await ctx.newPage();

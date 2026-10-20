@@ -31,6 +31,8 @@ export interface Dock {
   open(slug: string, trigger?: HTMLElement | null): Promise<void>;
   close(): Promise<void>;
   current(): string | null;
+  /** The 3D stage, which starts after the dock, hooks its fly-in and fly-back here. */
+  setHooks(hooks: DockHooks): void;
 }
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input, select, textarea, iframe, [tabindex]:not([tabindex="-1"])';
@@ -38,7 +40,8 @@ const FOCUSABLE = 'a[href], button:not([disabled]), input, select, textarea, ifr
 type Loops = { pauseAll(): void; resume(): void };
 
 export function createDock(opts: DockOptions): Dock {
-  const { root, entries, siteUrl, hooks = {} } = opts;
+  const { root, entries, siteUrl } = opts;
+  let hooks: DockHooks = opts.hooks ?? {};
   const doc = opts.doc ?? document;
   const loadTimeoutMs = opts.loadTimeoutMs ?? 12_000;
   const wide = opts.wide ?? (() => typeof matchMedia === 'function' && matchMedia('(min-width: 900px)').matches);
@@ -193,5 +196,5 @@ export function createDock(opts: DockOptions): Dock {
   const fromHash = typeof location !== 'undefined' ? parseWorkHash(location.hash) : null;
   if (fromHash && entry(fromHash) && wide()) void open(fromHash, null);
 
-  return { open, close, current: () => current };
+  return { open, close, current: () => current, setHooks: (h) => (hooks = h) };
 }

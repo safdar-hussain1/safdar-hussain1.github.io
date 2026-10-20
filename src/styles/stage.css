@@ -1,0 +1,170 @@
+/* The stage: while the city runs, one canvas sits behind the page and the hero and the work
+   section are shaped around it; on a narrow screen the lens alone sits inside the hero.
+   None of this applies on the flat site, which has no canvas at all. */
+.stage-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: -1;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 700ms var(--ease);
+}
+body.stage-on .stage-canvas,
+body.lens-on .stage-canvas {
+  opacity: 1;
+}
+body.stage-on .stage-canvas[style] {
+  transition: opacity 220ms linear;
+}
+.stage-media {
+  position: fixed;
+  width: 2px;
+  height: 2px;
+  left: -10px;
+  top: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.stage-media video {
+  width: 2px;
+  height: 2px;
+}
+
+/* The page over the canvas: the canvas sits below the root's content, so the dock and the
+   palette keep their place above the masthead. */
+body.stage-on .mast {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding-inline: var(--gutter-l) var(--gutter-r);
+  background: color-mix(in srgb, var(--ground) 78%, transparent);
+}
+
+/* The hero: full height, the name drawn in glass, the line and the cue at the foot. */
+body.stage-on .hero {
+  min-height: 100vh;
+  min-height: 100svh;
+  padding-top: 6rem;
+  padding-bottom: 9vh;
+}
+body.stage-on .hero h1,
+body.lens-on .hero h1,
+body.stage-on .work__head {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+body.stage-on .hero__art,
+body.lens-on .hero__art {
+  display: none;
+}
+body.stage-on .hero__text,
+body.lens-on .hero__text {
+  position: relative;
+  z-index: 1;
+}
+body.stage-on .hero__line {
+  max-width: 30ch;
+  text-shadow: 0 1px 24px color-mix(in srgb, var(--ground) 80%, transparent);
+}
+
+/* The work section: tall, so the scroll has room for the road; the captions ride in a sticky
+   panel and only the stop in focus shows. */
+body.stage-on .work {
+  padding: 0;
+  height: calc(var(--stops, 6) * 120vh + 160vh);
+}
+body.stage-on .work__list {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  display: block;
+}
+body.stage-on .plate {
+  position: absolute;
+  left: 0;
+  bottom: 8vh;
+  width: min(31rem, 100%);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  padding: 1.35rem 1.55rem 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--ground) 66%, transparent);
+  backdrop-filter: blur(18px) saturate(1.25);
+  -webkit-backdrop-filter: blur(18px) saturate(1.25);
+  box-shadow: var(--shadow);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(14px);
+  pointer-events: none;
+  transition: opacity 420ms var(--ease), transform 520ms var(--ease), visibility 0s linear 420ms;
+}
+body.stage-on .plate.on {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  pointer-events: auto;
+  transition: opacity 420ms var(--ease) 80ms, transform 520ms var(--ease) 80ms, visibility 0s;
+}
+body.stage-on .plate__media {
+  display: none;
+}
+body.stage-on .plate__name {
+  font-size: clamp(1.7rem, 1.3rem + 1.1vw, 2.3rem);
+}
+body.stage-on .plate__tagline {
+  font-size: var(--step-0);
+}
+
+/* The rail of stops at the right while the road is travelled. */
+body.stage-on .rail {
+  position: fixed;
+  right: var(--gutter-r);
+  top: 50%;
+  transform: translateY(-50%);
+  display: none;
+}
+body.stage-on.tour-on .rail {
+  display: flex;
+}
+body.drive-on .plate,
+body.drive-on .rail,
+body.fly-on .plate,
+body.fly-on .rail {
+  display: none;
+}
+
+/* The lens alone inside the hero on a narrow screen. */
+body.lens-on .hero {
+  position: relative;
+  min-height: min(82vh, 760px);
+}
+body.lens-on .stage-canvas {
+  position: absolute;
+  z-index: 0;
+}
+
+/* Stills: ?still=city shows only the canvas. */
+html[data-still='city'] main,
+html[data-still='city'] .mast,
+html[data-still='city'] .foot {
+  display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage-canvas,
+  body.stage-on .plate {
+    transition: none;
+  }
+}
