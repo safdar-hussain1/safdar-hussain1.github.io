@@ -59,8 +59,10 @@ const flows = {
     await page.goto(BASE, { waitUntil: 'networkidle' });
     if ((await page.locator('h1').textContent())?.trim() !== 'Safdar Hussain') throw new Error('h1 is not the name');
     if ((await page.locator('.plate[data-status="live"]').count()) !== 6) throw new Error('expected six live cards');
-    await page.evaluate(() => document.getElementById('projects').scrollIntoView());
-    await page.waitForFunction(() => [...document.querySelectorAll('video.loop')].some((v) => !v.paused && v.currentTime > 0), null, { timeout: 20000 });
+    // An instant scroll (the page scrolls smoothly by default) and a long wait: a software-rendered
+    // Chrome creates and decodes the first loop slowly in its first context.
+    await page.evaluate(() => document.getElementById('projects').scrollIntoView({ behavior: 'instant', block: 'start' }));
+    await page.waitForFunction(() => [...document.querySelectorAll('video.loop')].some((v) => !v.paused && v.currentTime > 0), null, { timeout: 45000 });
     const nav = await page.evaluate(() => [...document.querySelectorAll('.mast__nav a')].map((a) => a.textContent.trim()));
     if (nav.join('|') !== 'Projects|Experience|Skills|Practice|About|Contact|3D city') throw new Error(`nav reads ${nav.join('|')}`);
     await axe(page, 'home dark');
@@ -284,6 +286,16 @@ const flows = {
 
 const names = Object.keys(flows).filter((n) => ONLY.length === 0 || ONLY.includes(n));
 const browser = await launch({ browser: BROWSER });
+// Warm the browser once: its first context compiles the filters' shaders and decodes the first
+// loop at a few frames per second under software rendering, which is not what the flows measure.
+{
+  const ctx = await browser.newContext({ viewport: WIDE });
+  const page = await ctx.newPage();
+  await page.goto(BASE, { waitUntil: 'networkidle' }).catch(() => {});
+  await page.evaluate(() => document.getElementById('projects')?.scrollIntoView({ behavior: 'instant' })).catch(() => {});
+  await page.waitForTimeout(2500);
+  await ctx.close();
+}
 let failed = 0;
 for (const name of names) {
   try {

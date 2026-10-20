@@ -82,3 +82,10 @@
   display: block;
   background: var(--ground);
 }
+
+/* Icons are drawn at their pixel size but measured in rem, so they grow with the page. */
+.icon {
+  width: calc(var(--i, 18) / 16 * 1rem);
+  height: calc(var(--i, 18) / 16 * 1rem);
+  flex: none;
+}

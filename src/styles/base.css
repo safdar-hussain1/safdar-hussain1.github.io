@@ -37,10 +37,17 @@
   size-adjust: 84.5%;
 }
 
+/* The whole page scales with the screen, like a zoom: 100 % up to 1280 px wide, 120 % at 1512 px
+   (a 14-inch MacBook at its default scaling), 125 % from 1570 px. Every layout size is in rem so
+   the column, the type and the controls grow together. */
 html {
   -webkit-text-size-adjust: 100%;
+  font-size: clamp(100%, -1.655px + 1.379vw, 125%);
   scroll-behavior: smooth;
   scroll-padding-top: 5rem;
+}
+html[data-still] {
+  font-size: 100%;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -278,7 +285,7 @@ code {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  min-height: 46px;
+  min-height: 2.875rem;
   padding: 0 1.25rem;
   border-radius: var(--radius-pill);
   border: 1px solid var(--line-2);

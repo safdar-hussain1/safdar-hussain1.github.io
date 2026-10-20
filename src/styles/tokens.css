@@ -40,7 +40,7 @@
   --display: 'Archivo Variable', 'Archivo', 'Archivo Fallback', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --prose: 'Newsreader Variable', 'Newsreader', 'Newsreader Fallback', Georgia, 'Times New Roman', serif;
 
-  --max: 1120px;
+  --max: 70rem;
   --gutter-l: max(16px, env(safe-area-inset-left, 0px));
   --gutter-r: max(16px, env(safe-area-inset-right, 0px));
 
@@ -58,8 +58,8 @@
   --s-5: 5rem;
   --s-6: 7rem;
 
-  --radius: 16px;
-  --radius-lg: 22px;
+  --radius: 1rem;
+  --radius-lg: 1.375rem;
   --radius-pill: 999px;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
 
