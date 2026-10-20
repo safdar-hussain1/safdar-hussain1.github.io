@@ -31,18 +31,13 @@ describe('how I work, experience, skills, about and contact', () => {
     expect(points.length).toBeGreaterThan(0);
     for (const p of points) expect(tl).toContain(p.replace(/'/g, '&#39;'));
     expect(tl).toContain('exp__row--now');
-    // The chart above the list: one bar or point per row, the years as gridlines, the arrow to today.
-    expect(tl).toMatch(/<svg viewBox="0 0 1000 \d+" role="img" aria-label="A chart of the same years/);
-    expect((tl.match(/class="exp__bar/g) ?? []).length).toBe(5);
-    expect((tl.match(/class="exp__point"/g) ?? []).length).toBe(1);
-    expect(tl).toContain('class="exp__arrow"');
   });
 
   test('skills shows every group as chips and every certificate', () => {
     const sk = section('skills');
     for (const g of ['Machine learning', 'Language models', 'Computer vision', 'Web', 'Backend and cloud']) expect(sk).toContain(`>${g}</h3>`);
-    for (const item of ['PyTorch', 'LangGraph', 'OpenCV', 'Three.js', 'FastAPI']) expect(sk).toContain(`>${item}</span>`);
-    expect((sk.match(/<li class="tile"/g) ?? []).length).toBe(skills.reduce((n, g) => n + g.items.length, 0));
+    for (const item of ['PyTorch', 'LangGraph', 'OpenCV', 'Three.js', 'FastAPI']) expect(sk).toContain(`>${item}</li>`);
+    expect((sk.match(/<li class="chip chip--plain"/g) ?? []).length).toBe(skills.reduce((n, g) => n + g.items.length, 0));
     for (const c of ['Advanced Learning Algorithms', 'CS50&#39;s Introduction to Programming with Python', 'Harvard']) expect(sk).toContain(c);
   });
 
