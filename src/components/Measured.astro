@@ -7,11 +7,20 @@ interface Props {
 }
 const { entries } = Astro.props;
 ---
-<section id="measured" class="measured section section--ruled wrap" aria-labelledby="measured-title">
-  <div class="sec__head" data-reveal>
-    <p class="eyebrow"><span class="eyebrow__n">03</span>Measured</p>
-    <h2 id="measured-title">In each project's <em class="em">own</em> figures</h2>
-    <p class="sec__lede">Every figure on the left is quoted from the project's README and links to the line. The figures on the right are GitHub's own, fetched live.</p>
+<section id="measured" class="measured section band band--2" aria-labelledby="measured-title">
+  <div class="wrap">
+    <div class="sec__head" data-reveal>
+      <p class="eyebrow"><span class="eyebrow__n">03</span>Measured</p>
+      <h2 id="measured-title">In each project's <em class="em">own</em> figures</h2>
+      <p class="sec__lede">Every figure on the left is quoted from the project's README and links to the line. The figures on the right are GitHub's own, fetched live.</p>
+    </div>
+    <Ledger entries={entries} />
   </div>
-  <Ledger entries={entries} />
 </section>
+
+<style>
+  .measured {
+    margin-top: var(--s-6);
+    padding-block: var(--s-5) var(--s-5);
+  }
+</style>

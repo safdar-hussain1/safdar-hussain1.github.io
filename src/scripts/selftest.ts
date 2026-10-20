@@ -63,7 +63,7 @@ export async function runSelftest(ctx: SelftestContext): Promise<SelftestResult>
 
   check('meta author', doc.querySelector('meta[name="author"]')?.getAttribute('content') === 'Safdar Hussain');
   check('the authorship comment', doc.documentElement.outerHTML.includes('Built by Safdar Hussain · https://github.com/safdar-hussain1'));
-  check('the footer credit', /Built by Safdar Hussain\./.test(doc.querySelector('footer')?.textContent ?? ''));
+  check('the footer credit', /built by Safdar Hussain/i.test(doc.querySelector('footer')?.textContent ?? ''));
   check('exactly one h1', doc.querySelectorAll('h1').length === 1);
 
   const stage = ctx.stage;

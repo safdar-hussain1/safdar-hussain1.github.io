@@ -18,6 +18,7 @@ export const SITE = {
   repo: 'https://github.com/safdar-hussain1/safdar-hussain1.github.io',
   gsc: '0SIEfExLTSQj1qvnHWF5A5fY58KVl2lpIEnePP9CtI0',
   lastmod: '2026-10-19',
+  copyrightYear: '2026',
   ogImage: 'https://safdar-hussain1.github.io/og-image.png',
   ogAlt: 'Safdar Hussain, set in wide light type behind a glass lens, over a small night city whose buildings carry his projects',
 } as const;

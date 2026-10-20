@@ -7,26 +7,37 @@ import Icon from './Icon.astro';
     <div class="contact__head" data-reveal>
       <p class="eyebrow"><span class="eyebrow__n">07</span>Contact</p>
       <h2 id="contact-title">Let's build something that runs on <em class="em">your device</em>.</h2>
-      <p class="contact__lede">Email is best. I'm in Hyderabad and I work remotely.</p>
-      <a class="contact__mail" href={`mailto:${SITE.author.email}`}>
-        <code id="contact-email">{SITE.author.email}</code>
-        <span class="contact__arrow" aria-hidden="true"><Icon name="arrow-right" size={22} /></span>
-      </a>
-      <div class="contact__row">
-        <button class="btn ghost" type="button" id="copy-email" aria-label="Copy the email address"><Icon name="copy" size={16} /> Copy</button>
-        <a class="btn ghost" href={SITE.author.github}><Icon name="github" size={17} /> GitHub</a>
-        <a class="btn ghost" href={SITE.author.linkedin}><Icon name="linkedin" size={17} /> LinkedIn</a>
-      </div>
+      <p class="contact__lede">Whether it is a role, a contract or a question about one of the products, write to me. Email is best; I read it every day.</p>
+      <dl class="contact__details">
+        <div>
+          <dt><Icon name="mail" size={16} /> Email</dt>
+          <dd>
+            <a class="contact__mail" href={`mailto:${SITE.author.email}`}><code id="contact-email">{SITE.author.email}</code></a>
+            <button class="contact__copy" type="button" id="copy-email" aria-label="Copy the email address"><Icon name="copy" size={15} /><span>Copy</span></button>
+          </dd>
+        </div>
+        <div>
+          <dt><Icon name="pin" size={16} /> Based in</dt>
+          <dd>Hyderabad, India. I work remotely, on Indian Standard Time.</dd>
+        </div>
+        <div>
+          <dt><Icon name="git" size={16} /> Elsewhere</dt>
+          <dd class="contact__links">
+            <a href={SITE.author.github}><Icon name="github" size={16} /> GitHub</a>
+            <a href={SITE.author.linkedin}><Icon name="linkedin" size={16} /> LinkedIn</a>
+          </dd>
+        </div>
+      </dl>
     </div>
     <form class="contact__form" action={`mailto:${SITE.author.email}`} method="post" enctype="text/plain" data-contact-form data-reveal data-reveal-delay="120">
-      <p class="contact__form-title">Or write here</p>
+      <p class="contact__form-title">Send a message</p>
       <div class="contact__fields">
         <label><span>Your name</span><input type="text" name="name" autocomplete="name" required /></label>
         <label><span>Your email</span><input type="email" name="email" autocomplete="email" required /></label>
-        <label class="contact__wide"><span>Message</span><textarea name="message" rows="5" required></textarea></label>
+        <label class="contact__wide"><span>Message</span><textarea name="message" rows="5" required placeholder="What are you building, and where could I help?"></textarea></label>
       </div>
       <div class="contact__send">
-        <button class="btn cta" type="submit">Send <Icon name="arrow-right" size={16} /></button>
+        <button class="btn cta" type="submit">Send message <Icon name="arrow-right" size={16} /></button>
         <p class="contact__note meta" data-form-note>Opens in your mail app, addressed to me. Nothing is stored here.</p>
       </div>
     </form>
@@ -42,10 +53,10 @@ import Icon from './Icon.astro';
   const code = document.getElementById('contact-email');
   btn?.addEventListener('click', async () => {
     const ok = await copyText(code?.textContent?.trim() ?? '', code ?? undefined);
-    const label = btn.querySelector('svg')?.nextSibling;
-    if (label) label.textContent = ok ? ' Copied' : ' Selected';
+    const label = btn.querySelector('span');
+    if (label) label.textContent = ok ? 'Copied' : 'Selected';
     setTimeout(() => {
-      if (label) label.textContent = ' Copy';
+      if (label) label.textContent = 'Copy';
     }, 1600);
   });
   const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
@@ -63,7 +74,7 @@ import Icon from './Icon.astro';
   }
   @media (min-width: 980px) {
     .contact__in {
-      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
       gap: var(--s-6);
       align-items: start;
     }
@@ -78,24 +89,53 @@ import Icon from './Icon.astro';
     opacity: 0.75;
   }
   .contact__head h2 {
-    font-size: clamp(2rem, 1.2rem + 2.6vw, 3.4rem);
+    font-size: clamp(2rem, 1.2rem + 2.6vw, 3.3rem);
     max-width: 16ch;
   }
   .contact__lede {
     font-size: var(--step-1);
-    opacity: 0.8;
+    opacity: 0.85;
+    max-width: 44ch;
   }
-  .contact__mail {
+  .contact__details {
+    margin: 0.6rem 0 0;
+    border-top: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+  }
+  .contact__details > div {
+    display: grid;
+    gap: 0.4rem 1.2rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+    font-family: var(--display);
+  }
+  @media (min-width: 560px) {
+    .contact__details > div {
+      grid-template-columns: 130px minmax(0, 1fr);
+      align-items: center;
+    }
+  }
+  .contact__details dt {
     display: inline-flex;
     align-items: center;
-    gap: 1rem;
-    width: fit-content;
-    margin-top: 0.6rem;
+    gap: 0.5rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    opacity: 0.85;
+  }
+  .contact__details dd {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.9rem;
+    font-size: 1rem;
+  }
+  .contact__mail {
     text-decoration: none;
     color: inherit;
   }
   .contact__mail code {
-    font-size: clamp(1.1rem, 0.9rem + 1vw, 1.6rem);
+    font-size: 1.05rem;
     font-weight: 600;
     letter-spacing: -0.01em;
     text-decoration: underline;
@@ -104,33 +144,35 @@ import Icon from './Icon.astro';
     text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
     user-select: all;
   }
-  .contact__arrow {
-    display: inline-grid;
-    place-items: center;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: 1px solid color-mix(in srgb, currentColor 35%, transparent);
-    flex: none;
-    transition: transform 200ms var(--ease), background 200ms var(--ease);
+  .contact__mail:hover code {
+    text-decoration-color: currentColor;
   }
-  .contact__mail:hover .contact__arrow {
-    transform: translateX(4px);
-    background: color-mix(in srgb, currentColor 10%, transparent);
-  }
-  .contact__row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    margin-top: 0.4rem;
-  }
-  .contact .btn.ghost {
+  .contact__copy {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+    font-family: var(--display);
+    font-size: 0.82rem;
+    font-weight: 600;
     color: inherit;
-    border-color: color-mix(in srgb, currentColor 30%, transparent);
-    background: transparent;
   }
-  .contact .btn.ghost:hover {
+  .contact__copy:hover {
     border-color: currentColor;
+  }
+  .contact__links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    text-decoration: none;
+    font-weight: 500;
+    color: inherit;
+    border-bottom: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+  }
+  .contact__links a:hover {
+    border-bottom-color: currentColor;
   }
   .contact__form {
     display: grid;
@@ -143,7 +185,7 @@ import Icon from './Icon.astro';
   .contact__form-title {
     font-family: var(--display);
     font-weight: 600;
-    font-size: 1.05rem;
+    font-size: 1.15rem;
   }
   .contact__fields {
     display: grid;
@@ -176,6 +218,11 @@ import Icon from './Icon.astro';
     border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
     background: color-mix(in srgb, var(--ground) 70%, transparent);
     transition: border-color 150ms var(--ease);
+  }
+  .contact__fields textarea::placeholder,
+  .contact__fields input::placeholder {
+    color: inherit;
+    opacity: 0.45;
   }
   .contact__fields textarea {
     resize: vertical;

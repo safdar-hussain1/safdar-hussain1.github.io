@@ -54,7 +54,8 @@ describe('home page head', () => {
 describe('authorship marks', () => {
   test('meta author, HTML comment, footer credit', () => {
     expect(html).toContain('<!-- Built by Safdar Hussain · https://github.com/safdar-hussain1 -->');
-    expect(html).toMatch(/Built by Safdar Hussain\./);
+    expect(html).toMatch(/built by Safdar Hussain/i);
+    expect(html).toContain(`© ${SITE.copyrightYear} Safdar Hussain. All rights reserved.`);
   });
 
   test('console signature is in a shipped script', () => {

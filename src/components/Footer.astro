@@ -19,12 +19,14 @@ import Icon from './Icon.astro';
     <div class="foot__links">
       <a href={SITE.author.github}><Icon name="github" size={16} /> GitHub</a>
       <a href={SITE.author.linkedin}><Icon name="linkedin" size={16} /> LinkedIn</a>
-      <a href={SITE.repo}><Icon name="code" size={16} /> Source on GitHub</a>
+      <a href={`mailto:${SITE.author.email}`}><Icon name="mail" size={16} /> Email</a>
+      <a href={SITE.repo}><Icon name="code" size={16} /> Source</a>
     </div>
   </div>
-  <p class="wrap foot__note">
-    Built by Safdar Hussain. Every number about a project on this site is copied from that project's README.
-  </p>
+  <div class="wrap foot__legal">
+    <p class="foot__copy">© {SITE.copyrightYear} Safdar Hussain. All rights reserved.</p>
+    <p class="foot__credit">Designed and built by Safdar Hussain in Hyderabad.</p>
+  </div>
   <p class="foot__mark wrap" aria-hidden="true" data-mark="Safdar Hussain"></p>
 </footer>
 
@@ -87,13 +89,21 @@ import Icon from './Icon.astro';
   .foot__links a:hover {
     color: var(--ink);
   }
-  .foot__note {
-    max-width: none;
+  .foot__legal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
     margin-top: var(--s-3);
     padding-top: var(--s-2);
     border-top: 1px solid var(--line);
-    color: var(--ink-2);
     font-size: 0.85rem;
+  }
+  .foot__legal p {
+    max-width: none;
+  }
+  .foot__copy {
+    color: var(--ink);
   }
   /* The name, set very large and cut by the bottom of the page: the site's signature. */
   .foot__mark::before {

@@ -223,6 +223,11 @@ code {
   color: var(--band-ink);
 }
 
+.band--2 {
+  background: var(--band-2);
+  color: var(--ink);
+}
+
 /* The one card surface the few remaining cards share. */
 .card {
   background: var(--card);

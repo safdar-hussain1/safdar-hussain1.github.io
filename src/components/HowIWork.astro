@@ -9,27 +9,12 @@ const fact = (slug: string, i: number) => {
   const e = entries.find((x) => x.slug === slug)!;
   return { ...e.facts[i], name: e.name, accent: e.accent, accentInk: e.accentInk };
 };
+// Each rule carries a small drawing of itself, animated once as it comes into view.
 const principles = [
-  {
-    title: 'Measure, don’t claim',
-    text: 'Every product is scored against the naive thing people actually do, and the number is on the page.',
-    proof: fact('homecast', 2),
-  },
-  {
-    title: 'Break it on purpose',
-    text: 'Each headline claim has a test that goes red when the mechanism behind it is removed.',
-    proof: fact('red-light-green-light-cv', 1),
-  },
-  {
-    title: 'Publish the bad number',
-    text: 'A fix that did not help stays in the report, next to the ones that did.',
-    proof: fact('nightingale', 3),
-  },
-  {
-    title: 'It runs on your device',
-    text: 'No server anywhere. The model you read about is the model that runs, and nothing you load leaves the tab.',
-    proof: fact('wardos', 0),
-  },
+  { key: 'measure', title: 'Measure, don’t claim', text: 'Every product is scored against the naive thing people actually do, and the number is on the page.', proof: fact('homecast', 2) },
+  { key: 'break', title: 'Break it on purpose', text: 'Each headline claim has a test that goes red when the mechanism behind it is removed.', proof: fact('red-light-green-light-cv', 1) },
+  { key: 'publish', title: 'Publish the bad number', text: 'A fix that did not help stays in the report, next to the ones that did.', proof: fact('nightingale', 3) },
+  { key: 'device', title: 'It runs on your device', text: 'No server anywhere. The model you read about is the model that runs, and nothing you load leaves the tab.', proof: fact('wardos', 0) },
 ];
 ---
 <section id="how" class="how section section--ruled wrap" aria-labelledby="how-title">
@@ -41,7 +26,56 @@ const principles = [
   <ol class="how__list">
     {
       principles.map((p, i) => (
-        <li class="how__item" data-reveal data-reveal-delay={i * 70} style={`--accent:${p.proof.accent};--accent-ink:${p.proof.accentInk.dark};--accent-ink-light:${p.proof.accentInk.light}`}>
+        <li class={`how__item how__item--${p.key}`} data-reveal data-reveal-delay={i * 90} style={`--accent:${p.proof.accent};--accent-ink:${p.proof.accentInk.dark};--accent-ink-light:${p.proof.accentInk.light}`}>
+          <div class="how__art" aria-hidden="true">
+            {p.key === 'measure' && (
+              <svg viewBox="0 0 160 96">
+                <line class="how__base" x1="12" y1="80" x2="148" y2="80" />
+                <rect class="how__bar how__bar--naive" x="40" y="22" width="30" height="58" rx="3" />
+                <rect class="how__bar how__bar--model" x="92" y="44" width="30" height="36" rx="3" />
+                <line class="how__dash" x1="40" y1="22" x2="122" y2="22" />
+                <text x="55" y="92" text-anchor="middle">the usual rule</text>
+                <text x="107" y="92" text-anchor="middle">the model</text>
+              </svg>
+            )}
+            {p.key === 'break' && (
+              <svg viewBox="0 0 160 96">
+                {[0, 1, 2, 3, 4, 5].map((k) => (
+                  <g class="how__cell" style={`--k:${k}`} transform={`translate(${30 + (k % 3) * 36} ${18 + Math.floor(k / 3) * 36})`}>
+                    <rect width="26" height="26" rx="6" />
+                    <path class="how__tick" d="M7 13.5l4.5 4.5L19 9" />
+                  </g>
+                ))}
+                <text x="80" y="92" text-anchor="middle">six mutations, six caught</text>
+              </svg>
+            )}
+            {p.key === 'publish' && (
+              <svg viewBox="0 0 160 96">
+                <path class="how__bracket" d="M22 12v68" />
+                {[0, 1, 2].map((k) => (
+                  <g class={`how__line${k === 1 ? ' how__line--bad' : ''}`} transform={`translate(34 ${16 + k * 24})`}>
+                    <rect class="how__label" x="0" y="0" width="46" height="10" rx="5" />
+                    <rect class="how__value" x="56" y="0" width={k === 1 ? 24 : k === 0 ? 62 : 50} height="10" rx="5" />
+                    {k === 1 && <path class="how__cross" d="M88 1l8 8M96 1l-8 8" />}
+                  </g>
+                ))}
+                <text x="80" y="92" text-anchor="middle">the report keeps every row</text>
+              </svg>
+            )}
+            {p.key === 'device' && (
+              <svg viewBox="0 0 160 96">
+                <rect class="how__screen" x="30" y="14" width="100" height="58" rx="8" />
+                <path class="how__stand" d="M18 80h124" />
+                <path class="how__loop" d="M80 56a14 14 0 1 1 12-21" />
+                <path class="how__loopHead" d="M88 32l6 4-1-7" />
+                <g class="how__cloud" transform="translate(112 6)">
+                  <path d="M8 22a7 7 0 0 1 1-14 9 9 0 0 1 17 2 6 6 0 0 1-1 12z" />
+                  <path class="how__slash" d="M2 26L30 2" />
+                </g>
+                <text x="80" y="92" text-anchor="middle">nothing leaves the tab</text>
+              </svg>
+            )}
+          </div>
           <span class="how__n" aria-hidden="true">0{i + 1}</span>
           <h3>{p.title}</h3>
           <p class="how__text">{p.text}</p>
@@ -79,18 +113,157 @@ const principles = [
       margin-left: calc(-1 * var(--s-3) / 2);
     }
   }
+  /* The drawings: ink lines, one accent, a line of small type under each. */
+  .how__art {
+    height: 112px;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--ink) 4%, transparent);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+  .how__art svg {
+    width: 100%;
+    max-width: 200px;
+    height: 100%;
+    fill: none;
+    stroke: var(--ink-2);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .how__art text {
+    fill: var(--ink-3);
+    stroke: none;
+    font-family: var(--display);
+    font-size: 8.5px;
+    font-weight: 500;
+  }
+  .how__base,
+  .how__stand {
+    stroke: var(--ink-3);
+  }
+  .how__dash {
+    stroke: var(--ink-3);
+    stroke-dasharray: 3 3;
+    opacity: 0.7;
+  }
+  .how__bar {
+    stroke: none;
+    transform-origin: 50% 80px;
+    transform: scaleY(0);
+  }
+  .how__bar--naive {
+    fill: var(--ink-3);
+    opacity: 0.55;
+  }
+  .how__bar--model {
+    fill: var(--accent);
+  }
+  .in .how__bar--naive {
+    animation: grow 900ms var(--ease) 200ms forwards;
+  }
+  .in .how__bar--model {
+    animation: grow 900ms var(--ease) 500ms forwards;
+  }
+  @keyframes grow {
+    to {
+      transform: scaleY(1);
+    }
+  }
+  .how__cell rect {
+    stroke: var(--ink-3);
+  }
+  .how__cell .how__tick {
+    stroke: var(--accent);
+    stroke-width: 2.2;
+    stroke-dasharray: 22;
+    stroke-dashoffset: 22;
+  }
+  .in .how__cell .how__tick {
+    animation: draw 500ms var(--ease) forwards;
+    animation-delay: calc(300ms + var(--k) * 140ms);
+  }
+  .in .how__cell rect {
+    animation: catch 500ms var(--ease) forwards;
+    animation-delay: calc(300ms + var(--k) * 140ms);
+  }
+  @keyframes draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes catch {
+    to {
+      stroke: var(--accent);
+    }
+  }
+  .how__bracket {
+    stroke: var(--ink-3);
+  }
+  .how__label,
+  .how__value {
+    stroke: none;
+    fill: var(--ink-3);
+    opacity: 0.5;
+  }
+  .how__line--bad .how__value {
+    fill: var(--bad);
+    opacity: 0.9;
+  }
+  .how__cross {
+    stroke: var(--bad);
+    stroke-width: 2;
+  }
+  .in .how__line--bad {
+    animation: keep 1.6s var(--ease) 600ms 2;
+  }
+  @keyframes keep {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.35;
+    }
+  }
+  .how__screen {
+    stroke: var(--ink-2);
+  }
+  .how__loop,
+  .how__loopHead {
+    stroke: var(--accent);
+    stroke-width: 2.2;
+    transform-origin: 80px 42px;
+  }
+  .in .how__loop,
+  .in .how__loopHead {
+    animation: spin 6s linear infinite;
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .how__cloud {
+    stroke: var(--ink-3);
+    opacity: 0.6;
+  }
+  .how__slash {
+    stroke: var(--bad);
+  }
   .how__n {
     font-family: var(--display);
-    font-size: 2.4rem;
-    font-weight: 300;
-    letter-spacing: -0.03em;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
     line-height: 1;
     color: var(--ink-3);
     font-variant-numeric: tabular-nums;
+    margin-top: 0.4rem;
   }
   .how__item h3 {
     font-size: 1.2rem;
-    margin-top: 0.3rem;
   }
   .how__text {
     color: var(--ink-2);
@@ -127,5 +300,25 @@ const principles = [
   }
   :root[data-theme='light'] .how__proof a:hover {
     color: var(--accent-ink-light);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .how__bar {
+      transform: none;
+    }
+    .how__cell .how__tick {
+      stroke-dashoffset: 0;
+    }
+    .how__cell rect {
+      stroke: var(--accent);
+    }
+    .in .how__bar--naive,
+    .in .how__bar--model,
+    .in .how__cell .how__tick,
+    .in .how__cell rect,
+    .in .how__line--bad,
+    .in .how__loop,
+    .in .how__loopHead {
+      animation: none;
+    }
   }
 </style>
