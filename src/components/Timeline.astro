@@ -1,39 +1,39 @@
 ---
 import timeline from '../data/timeline.json';
 import { shortDate } from '../lib/dates';
-import Icon from './Icon.astro';
-import type { IconName } from './Icon.astro';
 
-// Newest first, the way a reader scans a CV.
+// A CV, newest first: dates on the left, the entry on the right, a hairline between rows.
 type Kind = 'work' | 'education' | 'community' | 'talk';
-const KINDS: Record<Kind, { label: string; icon: IconName }> = {
-  work: { label: 'Work', icon: 'briefcase' },
-  education: { label: 'Education', icon: 'school' },
-  community: { label: 'Community', icon: 'users' },
-  talk: { label: 'Talk', icon: 'mic' },
-};
-const items = [...timeline].reverse() as Array<{ when: string; until?: string; ongoing?: boolean; kind: Kind; title: string; role: string; text: string }>;
-const span = (t: (typeof items)[number]) => shortDate(t.when) + (t.until ? ` – ${shortDate(t.until)}` : t.ongoing ? ' – now' : '');
+const KINDS: Record<Kind, string> = { work: 'Work', education: 'Education', community: 'Community', talk: 'Talk' };
+type Item = { when: string; until?: string; ongoing?: boolean; kind: Kind; title: string; role: string; text: string; points?: string[] };
+const items = [...(timeline as Item[])].reverse();
+const span = (t: Item) => shortDate(t.when) + (t.until ? ` – ${shortDate(t.until)}` : t.ongoing ? ' – now' : '');
 ---
-<section id="experience" class="exp section wrap" aria-labelledby="experience-title">
+<section id="experience" class="exp section section--ruled wrap" aria-labelledby="experience-title">
   <div class="sec__head" data-reveal>
-    <p class="eyebrow">Experience</p>
-    <h2 id="experience-title">Where I have been</h2>
+    <p class="eyebrow"><span class="eyebrow__n">04</span>Experience</p>
+    <h2 id="experience-title">Where I have <em class="em">been</em></h2>
     <p class="sec__lede">From the first year of the degree to the job I do now, with the work in between.</p>
   </div>
-  <ol class="exp__list">
+  <ol class="rows exp__list">
     {
       items.map((t, i) => (
-        <li class={`exp__item exp__item--${t.kind}`} data-reveal data-reveal-delay={i * 50}>
+        <li class={`exp__row exp__row--${t.kind}${t.ongoing ? ' exp__row--now' : ''}`} data-reveal data-reveal-delay={i * 40}>
           <div class="exp__when">
-            <span class="exp__dot" aria-hidden="true"></span>
-            <span class="exp__dates meta">{span(t)}</span>
-            <span class="exp__kind"><Icon name={KINDS[t.kind].icon} size={14} /> {KINDS[t.kind].label}</span>
+            <span class="exp__dates">{t.ongoing && <span class="pulse" aria-hidden="true" />}{span(t)}</span>
+            <span class="exp__kind">{KINDS[t.kind]}</span>
           </div>
-          <div class="card card--hover exp__card">
+          <div class="exp__body">
             <h3>{t.title}</h3>
             <p class="exp__role">{t.role}</p>
             <p class="exp__text">{t.text}</p>
+            {t.points && (
+              <ul class="exp__points">
+                {t.points.map((p) => (
+                  <li>{p}</li>
+                ))}
+              </ul>
+            )}
           </div>
         </li>
       ))
@@ -42,105 +42,83 @@ const span = (t: (typeof items)[number]) => shortDate(t.when) + (t.until ? ` –
 </section>
 
 <style>
-  .exp__list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  .exp__row {
     display: grid;
-    gap: 1.1rem;
-    position: relative;
+    gap: 0.6rem 2rem;
+    padding: 1.4rem 0 1.6rem;
   }
-  .exp__list::before {
-    content: '';
-    position: absolute;
-    left: 7px;
-    top: 10px;
-    bottom: 10px;
-    width: 2px;
-    background: linear-gradient(to bottom, var(--brand), var(--line) 40%, var(--line));
-  }
-  .exp__item {
-    display: grid;
-    gap: 0.6rem;
-    padding-left: 2rem;
-    position: relative;
+  @media (min-width: 820px) {
+    .exp__row {
+      grid-template-columns: 240px minmax(0, 1fr);
+      align-items: start;
+    }
   }
   .exp__when {
     display: flex;
-    align-items: center;
     flex-wrap: wrap;
-    gap: 0.7rem;
+    align-items: center;
+    gap: 0.4rem 0.9rem;
+    font-family: var(--display);
   }
-  .exp__dot {
-    position: absolute;
-    left: 2px;
-    top: 0.35rem;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--ground);
-    border: 2px solid var(--brand);
-    box-shadow: 0 0 0 4px var(--brand-soft);
-  }
-  .exp__item--work .exp__dot {
-    background: var(--brand);
+  @media (min-width: 820px) {
+    .exp__when {
+      flex-direction: column;
+      align-items: flex-start;
+      padding-top: 0.25rem;
+    }
   }
   .exp__dates {
-    color: var(--ink);
-    font-variant-numeric: tabular-nums;
-  }
-  .exp__kind {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    padding: 0.2rem 0.6rem;
-    border-radius: var(--radius-pill);
-    background: var(--brand-soft);
-    color: var(--brand-ink);
-    font-family: var(--display);
-    font-size: 0.76rem;
+    gap: 0.55rem;
     font-weight: 600;
+    font-size: 0.95rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
   }
-  .exp__card {
+  .exp__kind {
+    font-size: 0.82rem;
+    color: var(--ink-3);
+  }
+  .exp__body {
     display: grid;
     gap: 0.35rem;
-    padding: 1.1rem 1.3rem 1.2rem;
+    min-width: 0;
   }
-  .exp__card h3 {
-    font-size: 1.15rem;
+  .exp__body h3 {
+    font-size: 1.3rem;
   }
   .exp__role {
     font-family: var(--display);
     font-weight: 500;
     color: var(--brand-ink);
-    font-size: 0.95rem;
+    font-size: 0.98rem;
   }
   .exp__text {
     color: var(--ink-2);
-    max-width: 60ch;
+    max-width: 62ch;
+    margin-top: 0.25rem;
   }
-  @media (min-width: 900px) {
-    .exp__list::before {
-      left: calc(220px + 7px);
-    }
-    .exp__item {
-      grid-template-columns: 200px minmax(0, 1fr);
-      gap: 1.6rem;
-      padding-left: 0;
-      align-items: start;
-    }
-    .exp__when {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.45rem;
-      padding-top: 1.1rem;
-    }
-    .exp__dot {
-      left: calc(220px + 2px);
-      top: 1.35rem;
-    }
-    .exp__card {
-      margin-left: 2rem;
-    }
+  .exp__points {
+    margin: 0.5rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.4rem;
+    color: var(--ink-2);
+    max-width: 62ch;
+  }
+  .exp__points li {
+    position: relative;
+    padding-left: 1.2rem;
+  }
+  .exp__points li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.72em;
+    width: 0.55rem;
+    height: 1px;
+    background: var(--ink-3);
   }
 </style>

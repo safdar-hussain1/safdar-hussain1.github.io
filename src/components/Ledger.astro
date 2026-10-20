@@ -1,0 +1,213 @@
+---
+import type { WorkEntry } from '../lib/work-schema';
+import { liveEntries } from '../lib/work';
+import snapshot from '../data/github-snapshot.json';
+import type { GithubSnapshot, RepoStatus } from '../lib/github';
+import { shortIsoDate } from '../lib/format';
+import { jsonForHtml } from '../lib/json';
+import Icon from './Icon.astro';
+
+// One row per project: the README's figures on the left, GitHub's own on the right. The board
+// script swaps the baked GitHub cells for live ones once GitHub answers.
+interface Props {
+  entries: WorkEntry[];
+}
+const { entries } = Astro.props;
+const live = liveEntries(entries);
+const snap = snapshot as GithubSnapshot;
+const rowFor = (slug: string): RepoStatus | undefined => snap.rows.find((r) => r.repo === slug);
+const CI_WORDS: Record<RepoStatus['ci'], string> = { passing: 'tests passing', failing: 'tests failing', unknown: 'tests not run yet' };
+---
+<div class="ledger" id="github-board" data-snapshot-date={snap.fetchedAt} data-repos={live.map((e) => e.slug).join(',')}>
+  <ol class="rows ledger__rows">
+    {
+      live.map((e, i) => {
+        const r = rowFor(e.slug);
+        return (
+          <li class="ledger__row" data-repo={e.slug} data-source={r ? 'snapshot' : 'none'} data-reveal data-reveal-delay={i * 40} style={`--accent:${e.accent};--accent-ink:${e.accentInk.dark};--accent-ink-light:${e.accentInk.light}`}>
+            <div class="ledger__who">
+              <span class="ledger__n" aria-hidden="true">0{i + 1}</span>
+              <a class="ledger__name" href={e.repo}><span class="ledger__dot" aria-hidden="true"></span>{e.name}<Icon name="external" size={13} /></a>
+              <span class={`gh__ci gh__ci--${r?.ci ?? 'unknown'}`} data-field="ci"><span>{CI_WORDS[r?.ci ?? 'unknown']}</span></span>
+            </div>
+            <div class="ledger__facts">
+              <p class="ledger__lead"><a href={e.facts[0].source}>{e.facts[0].text}</a></p>
+              <ul>
+                {e.facts.slice(1, 3).map((f) => (
+                  <li><a href={f.source}>{f.text}</a></li>
+                ))}
+              </ul>
+            </div>
+            <dl class="ledger__gh">
+              <div><dt>Stars</dt><dd class="num" data-field="stars">{r?.stars ?? '—'}</dd></div>
+              <div><dt>Open issues</dt><dd class="num" data-field="openIssues">{r?.openIssues ?? '—'}</dd></div>
+              <div><dt>Licence</dt><dd data-field="licence">{r?.licence ?? '—'}</dd></div>
+              <div><dt>Last push</dt><dd data-field="pushedAt" data-iso={r?.pushedAt ?? ''}>{r ? shortIsoDate(r.pushedAt) : '—'}</dd></div>
+            </dl>
+          </li>
+        );
+      })
+    }
+  </ol>
+  <p class="ledger__caption meta" data-gh-caption>Snapshot taken {shortIsoDate(snap.fetchedAt)}. Live figures load when GitHub answers.</p>
+  <script type="application/json" data-gh-snapshot set:html={jsonForHtml(snap.rows)} />
+</div>
+
+<script>
+  import { renderBoard } from '../scripts/github-board';
+
+  const root = document.getElementById('github-board');
+  if (root) void renderBoard(root);
+</script>
+
+<style>
+  .ledger {
+    display: grid;
+    gap: 1rem;
+  }
+  .ledger__row {
+    display: grid;
+    gap: 1rem 1.6rem;
+    padding: 1.4rem 0 1.5rem;
+    font-family: var(--display);
+  }
+  @media (min-width: 900px) {
+    .ledger__row {
+      grid-template-columns: 220px minmax(0, 1fr) 300px;
+      align-items: start;
+    }
+  }
+  .ledger__who {
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+    justify-items: start;
+  }
+  .ledger__n {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+  }
+  .ledger__name {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 1.12rem;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+  }
+  .ledger__name .icon {
+    color: var(--ink-3);
+  }
+  .ledger__dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .gh__ci {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--ink-2);
+    white-space: nowrap;
+  }
+  .gh__ci::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ink-3);
+  }
+  .gh__ci--passing {
+    color: var(--good);
+  }
+  .gh__ci--passing::before {
+    background: var(--good);
+  }
+  .gh__ci--failing {
+    color: var(--bad);
+  }
+  .gh__ci--failing::before {
+    background: var(--bad);
+  }
+  .ledger__facts {
+    display: grid;
+    gap: 0.6rem;
+    min-width: 0;
+  }
+  .ledger__lead {
+    font-weight: 600;
+    font-size: clamp(1.15rem, 1rem + 0.5vw, 1.4rem);
+    letter-spacing: -0.015em;
+    line-height: 1.3;
+    max-width: 30ch;
+  }
+  .ledger__lead a {
+    text-decoration-color: color-mix(in srgb, var(--accent) 60%, transparent);
+    text-decoration-thickness: 2px;
+  }
+  .ledger__facts ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.35rem;
+    font-size: 0.95rem;
+    color: var(--ink-2);
+  }
+  .ledger__facts ul li::before {
+    content: '—';
+    margin-right: 0.5rem;
+    color: var(--ink-3);
+  }
+  .ledger__facts a {
+    color: var(--ink);
+    text-decoration-color: var(--line-2);
+  }
+  .ledger__facts a:hover {
+    color: var(--accent-ink);
+  }
+  .ledger__gh {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.6rem;
+  }
+  @media (min-width: 900px) {
+    .ledger__gh {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.8rem 1rem;
+      padding-left: 1.6rem;
+      border-left: 1px solid var(--line);
+    }
+  }
+  .ledger__gh div {
+    display: grid;
+    gap: 0.15rem;
+  }
+  .ledger__gh dt {
+    font-size: 0.74rem;
+    color: var(--ink-3);
+  }
+  .ledger__gh dd {
+    margin: 0;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .ledger__caption {
+    color: var(--ink-2);
+  }
+  :root[data-theme='light'] .ledger__facts a:hover {
+    color: var(--accent-ink-light);
+  }
+  @media (max-width: 420px) {
+    .ledger__gh {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

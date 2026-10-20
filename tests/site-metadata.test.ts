@@ -82,9 +82,14 @@ describe('masthead and hero', () => {
   });
 
   test('the hero has the pitch, the calls to action and the picture of the city', () => {
-    expect(html).toContain('I build machine learning, computer vision and full products that run on your own device, and I publish the numbers behind them.');
+    expect(html).toMatch(/I build machine learning, computer vision and full products that run on <em class="em"[^>]*>your own device<\/em>, and I publish the numbers behind them\./);
     expect(html).toContain(`${SITE.author.jobTitle} at ${SITE.author.employer}`);
-    expect(html).toMatch(/<a class="btn brand" href="#projects"[^>]*>See the projects/);
+    expect(html).toMatch(/<a class="btn cta" href="#projects"[^>]*>See the projects/);
+    // The four facts under the hero: the CGPA is the only figure, and it is the allowed one.
+    const stats = html.match(/<ul class="hero__stats"[\s\S]*?<\/ul>/)![0];
+    expect(stats).toMatch(/<b[^>]*>9\.19<\/b>/);
+    expect(stats).toContain('Technical Head');
+    expect(stats).toContain('Six products');
     expect(html).toMatch(/<a class="btn ghost" href="\/city\/"[^>]*>[\s\S]*?Explore the 3D city/);
     expect(html).toContain('id="hero-art"');
     expect(html).toMatch(/<img[^>]*class="hero__still"[^>]*src="\/hero-still-sm\.webp"[^>]*fetchpriority="high"/);

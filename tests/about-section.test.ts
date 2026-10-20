@@ -17,15 +17,19 @@ describe('how I work, experience, skills, about and contact', () => {
     for (const t of ['Measure, don’t claim', 'Break it on purpose', 'Publish the bad number', 'It runs on your device']) expect(how).toContain(t);
   });
 
-  test('experience renders the seven items newest first, each with its kind and role', () => {
+  test('experience renders the seven items newest first, each with its kind, role and points', () => {
     const tl = section('experience');
-    const items = tl.match(/<li class="exp__item exp__item--(work|education|community|talk)"/g) ?? [];
+    const items = tl.match(/<li class="exp__row exp__row--(work|education|community|talk)/g) ?? [];
     expect(items).toHaveLength(7);
     const titles = [...tl.matchAll(/<h3[^>]*>([^<]+)<\/h3>/g)].map((m) => m[1]);
     expect(titles).toEqual([...timeline].reverse().map((t) => t.title));
     expect((tl.match(/<p class="exp__role"/g) ?? []).length).toBe(timeline.length);
     expect(tl).toContain('Jul 2026 – now');
     expect(tl).toContain('Jun 2025 – Aug 2025');
+    const points = timeline.flatMap((t) => ('points' in t ? (t.points as string[]) : []));
+    expect(points.length).toBeGreaterThan(0);
+    for (const p of points) expect(tl).toContain(p.replace(/'/g, '&#39;'));
+    expect(tl).toContain('exp__row--now');
   });
 
   test('skills shows every group as chips and every certificate', () => {
@@ -53,7 +57,11 @@ describe('how I work, experience, skills, about and contact', () => {
     expect(c).toContain('href="https://github.com/safdar-hussain1"');
     expect(c).toContain('href="https://www.linkedin.com/in/safdar-hussain-a8a61b248"');
     expect(c).toContain('id="copy-email"');
-    expect(c).toContain("Let's build something that runs on your device.");
+    expect(c).toMatch(/Let's build something that runs on <em class="em"[^>]*>your device<\/em>\./);
+    // The form opens the visitor's mail app; without scripts its own action does the same.
+    expect(c).toMatch(/<form class="contact__form" action="mailto:safdarhussaindudekula@gmail\.com" method="post" enctype="text\/plain"/);
+    for (const name of ['name', 'email', 'message']) expect(c).toContain(`name="${name}"`);
+    expect(c).toContain('Nothing is stored here.');
   });
 
   test('the footer carries the sections, the links and the credit', () => {

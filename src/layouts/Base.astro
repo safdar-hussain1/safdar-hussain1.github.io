@@ -1,8 +1,10 @@
 ---
 import '@fontsource-variable/archivo/wdth.css';
 import '@fontsource-variable/newsreader/opsz.css';
+import '@fontsource-variable/newsreader/opsz-italic.css';
 import archivoUrl from '@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2?url';
 import newsreaderUrl from '@fontsource-variable/newsreader/files/newsreader-latin-opsz-normal.woff2?url';
+import newsreaderItalicUrl from '@fontsource-variable/newsreader/files/newsreader-latin-opsz-italic.woff2?url';
 import '../styles/tokens.css';
 import '../styles/base.css';
 import '../styles/components.css';
@@ -72,6 +74,7 @@ const graph = { '@context': 'https://schema.org', '@graph': [website, person, ..
     <link rel="preconnect" href="https://api.github.com" crossorigin />
     <link rel="preload" href={archivoUrl} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={newsreaderUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={newsreaderItalicUrl} as="font" type="font/woff2" crossorigin />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Safdar Hussain" />

@@ -34,6 +34,7 @@ async function revealAll(page) {
 }
 
 async function axe(page, label, options = {}) {
+  await revealAll(page);
   await page.addScriptTag({ path: AXE });
   const result = await page.evaluate((o) => window.axe.run(document, { iframes: false, ...o }), options);
   const bad = result.violations.filter((v) => ['serious', 'critical', 'moderate', 'minor'].includes(v.impact));

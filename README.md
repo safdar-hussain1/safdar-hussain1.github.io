@@ -20,16 +20,16 @@ files.
 
 | Section | What it does |
 |---|---|
-| **Hero** | The name, the one-line pitch, *See the projects* and *Explore the 3D city*, and a picture of the city rendered from the same scene the city page runs |
-| **Projects** | One card per live project, with a loop of the real page and two actions: *Use it here* (docks the live app in the page on a desktop; opens it on a phone) and *Read more* (a page per project with the app at the top and the measured facts under it) |
-| **How I work** | Four rules as cards, each with one measured fact and the README line it is quoted from |
-| **Measured** | Stat tiles, every figure quoted word for word from a project's README, and repo cards fetched live from the GitHub API with a dated snapshot as the fallback |
-| **Experience**, **Skills**, **About**, **Contact** | The timeline newest first, the tools grouped by the work they do with the certificates, the facts about me, and how to reach me |
+| **Hero** | The name, the one-line pitch, *See the projects* and *Explore the 3D city*, four facts on a rule, and a picture of the city rendered from the same scene the city page runs |
+| **Projects** | One card per live project, with a loop of the real page, its stack, and two actions: *Use it here* (docks the live app in the page on a desktop; opens it on a phone) and *Read more* (a page per project with the app at the top and the measured facts under it) |
+| **How I work** | Four numbered rules, each with one measured fact and the README line it is quoted from |
+| **Measured** | A ledger, one row per project: the README's figures on the left, quoted word for word, and GitHub's own figures on the right, fetched live with a dated snapshot as the fallback |
+| **Experience**, **Skills**, **About**, **Contact** | A CV newest first, the tools grouped by the work they do with the certificates, the facts about me at a glance, and a contact band with the email, the links and a form that opens your mail app |
 | **The city** (`/city/`) | On a wide screen with a GPU: the lens over the name, then one building per project along a road, its live page on the facade screen, the cards as captions, a rail of stops at the right (arrow keys and digits move along it). The frame rate is measured once after the start; a slow machine loses the shadows, then the moving traffic, then the city itself and keeps the cards |
 | **The palette** | Press `/` anywhere (or Ctrl/Cmd-K) to jump to any project, section or link, switch the theme or the sound |
 
-The site is dark; a switch turns it light and the choice is remembered. The city is lit at
-night on the dark theme and stands in daylight on the light one. Sound is off until you turn
+The site is dark; a switch turns it light (paper, near-black ink, hairlines) and the choice is
+remembered. The city is lit at night on the dark theme and stands in daylight on the light one. Sound is off until you turn
 it on. Phones open the live sites directly instead of framing them, and on the city page they
 keep the cards; a tablet gets the lens alone; reduced motion, Save-Data and a browser without
 hardware WebGL2 also keep the cards. Every word on every page is in the HTML whether or not
@@ -69,7 +69,7 @@ npm run check                            # astro check: types in .astro and .ts 
 npm run build                            # writes docs/
 #   9 page(s) built in 1.49s · Complete!
 npm test                                 # vitest over the helpers and the built docs/
-#   Test Files  27 passed (27) · Tests  355 passed (355)
+#   Test Files  28 passed (28) · Tests  357 passed (357)
 node scripts/serve.mjs --port 4300       # the site at / and each project at /<repo>/
 #   Serving http://127.0.0.1:4300  / -> docs  /homecast/ -> ../1-homecast/docs  /nightingale/ -> ../2-nightingale/docs  /red-light-green-light-cv/ -> ../3-red-light-green-light-cv/docs  /wardos/ -> ../4-wardos/docs  /carmine/ -> ../5-carmine/docs  /trafficlens/ -> ../6-trafficlens/docs
 node scripts/e2e.mjs                     # browser flows + axe against the running server
@@ -118,7 +118,7 @@ src/
   content.config.ts  the collection and its schema (src/lib/work-schema.ts)
   data/              facts about me, the timeline, certificates, skills, the GitHub snapshot
   layouts/Base.astro the head of every page: metadata, fonts, theme, authorship marks
-  components/        masthead, hero, project cards, dock, boards, experience, skills, about, contact, palette
+  components/        masthead, hero, project cards, dock, the ledger, experience, skills, about, contact, palette
   pages/             the home page, the city page, a page per project, robots.txt, sitemap.xml, the 404 page
   scripts/           browser modules: theme, dock, palette, sound, GitHub board, selftest
   scripts/stage/     the city: the lens, the name, the ground, the buildings, the facade screens,

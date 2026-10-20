@@ -1,8 +1,4 @@
-/* Shared pieces that several components use: sections, chips, the section rhythm. */
-.section {
-  padding-block: var(--s-6) 0;
-}
-
+/* Shared pieces that several components use: chips, the pulse, the live frame. */
 .chips {
   display: flex;
   flex-wrap: wrap;
@@ -33,6 +29,35 @@
 
 .chip--plain::before {
   display: none;
+}
+
+/* A small green pulse: something is live, or being built right now. */
+.pulse {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--good);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--good) 55%, transparent);
+  animation: pulse 2.2s ease-out infinite;
+  flex: none;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--good) 55%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 9px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse {
+    animation: none;
+  }
 }
 
 /* A project's live site inside the page; created by script, so styled globally. */

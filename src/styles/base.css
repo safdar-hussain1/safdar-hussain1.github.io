@@ -4,6 +4,34 @@
   box-sizing: border-box;
 }
 
+/* Fallback faces sized to the real ones (widths measured in Chrome at text sizes; the serif's
+   optical size makes it narrower than Georgia there), so the text wraps the same before and
+   after the web fonts arrive and nothing on the page moves. */
+@font-face {
+  font-family: 'Archivo Fallback';
+  src: local('Arial'), local('Roboto'), local('Helvetica Neue');
+  font-weight: 100 500;
+  size-adjust: 98.2%;
+}
+@font-face {
+  font-family: 'Archivo Fallback';
+  src: local('Arial Bold'), local('Arial-BoldMT'), local('Roboto Bold'), local('Helvetica Neue Bold');
+  font-weight: 600 900;
+  size-adjust: 94%;
+}
+@font-face {
+  font-family: 'Newsreader Fallback';
+  src: local('Georgia'), local('Times New Roman');
+  font-style: normal;
+  size-adjust: 92.5%;
+}
+@font-face {
+  font-family: 'Newsreader Fallback';
+  src: local('Georgia Italic'), local('Georgia-Italic'), local('Times New Roman Italic');
+  font-style: italic;
+  size-adjust: 84.5%;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
@@ -63,6 +91,15 @@ h2 {
 h3 {
   font-size: var(--step-1);
   letter-spacing: -0.01em;
+}
+
+/* One word of a heading set in the serif italic: the editorial accent of the site. */
+.em {
+  font-family: var(--prose);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  font-size: 1.06em;
 }
 
 p {
@@ -128,31 +165,36 @@ code {
   white-space: nowrap;
 }
 
-/* The small label above a section title, and the title block itself. */
+/* The numbered label above a section title, and the title block itself. */
 .eyebrow {
   display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
+  align-items: baseline;
+  gap: 0.55rem;
   font-family: var(--display);
-  font-size: 0.82rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--brand-ink);
+  font-size: 0.84rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--ink-2);
 }
 
-.eyebrow::before {
-  content: '';
-  width: 22px;
-  height: 2px;
-  border-radius: 2px;
-  background: var(--grad);
+.eyebrow__n {
+  font-variant-numeric: tabular-nums;
+  color: var(--brand-ink);
+  font-weight: 600;
+}
+
+.eyebrow__n::after {
+  content: '/';
+  margin-left: 0.55rem;
+  color: var(--ink-3);
+  font-weight: 400;
 }
 
 .sec__head {
   display: grid;
-  gap: 0.9rem;
+  gap: 1rem;
   margin-bottom: var(--s-4);
-  max-width: 62ch;
+  max-width: 64ch;
 }
 
 .sec__lede {
@@ -161,7 +203,27 @@ code {
   max-width: 54ch;
 }
 
-/* The one card surface every component shares. */
+/* Every home-page section opens on a hairline: the page reads as one long editorial. */
+.section {
+  padding-block: var(--s-5) 0;
+}
+
+.section--ruled {
+  border-top: 1px solid var(--line);
+  padding-top: var(--s-4);
+  margin-top: var(--s-6);
+}
+
+/* A full-width band that breaks the column. */
+.band {
+  margin-left: calc(-1 * var(--gutter-l));
+  margin-right: calc(-1 * var(--gutter-r));
+  padding-inline: var(--gutter-l) var(--gutter-r);
+  background: var(--band);
+  color: var(--band-ink);
+}
+
+/* The one card surface the few remaining cards share. */
 .card {
   background: var(--card);
   border: 1px solid var(--line);
@@ -179,16 +241,19 @@ code {
   box-shadow: var(--shadow);
 }
 
-/* A small round icon badge. */
-.badge {
-  display: inline-grid;
-  place-items: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  background: var(--brand-soft);
-  color: var(--brand-ink);
-  flex: none;
+/* A list whose rows are separated by hairlines. */
+.rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.rows > li {
+  border-top: 1px solid var(--line);
+}
+
+.rows > li:last-child {
+  border-bottom: 1px solid var(--line);
 }
 
 .btn {
@@ -226,15 +291,15 @@ code {
   box-shadow: 0 14px 34px -12px color-mix(in srgb, var(--accent) 85%, transparent);
 }
 
-.btn.brand {
-  background: var(--grad);
-  color: #0a0e1c;
+/* The main call to action: a gradient pill at night, a black pill on paper. */
+.btn.cta {
+  background: var(--cta-bg);
+  color: var(--cta-ink);
   border-color: transparent;
-  box-shadow: 0 12px 34px -12px rgba(122, 162, 255, 0.7);
 }
 
-.btn.brand:hover {
-  box-shadow: 0 16px 40px -12px rgba(122, 162, 255, 0.9);
+.btn.cta:hover {
+  box-shadow: 0 14px 34px -14px color-mix(in srgb, var(--ink) 40%, transparent);
 }
 
 .btn.ghost {

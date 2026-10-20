@@ -23,7 +23,7 @@ describe('facts about Safdar', () => {
       ...about.facts.map((f) => f.text),
       about.outside,
       about.now.text,
-      ...timeline.map((t) => `${t.title} ${t.role} ${t.text}`),
+      ...timeline.map((t) => `${t.title} ${t.role} ${t.text} ${'points' in t ? (t.points as string[]).join(' ') : ''}`),
       ...certificates.map((c) => `${c.name} ${c.issuer}`),
       ...skills.flatMap((g) => [g.name, ...g.items]),
     ];

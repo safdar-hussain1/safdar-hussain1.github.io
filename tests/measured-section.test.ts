@@ -23,7 +23,7 @@ describe('measured section', () => {
 
   test('the GitHub board renders the snapshot rows server-side and says when it was taken', () => {
     expect(section).toContain('Snapshot taken');
-    for (const e of liveEntries(entries)) expect(section).toMatch(new RegExp(`<li class="card card--hover gh__card" data-repo="${e.slug}" data-source="snapshot"`));
+    for (const e of liveEntries(entries)) expect(section).toMatch(new RegExp(`<li class="ledger__row" data-repo="${e.slug}" data-source="snapshot"`));
     expect(section).toContain(`data-snapshot-date="${snapshot.fetchedAt}"`);
   });
 

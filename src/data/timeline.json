@@ -1,8 +1,32 @@
 [
   { "when": "2022-08", "kind": "education", "title": "Mahindra University", "role": "B.Tech, Computer Science and Engineering", "text": "Started the degree in Hyderabad." },
   { "when": "2024", "kind": "talk", "title": "MICA conference", "role": "Poster", "text": "Presented a poster on object detection for traffic surveillance." },
-  { "when": "2024-09", "until": "2025-06", "kind": "community", "title": "Computer Vision Club", "role": "Technical Head", "text": "Led the traffic-surveillance detection work from datasets and training to evaluation, and mentored the team." },
-  { "when": "2025-06", "until": "2025-08", "kind": "work", "title": "Mana Pharma", "role": "AI intern", "text": "A solvent-screening pipeline that shortlists and ranks candidate solvents." },
+  {
+    "when": "2024-09",
+    "until": "2025-06",
+    "kind": "community",
+    "title": "Computer Vision Club, Mahindra University",
+    "role": "Technical Head",
+    "text": "Led the traffic-surveillance vertical and mentored the team.",
+    "points": [
+      "Took the object-detection work end to end: dataset preparation, training pipelines, evaluation and deployment-ready inference.",
+      "Mentored peers and coordinated the team.",
+      "Organised a multi-stage technical event at the university fest, with live computer-vision challenges, Red Light, Green Light among them."
+    ]
+  },
+  {
+    "when": "2025-06",
+    "until": "2025-08",
+    "kind": "work",
+    "title": "Mana Pharma",
+    "role": "AI intern",
+    "text": "A pipeline that shortlists and ranks candidate solvents for the formulations team.",
+    "points": [
+      "Data preparation, molecular feature extraction, scoring and ranking logic, and result reporting, end to end.",
+      "Cheminformatics descriptors and similarity, combined with constraints and heuristics, so the recommendations could be acted on.",
+      "A structured solvent database built from component data and public sources, with reproducible preprocessing."
+    ]
+  },
   { "when": "2025-07", "until": "2026-07", "kind": "work", "title": "Navatej Technologies", "role": "AI intern", "text": "Full time and remote, through the final year of the degree." },
   { "when": "2026-07", "kind": "education", "title": "Graduated", "role": "B.Tech, Computer Science and Engineering", "text": "CGPA 9.19, Academic Scholarship all four years." },
   { "when": "2026-07", "ongoing": true, "kind": "work", "title": "Navatej Technologies", "role": "AI Engineer", "text": "Full time, remote." }

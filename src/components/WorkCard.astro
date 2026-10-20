@@ -47,6 +47,7 @@ const live = e.status === 'live';
       <span class="plate__count meta">{index + 1} of {total}</span>
     </h3>
     <p class="plate__tagline">{e.tagline}</p>
+    {live && <p class="plate__stack meta">{e.stack.slice(0, 4).join(' · ')}</p>}
     {
       live && (
         <div class="chips">
@@ -144,6 +145,10 @@ const live = e.status === 'live';
     font-size: var(--step-1);
     max-width: 40ch;
   }
+  .plate__stack {
+    color: var(--ink-2);
+    font-size: 0.86rem;
+  }
   .plate__actions {
     display: flex;
     flex-wrap: wrap;
@@ -153,8 +158,9 @@ const live = e.status === 'live';
   .plate__related a {
     color: var(--ink-2);
   }
-  :root[data-theme='light'] .plate {
-    --accent-ink: var(--accent-ink-light);
+  :root[data-theme='light'] .plate__count,
+  :root[data-theme='light'] .plate__related a:hover {
+    color: var(--accent-ink-light);
   }
   @media (prefers-reduced-motion: reduce) {
     .plate__media {

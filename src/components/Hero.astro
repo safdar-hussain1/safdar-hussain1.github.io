@@ -11,7 +11,7 @@ interface Props {
 }
 const { entries, variant = 'home' } = Astro.props;
 const live = liveEntries(entries).length;
-const WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+const WORDS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'];
 const liveWord = WORDS[live] ?? String(live);
 // The picture of the city, rendered from the same scene the city page runs. The alt names what
 // it is of without listing the projects (the cards do that).
@@ -21,40 +21,43 @@ const stillAlt = `A small night city on a round plinth: ${entries.length} buildi
   variant === 'home' ? (
     <section class="hero wrap" aria-labelledby="hero-title">
       <div class="hero__glow" aria-hidden="true" />
-      <div class="hero__text">
-        <p class="hero__eyebrow">
-          <span class="pulse" aria-hidden="true" />
-          {SITE.author.jobTitle} at {SITE.author.employer} · Hyderabad, remote
-        </p>
-        <h1 id="hero-title">Safdar Hussain</h1>
-        <p class="hero__line">I build machine learning, computer vision and full products that run on your own device, and I publish the numbers behind them.</p>
-        <div class="hero__cta">
-          <a class="btn brand" href="#projects">See the projects <Icon name="arrow-down" size={16} /></a>
-          <a class="btn ghost" href="/city/"><Icon name="cube" size={16} /> Explore the 3D city</a>
-          <a class="hero__social" href={SITE.author.github} aria-label="GitHub"><Icon name="github" size={19} /></a>
-          <a class="hero__social" href={SITE.author.linkedin} aria-label="LinkedIn"><Icon name="linkedin" size={19} /></a>
+      <div class="hero__grid">
+        <div class="hero__text">
+          <p class="hero__status">
+            <span class="pulse" aria-hidden="true" />
+            {SITE.author.jobTitle} at {SITE.author.employer} · Hyderabad, remote
+          </p>
+          <h1 id="hero-title">Safdar Hussain</h1>
+          <p class="hero__line">I build machine learning, computer vision and full products that run on <em class="em">your own device</em>, and I publish the numbers behind them.</p>
+          <div class="hero__cta">
+            <a class="btn cta" href="#projects">See the projects <Icon name="arrow-down" size={16} /></a>
+            <a class="btn ghost" href="/city/"><Icon name="cube" size={16} /> Explore the 3D city</a>
+            <a class="hero__social" href={SITE.author.github} aria-label="GitHub"><Icon name="github" size={19} /></a>
+            <a class="hero__social" href={SITE.author.linkedin} aria-label="LinkedIn"><Icon name="linkedin" size={19} /></a>
+          </div>
         </div>
-        <ul class="hero__stats">
-          <li><Icon name="cube" size={16} /><span><b>{liveWord[0].toUpperCase() + liveWord.slice(1)} products</b>, each one running live in this page</span></li>
-          <li><Icon name="device" size={16} /><span><b>Nothing leaves your device</b>: no server anywhere</span></li>
-          <li><Icon name="check" size={16} /><span><b>Every figure</b> quoted word for word from its README</span></li>
-        </ul>
+        <a id="hero-art" class="hero__art" href="/city/">
+          <span class="hero__bar" aria-hidden="true"><i /><i /><i /><span class="hero__url">safdar-hussain1.github.io/city</span></span>
+          <img
+            class="hero__still"
+            src="/hero-still-sm.webp"
+            srcset="/hero-still-sm.webp 800w, /hero-still.webp 1600w"
+            sizes="(min-width: 900px) 50vw, 100vw"
+            width="1600"
+            height="1000"
+            fetchpriority="high"
+            decoding="async"
+            alt={stillAlt}
+          />
+          <span class="hero__badge"><Icon name="cube" size={16} /> Explore the 3D city</span>
+        </a>
       </div>
-      <a id="hero-art" class="hero__art card card--hover" href="/city/">
-        <span class="hero__bar" aria-hidden="true"><i /><i /><i /><span class="hero__url">safdar-hussain1.github.io/city</span></span>
-        <img
-          class="hero__still"
-          src="/hero-still-sm.webp"
-          srcset="/hero-still-sm.webp 800w, /hero-still.webp 1600w"
-          sizes="(min-width: 900px) 52vw, 100vw"
-          width="1600"
-          height="1000"
-          fetchpriority="high"
-          decoding="async"
-          alt={stillAlt}
-        />
-        <span class="hero__badge"><Icon name="cube" size={16} /> Explore the 3D city</span>
-      </a>
+      <ul class="hero__stats" aria-label="In brief">
+        <li><b>9.19</b><span>CGPA, Mahindra University</span></li>
+        <li><b>Four years</b><span>Academic Scholarship, every year of the degree</span></li>
+        <li><b>Technical Head</b><span>Computer Vision Club, Mahindra University</span></li>
+        <li><b>{liveWord} products</b><span>each one running live in this page, on your device</span></li>
+      </ul>
     </section>
   ) : (
     <section class="hero hero--city wrap" aria-labelledby="hero-title">
@@ -93,29 +96,33 @@ const stillAlt = `A small night city on a round plinth: ${entries.length} buildi
     min-height: calc(100vh - 4rem);
     min-height: calc(100svh - 4rem);
     align-content: center;
-    padding-block: var(--s-5) var(--s-5);
+    padding-block: var(--s-5) var(--s-4);
+  }
+  .hero__grid {
+    display: grid;
+    gap: var(--s-4);
+    align-items: center;
   }
   @media (min-width: 900px) {
-    .hero {
+    .hero__grid {
       grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
-      align-items: center;
       gap: var(--s-4);
     }
   }
-  /* Two soft lights behind the first screen, the city's blue and violet. */
+  /* Two soft lights behind the first screen at night; paper has none. */
   .hero__glow {
     position: absolute;
     inset: 0;
     pointer-events: none;
     z-index: -1;
     background:
-      radial-gradient(42% 55% at 18% 40%, color-mix(in srgb, var(--brand) 34%, transparent), transparent 70%),
-      radial-gradient(38% 50% at 82% 30%, color-mix(in srgb, var(--brand-2) 26%, transparent), transparent 70%);
+      radial-gradient(42% 55% at 18% 40%, color-mix(in srgb, var(--brand) 30%, transparent), transparent 70%),
+      radial-gradient(38% 50% at 82% 30%, color-mix(in srgb, var(--brand-2) 22%, transparent), transparent 70%);
     filter: blur(40px);
     opacity: 0.7;
   }
   :root[data-theme='light'] .hero__glow {
-    opacity: 0.45;
+    display: none;
   }
   .hero__text {
     position: relative;
@@ -123,50 +130,27 @@ const stillAlt = `A small night city on a round plinth: ${entries.length} buildi
     gap: 1.3rem;
     max-width: 38rem;
   }
-  .hero__eyebrow {
+  .hero__status {
     display: inline-flex;
     align-items: center;
     gap: 0.6rem;
     width: fit-content;
-    padding: 0.4rem 0.9rem 0.4rem 0.7rem;
-    border: 1px solid var(--line-2);
-    border-radius: var(--radius-pill);
-    background: color-mix(in srgb, var(--raised) 80%, transparent);
     font-family: var(--display);
-    font-size: 0.84rem;
+    font-size: 0.9rem;
     font-weight: 500;
     color: var(--ink-2);
   }
-  .pulse {
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background: var(--good);
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--good) 55%, transparent);
-    animation: pulse 2.2s ease-out infinite;
-  }
-  @keyframes pulse {
-    0% {
-      box-shadow: 0 0 0 0 color-mix(in srgb, var(--good) 55%, transparent);
-    }
-    70% {
-      box-shadow: 0 0 0 9px transparent;
-    }
-    100% {
-      box-shadow: 0 0 0 0 transparent;
-    }
-  }
   .hero h1 {
-    background: linear-gradient(180deg, var(--ink) 55%, color-mix(in srgb, var(--ink) 70%, var(--brand)));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: var(--ink);
   }
   .hero__line {
-    font-size: clamp(1.15rem, 1rem + 0.9vw, 1.45rem);
+    font-size: clamp(1.2rem, 1rem + 0.9vw, 1.5rem);
     line-height: 1.45;
     color: var(--ink-2);
     max-width: 36ch;
+  }
+  .hero__line .em {
+    color: var(--ink);
   }
   .hero__cta {
     display: flex;
@@ -193,28 +177,48 @@ const stillAlt = `A small night city on a round plinth: ${entries.length} buildi
     border-color: var(--ink-3);
     transform: translateY(-1px);
   }
+  /* The four facts under the hero, on hairlines. */
   .hero__stats {
     list-style: none;
-    margin: 0.6rem 0 0;
+    margin: var(--s-2) 0 0;
     padding: 0;
     display: grid;
-    gap: 0.55rem;
-    font-family: var(--display);
-    font-size: 0.92rem;
-    color: var(--ink-2);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    border-top: 1px solid var(--line);
   }
   .hero__stats li {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
+    display: grid;
+    gap: 0.3rem;
+    padding: 1.1rem 1.2rem 0.2rem 0;
+    border-right: 1px solid var(--line);
+    margin-right: 1.2rem;
+    font-family: var(--display);
   }
-  .hero__stats .icon {
-    color: var(--brand-ink);
-    flex: none;
+  .hero__stats li:last-child {
+    border-right: 0;
+    margin-right: 0;
   }
   .hero__stats b {
-    color: var(--ink);
+    font-size: 1.5rem;
     font-weight: 600;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .hero__stats span {
+    font-size: 0.88rem;
+    color: var(--ink-2);
+    line-height: 1.4;
+  }
+  @media (max-width: 640px) {
+    .hero__stats li {
+      border-right: 0;
+      margin-right: 0;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 0.9rem;
+    }
+    .hero__stats li:last-child {
+      border-bottom: 0;
+    }
   }
   /* The picture, framed like a window onto the city page. */
   .hero__art {
@@ -222,9 +226,16 @@ const stillAlt = `A small night city on a round plinth: ${entries.length} buildi
     display: block;
     overflow: hidden;
     border-radius: var(--radius-lg);
+    border: 1px solid var(--line);
+    background: var(--raised);
     text-decoration: none;
     color: inherit;
-    box-shadow: var(--shadow), 0 0 0 1px color-mix(in srgb, var(--brand) 18%, transparent), 0 24px 80px -30px color-mix(in srgb, var(--brand) 45%, transparent);
+    box-shadow: var(--shadow);
+    transition: transform 400ms var(--ease), box-shadow 400ms var(--ease), border-color 400ms var(--ease);
+  }
+  .hero__art:hover {
+    transform: translateY(-3px);
+    border-color: var(--line-2);
   }
   .hero__bar {
     display: flex;
@@ -269,7 +280,7 @@ const stillAlt = `A small night city on a round plinth: ${entries.length} buildi
     gap: 0.5rem;
     padding: 0.55rem 1rem;
     border-radius: var(--radius-pill);
-    background: rgba(10, 14, 28, 0.7);
+    background: rgba(10, 14, 28, 0.72);
     border: 1px solid rgba(255, 255, 255, 0.18);
     color: #eef2ff;
     font-family: var(--display);
@@ -279,10 +290,8 @@ const stillAlt = `A small night city on a round plinth: ${entries.length} buildi
     -webkit-backdrop-filter: blur(10px);
   }
   @media (prefers-reduced-motion: reduce) {
-    .pulse {
-      animation: none;
-    }
-    .hero__still {
+    .hero__still,
+    .hero__art {
       transition: none;
     }
   }
@@ -315,8 +324,6 @@ const stillAlt = `A small night city on a round plinth: ${entries.length} buildi
     font-weight: 300;
     font-stretch: 118%;
     letter-spacing: -0.015em;
-    background: none;
-    color: var(--ink);
   }
   .hero--city .hero__line {
     max-width: 34ch;
@@ -331,11 +338,6 @@ const stillAlt = `A small night city on a round plinth: ${entries.length} buildi
   }
   .hero__cue:hover {
     color: var(--ink);
-  }
-  .hero__art--city {
-    border: 1px solid var(--line);
-    background: var(--raised);
-    box-shadow: var(--shadow);
   }
   .hero__art--city .hero__still {
     height: 100%;

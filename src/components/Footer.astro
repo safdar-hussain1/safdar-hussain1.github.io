@@ -5,7 +5,7 @@ import Icon from './Icon.astro';
 <footer class="foot">
   <div class="wrap foot__in">
     <div class="foot__brand">
-      <b><span class="foot__mark" aria-hidden="true"></span>Safdar Hussain</b>
+      <b><span class="foot__dot" aria-hidden="true"></span>Safdar Hussain</b>
       <p>AI engineer. Products that run on your own device, with the numbers behind them.</p>
     </div>
     <nav class="foot__nav" aria-label="Footer">
@@ -25,17 +25,17 @@ import Icon from './Icon.astro';
   <p class="wrap foot__note">
     Built by Safdar Hussain. Every number about a project on this site is copied from that project's README.
   </p>
+  <p class="foot__mark wrap" aria-hidden="true" data-mark="Safdar Hussain"></p>
 </footer>
 
 <style>
   .foot {
-    margin-top: var(--s-6);
-    padding-block: var(--s-4) var(--s-4);
-    border-top: 1px solid var(--line);
+    padding-block: var(--s-4) 0;
     color: var(--ink-2);
     font-family: var(--display);
     font-size: var(--step--1);
     line-height: 1.5;
+    overflow: hidden;
   }
   .foot__in {
     display: grid;
@@ -60,7 +60,7 @@ import Icon from './Icon.astro';
     font-size: 1rem;
     font-weight: 600;
   }
-  .foot__mark {
+  .foot__dot {
     width: 9px;
     height: 9px;
     border-radius: 50%;
@@ -94,5 +94,21 @@ import Icon from './Icon.astro';
     border-top: 1px solid var(--line);
     color: var(--ink-2);
     font-size: 0.85rem;
+  }
+  /* The name, set very large and cut by the bottom of the page: the site's signature. */
+  .foot__mark::before {
+    content: attr(data-mark);
+  }
+  .foot__mark {
+    max-width: var(--max);
+    margin: var(--s-3) auto -0.22em;
+    font-size: clamp(3.6rem, 12.5vw, 12.5rem);
+    font-weight: 600;
+    letter-spacing: -0.045em;
+    line-height: 0.95;
+    white-space: nowrap;
+    color: var(--ink);
+    opacity: 0.08;
+    user-select: none;
   }
 </style>

@@ -1,12 +1,13 @@
-/* Layout: one 1120px column on a deep navy ground. Dark is the site's own look; the light theme
-   is a switch, not a system setting, and redefines the same tokens. Every colour is a token. */
+/* Layout: one 1120px column. Dark is the site's own look; the light theme is a switch and reads
+   as paper: warm ground, near-black ink, hairlines, one indigo accent, no glow. Every colour is
+   a token; the band tokens colour the full-width contact section. */
 :root {
   --ground: #0a0e1c;
   --ground-2: #0d1326;
   --raised: #121a2f;
   --raised-2: #182340;
-  --line: rgba(255, 255, 255, 0.08);
-  --line-2: rgba(255, 255, 255, 0.16);
+  --line: rgba(255, 255, 255, 0.09);
+  --line-2: rgba(255, 255, 255, 0.18);
   --ink: #eef2ff;
   --ink-2: #aab4cf;
   --ink-3: #7f8aa8;
@@ -15,20 +16,23 @@
   --brand-ink: #9ec1ff;
   --brand-soft: rgba(122, 162, 255, 0.14);
   --grad: linear-gradient(120deg, #7aa2ff 0%, #c084fc 55%, #f0abfc 100%);
+  --cta-bg: var(--grad);
+  --cta-ink: #0a0e1c;
+  --band: #0f1536;
+  --band-ink: #eef2ff;
   --focus: #9ecbff;
   --glass: rgba(14, 20, 39, 0.72);
   --card: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.02));
   --card-hover: rgba(255, 255, 255, 0.07);
   --shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.8);
   --shadow-2: 0 18px 50px -24px rgba(0, 0, 0, 0.7);
-  --glow: 0 0 0 1px rgba(122, 162, 255, 0.25), 0 12px 40px -12px rgba(122, 162, 255, 0.45);
   --accent: var(--brand);
   --accent-ink: var(--brand-ink);
   --good: #5ad38a;
   --bad: #ff7b7b;
 
-  --display: 'Archivo Variable', 'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --prose: 'Newsreader Variable', 'Newsreader', Georgia, 'Times New Roman', serif;
+  --display: 'Archivo Variable', 'Archivo', 'Archivo Fallback', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --prose: 'Newsreader Variable', 'Newsreader', 'Newsreader Fallback', Georgia, 'Times New Roman', serif;
 
   --max: 1120px;
   --gutter-l: max(16px, env(safe-area-inset-left, 0px));
@@ -57,28 +61,31 @@
 }
 
 :root[data-theme='light'] {
-  --ground: #f5f7fb;
-  --ground-2: #eef1f7;
-  --raised: #ffffff;
-  --raised-2: #f3f5fa;
-  --line: rgba(15, 23, 42, 0.09);
-  --line-2: rgba(15, 23, 42, 0.18);
-  --ink: #0f172a;
-  --ink-2: #475569;
-  --ink-3: #64748b;
-  --brand: #2f5bff;
-  --brand-2: #7c3aed;
-  --brand-ink: #2448d6;
-  --brand-soft: rgba(47, 91, 255, 0.1);
-  --grad: linear-gradient(120deg, #2f5bff 0%, #7c3aed 60%, #c026d3 100%);
-  --focus: #1d4ed8;
-  --glass: rgba(255, 255, 255, 0.78);
-  --card: linear-gradient(180deg, #ffffff, #fbfcfe);
+  --ground: #f6f4ef;
+  --ground-2: #efece5;
+  --raised: #fbfaf7;
+  --raised-2: #f1eee7;
+  --line: rgba(22, 21, 18, 0.12);
+  --line-2: rgba(22, 21, 18, 0.24);
+  --ink: #161512;
+  --ink-2: #514e47;
+  --ink-3: #6b675f;
+  --brand: #3b38c8;
+  --brand-2: #3b38c8;
+  --brand-ink: #2f2db0;
+  --brand-soft: rgba(59, 56, 200, 0.08);
+  --grad: #3b38c8;
+  --cta-bg: #161512;
+  --cta-ink: #fbfaf7;
+  --band: #e8e4f6;
+  --band-ink: #161512;
+  --focus: #2f2db0;
+  --glass: rgba(251, 250, 247, 0.82);
+  --card: #fbfaf7;
   --card-hover: #ffffff;
-  --shadow: 0 30px 80px -40px rgba(15, 23, 42, 0.35);
-  --shadow-2: 0 18px 50px -30px rgba(15, 23, 42, 0.3);
-  --glow: 0 0 0 1px rgba(47, 91, 255, 0.2), 0 12px 40px -12px rgba(47, 91, 255, 0.35);
-  --good: #15803d;
-  --bad: #b91c1c;
+  --shadow: 0 24px 60px -36px rgba(22, 21, 18, 0.28);
+  --shadow-2: 0 14px 40px -28px rgba(22, 21, 18, 0.22);
+  --good: #1f7a3f;
+  --bad: #b42318;
   color-scheme: light;
 }

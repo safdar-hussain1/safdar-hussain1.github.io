@@ -1,111 +1,93 @@
 ---
 import certificates from '../data/certificates.json';
 import skills from '../data/skills.json';
-import Icon from './Icon.astro';
-import type { IconName } from './Icon.astro';
-
-const ICONS: Record<string, IconName> = {
-  'Machine learning': 'brain',
-  'Language models': 'chat',
-  'Computer vision': 'eye',
-  Web: 'code',
-  'Backend and cloud': 'cloud',
-};
 ---
-<section id="skills" class="skills section wrap" aria-labelledby="skills-title">
+<section id="skills" class="skills section section--ruled wrap" aria-labelledby="skills-title">
   <div class="sec__head" data-reveal>
-    <p class="eyebrow">Skills</p>
-    <h2 id="skills-title">What I build with</h2>
+    <p class="eyebrow"><span class="eyebrow__n">05</span>Skills</p>
+    <h2 id="skills-title">What I <em class="em">build</em> with</h2>
     <p class="sec__lede">The tools behind the products above, grouped by the work they do.</p>
   </div>
   <div class="skills__grid">
-    {
-      skills.map((g, i) => (
-        <article class="card card--hover skills__group" data-reveal data-reveal-delay={i * 60}>
-          <div class="skills__top">
-            <span class="badge"><Icon name={ICONS[g.name] ?? 'spark'} size={20} /></span>
-            <h3>{g.name}</h3>
-          </div>
-          <ul class="chips">
-            {g.items.map((item) => (
-              <li class="chip chip--plain">{item}</li>
-            ))}
-          </ul>
-        </article>
-      ))
-    }
-    <article class="card skills__group skills__certs" data-reveal data-reveal-delay={skills.length * 60}>
-      <div class="skills__top">
-        <span class="badge"><Icon name="award" size={20} /></span>
-        <h3>Certificates</h3>
-      </div>
-      <ul class="skills__certlist">
+    <ol class="rows skills__table" data-reveal>
+      {
+        skills.map((g) => (
+          <li class="skills__row">
+            <h3 class="skills__name">{g.name}</h3>
+            <ul class="chips">
+              {g.items.map((item) => (
+                <li class="chip chip--plain">{item}</li>
+              ))}
+            </ul>
+          </li>
+        ))
+      }
+    </ol>
+    <aside class="skills__certs" data-reveal data-reveal-delay="120">
+      <h3>Certificates</h3>
+      <ol class="rows">
         {
           certificates.map((c) => (
-            <li>
-              <Icon name="check" size={15} />
-              <span>
-                <b>{c.name}</b>
-                {c.issuer && <span class="meta">{c.issuer}</span>}
-              </span>
+            <li class="skills__cert">
+              <b>{c.name}</b>
+              {c.issuer && <span class="meta">{c.issuer}</span>}
             </li>
           ))
         }
-      </ul>
-    </article>
+      </ol>
+    </aside>
   </div>
 </section>
 
 <style>
   .skills__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1rem;
+    gap: var(--s-4);
   }
-  .skills__group {
+  @media (min-width: 980px) {
+    .skills__grid {
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+      gap: var(--s-5);
+      align-items: start;
+    }
+  }
+  .skills__row {
     display: grid;
-    gap: 1rem;
-    align-content: start;
-    padding: 1.3rem 1.4rem 1.4rem;
+    gap: 0.8rem;
+    padding: 1.1rem 0 1.2rem;
   }
-  .skills__top {
-    display: flex;
-    align-items: center;
+  @media (min-width: 640px) {
+    .skills__row {
+      grid-template-columns: 180px minmax(0, 1fr);
+      gap: 1.5rem;
+      align-items: start;
+    }
+  }
+  .skills__name {
+    font-size: 1.02rem;
+    padding-top: 0.3rem;
+  }
+  .skills__row .chips {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .skills__certs {
+    display: grid;
     gap: 0.8rem;
   }
-  .skills__top h3 {
-    font-size: 1.15rem;
+  .skills__certs > h3 {
+    font-size: 1.02rem;
   }
-  .skills__group .chips {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  .skills__certlist {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  .skills__cert {
     display: grid;
-    gap: 0.7rem;
-  }
-  .skills__certlist li {
-    display: flex;
-    gap: 0.6rem;
-    align-items: flex-start;
+    gap: 0.15rem;
+    padding: 0.9rem 0;
     font-family: var(--display);
     font-size: 0.95rem;
     line-height: 1.4;
   }
-  .skills__certlist .icon {
-    flex: none;
-    margin-top: 0.2rem;
-    color: var(--good);
-  }
-  .skills__certlist span {
-    display: grid;
-    gap: 0.1rem;
-  }
-  .skills__certlist b {
+  .skills__cert b {
     font-weight: 600;
   }
 </style>
