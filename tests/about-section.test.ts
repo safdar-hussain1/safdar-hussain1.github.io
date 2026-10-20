@@ -9,7 +9,7 @@ import { privateRuns } from './helpers/private';
 const html = readDoc();
 const section = (id: string) => html.match(new RegExp(`<section id="${id}"[\\s\\S]*?<\\/section>`))![0];
 
-describe('how I work, timeline, about and contact', () => {
+describe('how I work, experience, skills, about and contact', () => {
   test('how i work has four principles each with a README link', () => {
     const how = section('how');
     expect((how.match(/<h3[\s>]/g) ?? []).length).toBe(4);
@@ -17,12 +17,22 @@ describe('how I work, timeline, about and contact', () => {
     for (const t of ['Measure, don’t claim', 'Break it on purpose', 'Publish the bad number', 'It runs on your device']) expect(how).toContain(t);
   });
 
-  test('timeline renders seven items in order', () => {
-    const tl = section('timeline');
-    const items = tl.match(/<li class="timeline__item"/g) ?? [];
+  test('experience renders the seven items newest first, each with its kind and role', () => {
+    const tl = section('experience');
+    const items = tl.match(/<li class="exp__item exp__item--(work|education|community|talk)"/g) ?? [];
     expect(items).toHaveLength(7);
     const titles = [...tl.matchAll(/<h3[^>]*>([^<]+)<\/h3>/g)].map((m) => m[1]);
-    expect(titles).toEqual(timeline.map((t) => t.title));
+    expect(titles).toEqual([...timeline].reverse().map((t) => t.title));
+    expect((tl.match(/<p class="exp__role"/g) ?? []).length).toBe(timeline.length);
+    expect(tl).toContain('Jul 2026 – now');
+    expect(tl).toContain('Jun 2025 – Aug 2025');
+  });
+
+  test('skills shows every group as chips and every certificate', () => {
+    const sk = section('skills');
+    for (const g of ['Machine learning', 'Language models', 'Computer vision', 'Web', 'Backend and cloud']) expect(sk).toContain(`>${g}</h3>`);
+    for (const item of ['PyTorch', 'LangGraph', 'OpenCV', 'Three.js', 'FastAPI']) expect(sk).toContain(`>${item}</li>`);
+    for (const c of ['Advanced Learning Algorithms', 'CS50&#39;s Introduction to Programming with Python', 'Harvard']) expect(sk).toContain(c);
   });
 
   test('about shows the dated note, CGPA 9.19 and the scholarship, and no phone number', () => {
@@ -43,6 +53,14 @@ describe('how I work, timeline, about and contact', () => {
     expect(c).toContain('href="https://github.com/safdar-hussain1"');
     expect(c).toContain('href="https://www.linkedin.com/in/safdar-hussain-a8a61b248"');
     expect(c).toContain('id="copy-email"');
+    expect(c).toContain("Let's build something that runs on your device.");
+  });
+
+  test('the footer carries the sections, the links and the credit', () => {
+    const foot = html.match(/<footer class="foot"[\s\S]*?<\/footer>/)![0];
+    for (const h of ['/#projects', '/#experience', '/#skills', '/#about', '/#contact', '/city/']) expect(foot).toContain(`href="${h}"`);
+    expect(foot).toContain('Source on GitHub');
+    expect(foot).toContain('Built by Safdar Hussain.');
   });
 
   test('no all-caps labels anywhere in the shipped styles', () => {

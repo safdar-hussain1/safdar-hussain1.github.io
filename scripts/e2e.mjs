@@ -27,6 +27,12 @@ mkdirSync(SHOTS, { recursive: true });
 const WIDE = { width: 1440, height: 900 };
 const PHONE = { width: 390, height: 844 };
 
+// Full-page captures never scroll, so the sections that rise into view on scroll are shown first.
+async function revealAll(page) {
+  await page.evaluate(() => document.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('in')));
+  await page.waitForTimeout(700);
+}
+
 async function axe(page, label, options = {}) {
   await page.addScriptTag({ path: AXE });
   const result = await page.evaluate((o) => window.axe.run(document, { iframes: false, ...o }), options);
@@ -46,17 +52,24 @@ const flows = {
     await page.goto(BASE, { waitUntil: 'networkidle' });
     if ((await page.locator('h1').textContent())?.trim() !== 'Safdar Hussain') throw new Error('h1 is not the name');
     if ((await page.locator('.plate[data-status="live"]').count()) !== 6) throw new Error('expected six live cards');
-    await page.evaluate(() => document.getElementById('work').scrollIntoView());
+    await page.evaluate(() => document.getElementById('projects').scrollIntoView());
     await page.waitForFunction(() => [...document.querySelectorAll('video.loop')].some((v) => !v.paused && v.currentTime > 0), null, { timeout: 20000 });
+    const nav = await page.evaluate(() => [...document.querySelectorAll('.mast__nav a')].map((a) => a.textContent.trim()));
+    if (nav.join('|') !== 'Projects|Experience|Skills|About|Contact|3D city') throw new Error(`nav reads ${nav.join('|')}`);
     await axe(page, 'home dark');
+    await revealAll(page);
     await page.screenshot({ path: join(SHOTS, `home-dark-${BROWSER}.png`), fullPage: true });
     await ctx.close();
   },
+  // The light theme is the visitor's switch (the site is dark whatever the system says).
   async 'home-light'(browser) {
     const ctx = await browser.newContext({ viewport: WIDE, colorScheme: 'light' });
+    await ctx.addInitScript(() => localStorage.setItem('portfolio.theme', 'light'));
     const page = await ctx.newPage();
     await page.goto(BASE, { waitUntil: 'networkidle' });
+    if ((await page.evaluate(() => document.documentElement.dataset.theme)) !== 'light') throw new Error('the light theme did not apply');
     await axe(page, 'home light');
+    await revealAll(page);
     await page.screenshot({ path: join(SHOTS, `home-light-${BROWSER}.png`), fullPage: true });
     await ctx.close();
   },
@@ -69,6 +82,7 @@ const flows = {
     const href = await page.locator('[data-dock="wardos"]').getAttribute('href');
     if (!href?.includes('/wardos/')) throw new Error('the phone link does not lead to the live site');
     await axe(page, 'home 390');
+    await revealAll(page);
     await page.screenshot({ path: join(SHOTS, `home-390-${BROWSER}.png`), fullPage: true });
     await ctx.close();
   },
@@ -91,9 +105,11 @@ const flows = {
       console.log('     no project site here, the poster fallback is shown');
     }
     await axe(page, 'project page dark');
+    await revealAll(page);
     await page.screenshot({ path: join(SHOTS, `project-wardos-${BROWSER}.png`), fullPage: true });
     await ctx.close();
     const light = await browser.newContext({ viewport: WIDE, colorScheme: 'light' });
+    await light.addInitScript(() => localStorage.setItem('portfolio.theme', 'light'));
     const lp = await light.newPage();
     await lp.goto(`${BASE}work/carmine/`, { waitUntil: 'networkidle' });
     await axe(lp, 'project page light');
@@ -102,7 +118,7 @@ const flows = {
   async dock(browser) {
     const ctx = await browser.newContext({ viewport: WIDE, colorScheme: 'dark' });
     const page = await ctx.newPage();
-    await page.goto(`${BASE}?stage=off`, { waitUntil: 'networkidle' });
+    await page.goto(BASE, { waitUntil: 'networkidle' });
     const historyBefore = await page.evaluate(() => history.length);
     await page.locator('[data-dock="wardos"]').click();
     await page.waitForSelector('#dock:not([hidden])');
@@ -138,7 +154,7 @@ const flows = {
   async palette(browser) {
     const ctx = await browser.newContext({ viewport: WIDE, colorScheme: 'dark' });
     const page = await ctx.newPage();
-    await page.goto(`${BASE}?stage=off`, { waitUntil: 'networkidle' });
+    await page.goto(BASE, { waitUntil: 'networkidle' });
     await page.keyboard.press('/');
     await page.waitForSelector('#palette:not([hidden])');
     const activeBg = await page.evaluate(() => getComputedStyle(document.querySelector('#palette [role="option"][aria-selected="true"]')).backgroundColor);
@@ -159,12 +175,17 @@ const flows = {
     const ctx = await browser.newContext({ viewport: WIDE, colorScheme: 'dark', reducedMotion: 'reduce' });
     const page = await ctx.newPage();
     await page.goto(BASE, { waitUntil: 'networkidle' });
-    await page.evaluate(() => document.getElementById('work').scrollIntoView());
+    await page.evaluate(() => document.getElementById('projects').scrollIntoView());
     await page.waitForTimeout(1500);
     const videos = await page.evaluate(() => document.querySelectorAll('video.loop').length);
     if (videos) throw new Error(`${videos} loop(s) created under reduced motion`);
+    const revealed = await page.evaluate(() => [...document.querySelectorAll('[data-reveal]')].every((el) => getComputedStyle(el).opacity === '1'));
+    if (!revealed) throw new Error('a section stayed hidden under reduced motion');
+    // The city page keeps the flat cards under reduced motion and says why.
+    await page.goto(`${BASE}city/`, { waitUntil: 'networkidle' });
+    await page.waitForFunction(() => window.__stage && window.__stage.reason !== 'pending', null, { timeout: 30000 });
     const stage = await page.evaluate(() => window.__stage);
-    if (!stage || (stage.started && document.body.classList.contains('stage-on'))) throw new Error('the 3D stage ran under reduced motion');
+    if (!stage || stage.started || stage.reason !== 'reduced-motion') throw new Error(`the city under reduced motion: ${JSON.stringify(stage)}`);
     await ctx.close();
   },
   // The 3D stage needs the real GPU; without E2E_GL these two flows report themselves skipped.
@@ -175,7 +196,8 @@ const flows = {
     }
     const ctx = await browser.newContext({ viewport: WIDE, colorScheme: 'dark' });
     const page = await ctx.newPage();
-    await page.goto(BASE, { waitUntil: 'networkidle' });
+    const CITY = `${BASE}city/`;
+    await page.goto(CITY, { waitUntil: 'networkidle' });
     await page.waitForFunction(() => document.body.classList.contains('stage-on'), null, { timeout: 30000 });
     const seen = await page.evaluate(() => ({
       canvases: document.querySelectorAll('canvas.stage-canvas').length,
@@ -190,16 +212,16 @@ const flows = {
     await page.screenshot({ path: join(SHOTS, `stage-hero-${BROWSER}.png`) });
     // The ladder: a forced 35 fps keeps the city without shadows; a forced 10 fps returns the
     // flat site and says why.
-    await page.goto(`${BASE}?fps=35`, { waitUntil: 'networkidle' });
+    await page.goto(`${CITY}?fps=35`, { waitUntil: 'networkidle' });
     await page.waitForFunction(() => window.__stage && window.__stage.step === 'no-shadows', null, { timeout: 30000 });
     const dim = await page.evaluate(() => ({ canvases: document.querySelectorAll('canvas.stage-canvas').length, on: document.body.classList.contains('stage-on'), started: window.__stage.started }));
     if (dim.canvases !== 1 || !dim.on || !dim.started) throw new Error(`the city should stay on without shadows: ${JSON.stringify(dim)}`);
-    await page.goto(`${BASE}?fps=10`, { waitUntil: 'networkidle' });
+    await page.goto(`${CITY}?fps=10`, { waitUntil: 'networkidle' });
     await page.waitForFunction(() => window.__stage && window.__stage.reason === 'slow', null, { timeout: 30000 });
     const flat = await page.evaluate(() => ({ canvases: document.querySelectorAll('canvas.stage-canvas').length, on: document.body.classList.contains('stage-on') }));
     if (flat.canvases !== 0 || flat.on) throw new Error('the flat site did not return after the ladder');
     // The selftest with the stage running.
-    await page.goto(`${BASE}?selftest=1`, { waitUntil: 'networkidle' });
+    await page.goto(`${CITY}?selftest=1`, { waitUntil: 'networkidle' });
     await page.waitForFunction(() => document.title.startsWith('PORTFOLIO SELFTEST'), null, { timeout: 60000 });
     const title = await page.title();
     if (!title.startsWith('PORTFOLIO SELFTEST PASS')) throw new Error(title);
@@ -212,7 +234,7 @@ const flows = {
     }
     const ctx = await browser.newContext({ viewport: WIDE, colorScheme: 'dark' });
     const page = await ctx.newPage();
-    await page.goto(BASE, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE}city/`, { waitUntil: 'networkidle' });
     await page.waitForFunction(() => document.body.classList.contains('stage-on'), null, { timeout: 30000 });
     await page.waitForTimeout(1500);
     await page.evaluate(() => window.__stage.tour.jumpTo(3));

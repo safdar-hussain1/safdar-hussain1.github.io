@@ -19,7 +19,7 @@ export async function renderBoard(root: HTMLElement, fetchImpl: typeof fetch = f
 
 export function paint(root: HTMLElement, rows: RepoStatus[], now: () => Date): void {
   for (const r of rows) {
-    const tr = root.querySelector<HTMLElement>(`tr[data-repo="${r.repo}"]`);
+    const tr = root.querySelector<HTMLElement>(`[data-repo="${r.repo}"]`);
     if (!tr) continue;
     tr.dataset.source = r.source;
     const set = (field: string, text: string) => {
@@ -32,10 +32,11 @@ export function paint(root: HTMLElement, rows: RepoStatus[], now: () => Date): v
       pushed.textContent = `${relativeTime(r.pushedAt, now())}`;
       pushed.title = shortIsoDate(r.pushedAt);
     }
-    const ci = tr.querySelector<HTMLElement>('[data-field="ci"] span');
+    const ci = tr.querySelector<HTMLElement>('[data-field="ci"]');
     if (ci) {
       ci.className = `gh__ci gh__ci--${r.ci}`;
-      ci.textContent = CI_WORDS[r.ci];
+      const label = ci.querySelector('span') ?? ci;
+      label.textContent = CI_WORDS[r.ci];
     }
     set('stars', String(r.stars));
     set('openIssues', String(r.openIssues));

@@ -1,73 +1,324 @@
 ---
 import type { WorkEntry } from '../lib/work-schema';
 import Icon from './Icon.astro';
+import { SITE } from '../data/site';
+import { liveEntries } from '../lib/work';
 
 interface Props {
   entries: WorkEntry[];
+  /** The home page's hero, or the city page's (the name the glass is drawn over). */
+  variant?: 'home' | 'city';
 }
-const { entries } = Astro.props;
-// The flat hero shows a picture of the city; where the city itself runs, the picture gives way
-// to it. The alt names what the picture is of without listing the projects (the cards do that).
-const stillAlt = `A small night city on a round plinth: ${entries.length} buildings along one road, ${entries.filter((e) => e.status === 'live').length} of them with a lit screen on the facade`;
+const { entries, variant = 'home' } = Astro.props;
+const live = liveEntries(entries).length;
+const WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+const liveWord = WORDS[live] ?? String(live);
+// The picture of the city, rendered from the same scene the city page runs. The alt names what
+// it is of without listing the projects (the cards do that).
+const stillAlt = `A small night city on a round plinth: ${entries.length} buildings along one road, ${live} of them with a lit screen on the facade`;
 ---
-<section class="hero wrap" aria-labelledby="hero-title">
-  <div class="hero__text">
-    <h1 id="hero-title">Safdar Hussain</h1>
-    <div class="hero__copy">
-      <p class="hero__line">I build products that run on your own device and publish the numbers behind them.</p>
-      <a class="hero__cue meta" href="#work">
-        <Icon name="arrow-down" size={16} />
-        Every project runs live. Scroll.
+{
+  variant === 'home' ? (
+    <section class="hero wrap" aria-labelledby="hero-title">
+      <div class="hero__glow" aria-hidden="true" />
+      <div class="hero__text">
+        <p class="hero__eyebrow">
+          <span class="pulse" aria-hidden="true" />
+          {SITE.author.jobTitle} at {SITE.author.employer} · Hyderabad, remote
+        </p>
+        <h1 id="hero-title">Safdar Hussain</h1>
+        <p class="hero__line">I build machine learning, computer vision and full products that run on your own device, and I publish the numbers behind them.</p>
+        <div class="hero__cta">
+          <a class="btn brand" href="#projects">See the projects <Icon name="arrow-down" size={16} /></a>
+          <a class="btn ghost" href="/city/"><Icon name="cube" size={16} /> Explore the 3D city</a>
+          <a class="hero__social" href={SITE.author.github} aria-label="GitHub"><Icon name="github" size={19} /></a>
+          <a class="hero__social" href={SITE.author.linkedin} aria-label="LinkedIn"><Icon name="linkedin" size={19} /></a>
+        </div>
+        <ul class="hero__stats">
+          <li><Icon name="cube" size={16} /><span><b>{liveWord[0].toUpperCase() + liveWord.slice(1)} products</b>, each one running live in this page</span></li>
+          <li><Icon name="device" size={16} /><span><b>Nothing leaves your device</b>: no server anywhere</span></li>
+          <li><Icon name="check" size={16} /><span><b>Every figure</b> quoted word for word from its README</span></li>
+        </ul>
+      </div>
+      <a id="hero-art" class="hero__art card card--hover" href="/city/">
+        <span class="hero__bar" aria-hidden="true"><i /><i /><i /><span class="hero__url">safdar-hussain1.github.io/city</span></span>
+        <img
+          class="hero__still"
+          src="/hero-still-sm.webp"
+          srcset="/hero-still-sm.webp 800w, /hero-still.webp 1600w"
+          sizes="(min-width: 900px) 52vw, 100vw"
+          width="1600"
+          height="1000"
+          fetchpriority="high"
+          decoding="async"
+          alt={stillAlt}
+        />
+        <span class="hero__badge"><Icon name="cube" size={16} /> Explore the 3D city</span>
       </a>
-    </div>
-  </div>
-  <div id="hero-art" class="hero__art">
-    <img
-      class="hero__still"
-      src="/hero-still-sm.webp"
-      srcset="/hero-still-sm.webp 800w, /hero-still.webp 1600w"
-      sizes="(min-width: 900px) 56vw, 100vw"
-      width="1600"
-      height="1000"
-      fetchpriority="high"
-      decoding="async"
-      alt={stillAlt}
-    />
-  </div>
-</section>
+    </section>
+  ) : (
+    <section class="hero hero--city wrap" aria-labelledby="hero-title">
+      <div class="hero__text">
+        <h1 id="hero-title">Safdar Hussain</h1>
+        <div class="hero__copy">
+          <p class="hero__line">I build products that run on your own device and publish the numbers behind them.</p>
+          <a class="hero__cue meta" href="#projects">
+            <Icon name="arrow-down" size={16} />
+            Every project runs live. Scroll.
+          </a>
+        </div>
+      </div>
+      <div id="hero-art" class="hero__art hero__art--city">
+        <img
+          class="hero__still"
+          src="/hero-still-sm.webp"
+          srcset="/hero-still-sm.webp 800w, /hero-still.webp 1600w"
+          sizes="(min-width: 900px) 56vw, 100vw"
+          width="1600"
+          height="1000"
+          fetchpriority="high"
+          decoding="async"
+          alt={stillAlt}
+        />
+      </div>
+    </section>
+  )
+}
 
 <style>
   .hero {
     position: relative;
     display: grid;
-    gap: var(--s-3);
+    gap: var(--s-4);
     min-height: calc(100vh - 4rem);
     min-height: calc(100svh - 4rem);
+    align-content: center;
+    padding-block: var(--s-5) var(--s-5);
+  }
+  @media (min-width: 900px) {
+    .hero {
+      grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
+      align-items: center;
+      gap: var(--s-4);
+    }
+  }
+  /* Two soft lights behind the first screen, the city's blue and violet. */
+  .hero__glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    background:
+      radial-gradient(42% 55% at 18% 40%, color-mix(in srgb, var(--brand) 34%, transparent), transparent 70%),
+      radial-gradient(38% 50% at 82% 30%, color-mix(in srgb, var(--brand-2) 26%, transparent), transparent 70%);
+    filter: blur(40px);
+    opacity: 0.7;
+  }
+  :root[data-theme='light'] .hero__glow {
+    opacity: 0.45;
+  }
+  .hero__text {
+    position: relative;
+    display: grid;
+    gap: 1.3rem;
+    max-width: 38rem;
+  }
+  .hero__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: fit-content;
+    padding: 0.4rem 0.9rem 0.4rem 0.7rem;
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--raised) 80%, transparent);
+    font-family: var(--display);
+    font-size: 0.84rem;
+    font-weight: 500;
+    color: var(--ink-2);
+  }
+  .pulse {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--good);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--good) 55%, transparent);
+    animation: pulse 2.2s ease-out infinite;
+  }
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--good) 55%, transparent);
+    }
+    70% {
+      box-shadow: 0 0 0 9px transparent;
+    }
+    100% {
+      box-shadow: 0 0 0 0 transparent;
+    }
+  }
+  .hero h1 {
+    background: linear-gradient(180deg, var(--ink) 55%, color-mix(in srgb, var(--ink) 70%, var(--brand)));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero__line {
+    font-size: clamp(1.15rem, 1rem + 0.9vw, 1.45rem);
+    line-height: 1.45;
+    color: var(--ink-2);
+    max-width: 36ch;
+  }
+  .hero__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 0.3rem;
+  }
+  .hero__cta .btn {
+    padding-inline: 1.1rem;
+  }
+  .hero__social {
+    display: inline-grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 1px solid var(--line-2);
+    color: var(--ink-2);
+    transition: color 150ms var(--ease), border-color 150ms var(--ease), transform 150ms var(--ease);
+  }
+  .hero__social:hover {
+    color: var(--ink);
+    border-color: var(--ink-3);
+    transform: translateY(-1px);
+  }
+  .hero__stats {
+    list-style: none;
+    margin: 0.6rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.55rem;
+    font-family: var(--display);
+    font-size: 0.92rem;
+    color: var(--ink-2);
+  }
+  .hero__stats li {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .hero__stats .icon {
+    color: var(--brand-ink);
+    flex: none;
+  }
+  .hero__stats b {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  /* The picture, framed like a window onto the city page. */
+  .hero__art {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    color: inherit;
+    box-shadow: var(--shadow), 0 0 0 1px color-mix(in srgb, var(--brand) 18%, transparent), 0 24px 80px -30px color-mix(in srgb, var(--brand) 45%, transparent);
+  }
+  .hero__bar {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 0.8rem;
+    border-bottom: 1px solid var(--line);
+    background: var(--raised-2);
+  }
+  .hero__bar i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--ink-3);
+    opacity: 0.6;
+  }
+  .hero__url {
+    margin-left: 0.5rem;
+    padding: 0.2rem 0.7rem;
+    border-radius: var(--radius-pill);
+    background: var(--ground);
+    font-family: var(--display);
+    font-size: 0.74rem;
+    color: var(--ink-2);
+  }
+  .hero__still {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    transition: transform 700ms var(--ease);
+  }
+  .hero__art:hover .hero__still {
+    transform: scale(1.025);
+  }
+  .hero__badge {
+    position: absolute;
+    left: 1rem;
+    bottom: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1rem;
+    border-radius: var(--radius-pill);
+    background: rgba(10, 14, 28, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #eef2ff;
+    font-family: var(--display);
+    font-size: 0.88rem;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pulse {
+      animation: none;
+    }
+    .hero__still {
+      transition: none;
+    }
+  }
+
+  /* The city page: the name sits where the glass will draw it; the picture is the fallback. */
+  .hero--city {
     align-content: end;
     padding-block: var(--s-5) 8vh;
   }
   @media (min-width: 900px) {
-    .hero {
+    .hero--city {
       grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
       align-items: end;
       gap: var(--s-4);
     }
   }
-  .hero__text,
+  .hero--city .hero__text,
   .hero__copy {
     position: relative;
     display: grid;
     gap: var(--s-2);
     max-width: 30ch;
   }
-  .hero h1,
+  .hero--city h1,
   .hero__copy {
     position: relative;
     z-index: 1;
   }
-  .hero__line {
-    font-size: clamp(1.2rem, 1rem + 1.1vw, 1.55rem);
-    line-height: 1.4;
+  .hero--city h1 {
+    font-weight: 300;
+    font-stretch: 118%;
+    letter-spacing: -0.015em;
+    background: none;
+    color: var(--ink);
+  }
+  .hero--city .hero__line {
     max-width: 34ch;
   }
   .hero__cue {
@@ -81,16 +332,12 @@ const stillAlt = `A small night city on a round plinth: ${entries.length} buildi
   .hero__cue:hover {
     color: var(--ink);
   }
-  .hero__art {
-    aspect-ratio: 16 / 10;
-    border-radius: var(--radius);
-    overflow: hidden;
+  .hero__art--city {
     border: 1px solid var(--line);
     background: var(--raised);
     box-shadow: var(--shadow);
   }
-  .hero__still {
-    width: 100%;
+  .hero__art--city .hero__still {
     height: 100%;
     object-fit: cover;
   }

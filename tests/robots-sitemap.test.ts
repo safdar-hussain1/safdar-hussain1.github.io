@@ -15,11 +15,12 @@ describe('robots, sitemap, 404 and the preview pictures', () => {
     for (const s of [...LIVE, 'health-haven']) expect(robots).toContain(`Sitemap: ${SITE.url}${s}/sitemap.xml`);
   });
 
-  test('sitemap lists the home page and every live project page with lastmod', () => {
+  test('sitemap lists the home page, the city page and every live project page with lastmod', () => {
     const xml = readFileSync(join(docs, 'sitemap.xml'), 'utf8');
     expect(xml).toContain(`<loc>${SITE.url}</loc>`);
+    expect(xml).toContain(`<loc>${SITE.url}city/</loc>`);
     for (const s of LIVE) expect(xml).toContain(`<loc>${SITE.url}work/${s}/</loc>`);
-    expect((xml.match(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/g) ?? []).length).toBe(LIVE.length + 1);
+    expect((xml.match(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/g) ?? []).length).toBe(LIVE.length + 2);
     expect(xml).not.toContain('wavelength');
   });
 

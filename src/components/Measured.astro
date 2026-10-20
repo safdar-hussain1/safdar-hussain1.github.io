@@ -9,7 +9,11 @@ interface Props {
 const { entries } = Astro.props;
 ---
 <section id="measured" class="measured section wrap" aria-labelledby="measured-title">
-  <h2 id="measured-title">Measured</h2>
+  <div class="sec__head" data-reveal>
+    <p class="eyebrow">Measured, not claimed</p>
+    <h2 id="measured-title">In each project's own figures</h2>
+    <p class="sec__lede">Every figure is quoted from the project's README, and each line links to it. No figure here is rounded or re-stated.</p>
+  </div>
   <div class="measured__grid">
     <NumbersBoard entries={entries} />
     <GithubBoard entries={entries} />
@@ -19,6 +23,6 @@ const { entries } = Astro.props;
 <style>
   .measured__grid {
     display: grid;
-    gap: var(--s-4);
+    gap: var(--s-5);
   }
 </style>

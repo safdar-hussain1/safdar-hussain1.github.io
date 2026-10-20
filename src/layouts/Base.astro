@@ -68,8 +68,7 @@ const graph = { '@context': 'https://schema.org', '@graph': [website, person, ..
     <meta name="google-site-verification" content={SITE.gsc} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b1020" />
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#edeff4" />
+    <meta name="theme-color" content="#0a0e1c" />
     <link rel="preconnect" href="https://api.github.com" crossorigin />
     <link rel="preload" href={archivoUrl} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={newsreaderUrl} as="font" type="font/woff2" crossorigin />
@@ -95,9 +94,10 @@ const graph = { '@context': 'https://schema.org', '@graph': [website, person, ..
     <!-- Built by Safdar Hussain · https://github.com/safdar-hussain1 -->
     <script is:inline>
       (function () {
+        document.documentElement.classList.add('js');
         try {
           var t = localStorage.getItem('portfolio.theme');
-          if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
+          if (t === 'light') document.documentElement.dataset.theme = t;
         } catch (e) {}
         var still = /[?&]still=(hero|og|city)\b/.exec(location.search);
         if (still) document.documentElement.dataset.still = still[1];

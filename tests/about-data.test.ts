@@ -23,7 +23,7 @@ describe('facts about Safdar', () => {
       ...about.facts.map((f) => f.text),
       about.outside,
       about.now.text,
-      ...timeline.map((t) => `${t.title} ${t.text}`),
+      ...timeline.map((t) => `${t.title} ${t.role} ${t.text}`),
       ...certificates.map((c) => `${c.name} ${c.issuer}`),
       ...skills.flatMap((g) => [g.name, ...g.items]),
     ];
@@ -41,6 +41,8 @@ describe('facts about Safdar', () => {
     const keys = timeline.map((t) => t.when.padEnd(7, '-'));
     expect([...keys].sort()).toEqual(keys);
     for (const t of timeline) expect(t.when).toMatch(/^\d{4}(-\d{2})?$/);
+    for (const t of timeline) expect(['work', 'education', 'community', 'talk']).toContain(t.kind);
+    expect(timeline.filter((t) => t.ongoing).map((t) => t.title)).toEqual(['Navatej Technologies']);
   });
 
   test('swara is null until Safdar supplies it', () => {

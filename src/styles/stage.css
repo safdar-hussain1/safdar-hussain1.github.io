@@ -43,8 +43,8 @@ body.stage-on .mast {
 
 /* The hero keeps the flat hero's height and the name keeps its place, drawn in glass instead
    of ink; the picture of the city gives way to the city. */
-body.stage-on .hero h1,
-body.lens-on .hero h1 {
+body.stage-on .hero--city h1,
+body.lens-on .hero--city h1 {
   opacity: 0;
 }
 body.stage-on .work__head {

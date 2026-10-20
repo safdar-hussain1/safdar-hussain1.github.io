@@ -1,5 +1,5 @@
-// The theme follows the system setting until the visitor picks one; the pick is remembered
-// per browser. Storage can be missing or throw (private windows), so every access is guarded.
+// The site is dark; the switch turns it light, and the choice is remembered per browser.
+// Storage can be missing or throw (private windows), so every access is guarded.
 export const THEME_KEY = 'portfolio.theme';
 
 export type Theme = 'dark' | 'light';
@@ -36,18 +36,9 @@ export function applyTheme(theme: Theme | null, root: HTMLElement = document.doc
   else delete root.dataset.theme;
 }
 
-export function currentTheme(root: HTMLElement = document.documentElement, prefersDark = systemPrefersDark()): Theme {
-  const set = root.dataset.theme;
-  if (set === 'dark' || set === 'light') return set;
-  return prefersDark ? 'dark' : 'light';
-}
-
-export function systemPrefersDark(): boolean {
-  try {
-    return typeof matchMedia === 'function' && matchMedia('(prefers-color-scheme: dark)').matches;
-  } catch {
-    return true;
-  }
+/** Light only when the visitor chose it; everything else is the dark design. */
+export function currentTheme(root: HTMLElement = document.documentElement): Theme {
+  return root.dataset.theme === 'light' ? 'light' : 'dark';
 }
 
 export function toggleTheme(root: HTMLElement = document.documentElement, store: Store | null = storage()): Theme {

@@ -23,7 +23,7 @@ describe('measured section', () => {
 
   test('the GitHub board renders the snapshot rows server-side and says when it was taken', () => {
     expect(section).toContain('Snapshot taken');
-    for (const e of liveEntries(entries)) expect(section).toContain(`<tr data-repo="${e.slug}" data-source="snapshot"`);
+    for (const e of liveEntries(entries)) expect(section).toMatch(new RegExp(`<li class="card card--hover gh__card" data-repo="${e.slug}" data-source="snapshot"`));
     expect(section).toContain(`data-snapshot-date="${snapshot.fetchedAt}"`);
   });
 
@@ -34,8 +34,9 @@ describe('measured section', () => {
     const rows: RepoStatus[] = (snapshot.rows as RepoStatus[]).map((r) => ({ ...r, source: 'live', pushedAt: '2026-10-19T13:08:13Z' }));
     paint(root, rows, now);
     expect(root.querySelector('[data-gh-caption]')!.textContent).toMatch(/^Live from GitHub/);
-    expect(root.querySelector('tr[data-repo="wardos"] [data-field="pushedAt"]')!.textContent).toBe('2 days ago');
-    expect(root.querySelector('tr[data-repo="wardos"]')!.getAttribute('data-source')).toBe('live');
+    expect(root.querySelector('[data-repo="wardos"] [data-field="pushedAt"]')!.textContent).toBe('2 days ago');
+    expect(root.querySelector('[data-repo="wardos"]')!.getAttribute('data-source')).toBe('live');
+    expect(root.querySelector('[data-repo="wardos"] [data-field="ci"]')!.textContent).toBe('tests passing');
   });
 
   test('painting snapshot-only rows says GitHub did not answer', () => {

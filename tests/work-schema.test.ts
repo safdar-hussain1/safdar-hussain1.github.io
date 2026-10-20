@@ -41,8 +41,10 @@ describe('work collection', () => {
 
   test('accentInk passes 4.5:1 on both grounds', () => {
     for (const e of entries) {
-      expect(contrast(e.accentInk.dark, '#0b1020'), `${e.slug} dark`).toBeGreaterThanOrEqual(4.5);
-      expect(contrast(e.accentInk.light, '#edeff4'), `${e.slug} light`).toBeGreaterThanOrEqual(4.5);
+      // The lightest surface of each theme that accent text sits on: the raised card tone and white.
+      expect(contrast(e.accentInk.dark, '#182340'), `${e.slug} dark`).toBeGreaterThanOrEqual(4.5);
+      expect(contrast(e.accentInk.dark, '#0a0e1c'), `${e.slug} dark on the ground`).toBeGreaterThanOrEqual(4.6);
+      expect(contrast(e.accentInk.light, '#ffffff'), `${e.slug} light`).toBeGreaterThanOrEqual(4.5);
     }
   });
 

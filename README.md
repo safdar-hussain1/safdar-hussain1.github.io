@@ -8,29 +8,32 @@ project on it is a complete product with its own live site, and the portfolio ru
 *inside* the page: press **Use it here** and the real app opens in a same-origin frame, with
 its camera, its models and its database. Nothing on the page is a video of a product.
 
-On a desktop with a GPU the page is a small night city: a glass lens floats over the name,
-and below it every project is a building with its own page playing on the facade. Scrolling
-takes the camera down through the lens and along the road, stopping at each building, and
-**Use it here** flies into the facade before the app opens. Everything in the city is built
-in code from boxes, cylinders and cones; there are no model files.
+The front page is a portfolio: who I am, the projects, how I work, the measured results,
+experience, skills, about and contact. The **3D city** is its own page, `/city/`: a glass
+lens floats over the name, and below it every project is a building with its own page
+playing on the facade. Scrolling takes the camera down through the lens and along the road,
+stopping at each building, and **Use it here** flies into the facade before the app opens.
+Everything in the city is built in code from boxes, cylinders and cones; there are no model
+files.
 
 ## What is on the page
 
 | Section | What it does |
 |---|---|
-| **The city** | On a wide screen with a GPU: the lens over the name, then one building per project along a road, its live page on the facade screen, a caption beside it with *Use it here* and *Read more*, a rail of stops at the right (arrow keys and digits move along it). The frame rate is measured once after the start; a slow machine loses the shadows, then the moving traffic, then the city itself and keeps the flat page |
-| **Work** | One card per live project, with a loop of the real page and two actions: *Use it here* (docks the live app in the page on a desktop; opens it on a phone) and *Read more* (a page per project with the app at the top and the measured facts under it). These cards are the flat page, and they become the city's captions when the city runs |
-| **How I work** | Four principles, each with one measured fact and the README line it is quoted from |
-| **Measured** | The by-the-numbers board, every figure quoted word for word from a project's README, and the GitHub board, fetched live from the GitHub API with a dated snapshot as the fallback |
-| **Where I have been**, **About**, **Contact** | The timeline, the facts about me, certificates and skills, and how to reach me |
+| **Hero** | The name, the one-line pitch, *See the projects* and *Explore the 3D city*, and a picture of the city rendered from the same scene the city page runs |
+| **Projects** | One card per live project, with a loop of the real page and two actions: *Use it here* (docks the live app in the page on a desktop; opens it on a phone) and *Read more* (a page per project with the app at the top and the measured facts under it) |
+| **How I work** | Four rules as cards, each with one measured fact and the README line it is quoted from |
+| **Measured** | Stat tiles, every figure quoted word for word from a project's README, and repo cards fetched live from the GitHub API with a dated snapshot as the fallback |
+| **Experience**, **Skills**, **About**, **Contact** | The timeline newest first, the tools grouped by the work they do with the certificates, the facts about me, and how to reach me |
+| **The city** (`/city/`) | On a wide screen with a GPU: the lens over the name, then one building per project along a road, its live page on the facade screen, the cards as captions, a rail of stops at the right (arrow keys and digits move along it). The frame rate is measured once after the start; a slow machine loses the shadows, then the moving traffic, then the city itself and keeps the cards |
 | **The palette** | Press `/` anywhere (or Ctrl/Cmd-K) to jump to any project, section or link, switch the theme or the sound |
 
-Two themes, following the system setting with a switch to override it; the city is lit at
+The site is dark; a switch turns it light and the choice is remembered. The city is lit at
 night on the dark theme and stands in daylight on the light one. Sound is off until you turn
-it on. Phones get the flat page with a picture of the city and open the live sites directly
-instead of framing them; a tablet gets the lens alone; reduced motion, Save-Data and a
-browser without hardware WebGL2 also get the flat page. Every word on the page is in the HTML
-whether or not the city runs.
+it on. Phones open the live sites directly instead of framing them, and on the city page they
+keep the cards; a tablet gets the lens alone; reduced motion, Save-Data and a browser without
+hardware WebGL2 also keep the cards. Every word on every page is in the HTML whether or not
+the city runs.
 
 ## The numbers rule
 
@@ -64,14 +67,14 @@ npm ci                                   # install exactly the locked versions
 npm run check                            # astro check: types in .astro and .ts files
 #   Result (117 files): - 0 errors / - 0 warnings
 npm run build                            # writes docs/
-#   8 page(s) built in 1.49s · Complete!
+#   9 page(s) built in 1.49s · Complete!
 npm test                                 # vitest over the helpers and the built docs/
-#   Test Files  26 passed (26) · Tests  350 passed (350)
+#   Test Files  27 passed (27) · Tests  355 passed (355)
 node scripts/serve.mjs --port 4300       # the site at / and each project at /<repo>/
 #   Serving http://127.0.0.1:4300  / -> docs  /homecast/ -> ../1-homecast/docs  /nightingale/ -> ../2-nightingale/docs  /red-light-green-light-cv/ -> ../3-red-light-green-light-cv/docs  /wardos/ -> ../4-wardos/docs  /carmine/ -> ../5-carmine/docs  /trafficlens/ -> ../6-trafficlens/docs
 node scripts/e2e.mjs                     # browser flows + axe against the running server
 #   ok   home-dark · ok   home-light · ok   home-390 · ok   project-page · ok   dock · ok   palette · ok   reduced-motion · ok   stage (skipped: needs E2E_GL=1 and a GPU) · ok   tour (skipped) · ok   selftest · PASS 10/10 on chrome
-E2E_GL=1 node scripts/e2e.mjs --only stage,tour   # the city on the real GPU: the canvas, the ladder, a stop, the keys, the dock from a facade
+E2E_GL=1 node scripts/e2e.mjs --only stage,tour   # the city page on the real GPU: the canvas, the ladder, a stop, the keys, the dock from a facade
 #   ok   stage · ok   tour · PASS 2/2 on chrome
 E2E_GL=1 node scripts/stage-shot.mjs --stops      # screenshots of the hero and every stop (add --light, --width 768)
 #   wrote …/hero-dark.png · wrote …/stop-0-dark.png · … · wrote …/stop-5-dark.png
@@ -115,8 +118,8 @@ src/
   content.config.ts  the collection and its schema (src/lib/work-schema.ts)
   data/              facts about me, the timeline, certificates, skills, the GitHub snapshot
   layouts/Base.astro the head of every page: metadata, fonts, theme, authorship marks
-  components/        masthead, hero, work cards, dock, boards, timeline, about, contact, palette
-  pages/             the home page, a page per project, robots.txt, sitemap.xml, the 404 page
+  components/        masthead, hero, project cards, dock, boards, experience, skills, about, contact, palette
+  pages/             the home page, the city page, a page per project, robots.txt, sitemap.xml, the 404 page
   scripts/           browser modules: theme, dock, palette, sound, GitHub board, selftest
   scripts/stage/     the city: the lens, the name, the ground, the buildings, the facade screens,
                      the traffic, the camera on its rails, the dock fly, the drive; stage-loader.ts

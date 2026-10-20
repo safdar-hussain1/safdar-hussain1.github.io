@@ -1,5 +1,7 @@
 ---
 import type { WorkEntry } from '../lib/work-schema';
+import Icon from './Icon.astro';
+import type { IconName } from './Icon.astro';
 
 interface Props {
   entries: WorkEntry[];
@@ -7,25 +9,29 @@ interface Props {
 const { entries } = Astro.props;
 const fact = (slug: string, i: number) => {
   const e = entries.find((x) => x.slug === slug)!;
-  return { ...e.facts[i], name: e.name };
+  return { ...e.facts[i], name: e.name, accent: e.accent, accentInk: e.accentInk };
 };
-const principles = [
+const principles: Array<{ icon: IconName; title: string; text: string; proof: ReturnType<typeof fact> }> = [
   {
+    icon: 'ruler',
     title: 'Measure, don’t claim',
     text: 'Every product is scored against the naive thing people actually do, and the number is on the page.',
     proof: fact('homecast', 2),
   },
   {
+    icon: 'hammer',
     title: 'Break it on purpose',
     text: 'Each headline claim has a test that goes red when the mechanism behind it is removed.',
     proof: fact('red-light-green-light-cv', 1),
   },
   {
+    icon: 'flag',
     title: 'Publish the bad number',
     text: 'A fix that did not help stays in the report, next to the ones that did.',
     proof: fact('nightingale', 3),
   },
   {
+    icon: 'cpu',
     title: 'It runs on your device',
     text: 'No server anywhere. The model you read about is the model that runs, and nothing you load leaves the tab.',
     proof: fact('wardos', 0),
@@ -33,17 +39,23 @@ const principles = [
 ];
 ---
 <section id="how" class="how section wrap" aria-labelledby="how-title">
-  <h2 id="how-title">How I work</h2>
+  <div class="sec__head" data-reveal>
+    <p class="eyebrow">How I work</p>
+    <h2 id="how-title">Four rules, each with a number behind it</h2>
+    <p class="sec__lede">Every rule links to the line of a README that proves it was followed.</p>
+  </div>
   <div class="how__grid">
     {
-      principles.map((p) => (
-        <div class="how__item">
+      principles.map((p, i) => (
+        <article class="card card--hover how__item" data-reveal data-reveal-delay={i * 70} style={`--accent:${p.proof.accent};--accent-ink:${p.proof.accentInk.dark};--accent-ink-light:${p.proof.accentInk.light}`}>
+          <span class="badge"><Icon name={p.icon} size={20} /></span>
           <h3>{p.title}</h3>
           <p>{p.text}</p>
-          <p class="how__proof meta">
-            {p.proof.name}: <a href={p.proof.source}>{p.proof.text}</a>
+          <p class="how__proof">
+            <span class="how__who"><span class="how__dot" aria-hidden="true"></span>{p.proof.name}</span>
+            <a href={p.proof.source}>{p.proof.text}</a>
           </p>
-        </div>
+        </article>
       ))
     }
   </div>
@@ -53,17 +65,52 @@ const principles = [
   .how__grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: var(--s-3) var(--s-4);
+    gap: 1rem;
   }
   .how__item {
     display: grid;
-    gap: 0.6rem;
+    gap: 0.8rem;
     align-content: start;
+    padding: 1.4rem 1.4rem 1.5rem;
   }
-  .how__item p {
-    max-width: 36ch;
+  .how__item h3 {
+    font-size: 1.15rem;
+  }
+  .how__item > p {
+    color: var(--ink-2);
+    font-size: 1rem;
+  }
+  .how__proof {
+    display: grid;
+    gap: 0.35rem;
+    margin-top: auto;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--line);
+    font-family: var(--display);
+    font-size: 0.88rem;
+    line-height: 1.45;
+  }
+  .how__who {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  .how__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
   }
   .how__proof a {
     color: var(--ink);
+    text-decoration-color: var(--line-2);
+  }
+  .how__proof a:hover {
+    color: var(--accent-ink);
+  }
+  :root[data-theme='light'] .how__item {
+    --accent-ink: var(--accent-ink-light);
   }
 </style>

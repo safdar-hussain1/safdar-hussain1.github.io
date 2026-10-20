@@ -23,14 +23,16 @@ describe('theme', () => {
     expect(root.dataset.theme).toBe(second);
   });
 
-  test('a remembered choice wins over the system setting', () => {
+  test('dark unless the visitor chose light, and the choice is remembered', () => {
     const root = document.createElement('html');
     const store = new Map<string, string>();
     const memory = { getItem: (k: string) => store.get(k) ?? null, setItem: (k: string, v: string) => void store.set(k, v) };
+    expect(currentTheme(root)).toBe('dark');
     applyTheme('light', root);
-    expect(currentTheme(root, true)).toBe('light');
+    expect(currentTheme(root)).toBe('light');
     toggleTheme(root, memory);
     expect(store.get('portfolio.theme')).toBe('dark');
     expect(readTheme(memory)).toBe('dark');
+    expect(currentTheme(root)).toBe('dark');
   });
 });

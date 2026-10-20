@@ -4,8 +4,8 @@
   "order": 3,
   "accent": "#b45309",
   "accentInk": {
-    "dark": "#bd6827",
-    "light": "#b05109"
+    "dark": "#c67c44",
+    "light": "#b45309"
   },
   "tagline": "Draw a line on traffic video. It counts what crosses, on your own machine.",
   "live": "https://safdar-hussain1.github.io/trafficlens/",

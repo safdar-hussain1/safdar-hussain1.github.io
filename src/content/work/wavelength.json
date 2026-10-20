@@ -4,8 +4,8 @@
   "order": 7,
   "accent": "#0d9488",
   "accentInk": {
-    "dark": "#0d9488",
-    "light": "#0b7970"
+    "dark": "#209d92",
+    "light": "#0b8278"
   },
   "tagline": "Music discovery that learns your taste on your own device.",
   "live": "https://safdar-hussain1.github.io/wavelength/",

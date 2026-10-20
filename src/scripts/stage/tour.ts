@@ -73,7 +73,7 @@ export function createTour(opts: TourOptions): Tour {
   const frame: TourFrame = { p: 0, dive: 0, road: 0, idx: 0, focus: 0, near: 1, fade: 1, inTour: false };
 
   function layout(): void {
-    const work = doc.getElementById('work');
+    const work = doc.querySelector<HTMLElement>('.work');
     const vh = win.innerHeight;
     if (!work) return;
     const top = work.offsetTop;

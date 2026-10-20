@@ -24,6 +24,8 @@ type W = Window & { __stage?: StageState; __sound?: { play(cue: 'tick' | 'hum-st
 const w = window as unknown as W;
 const params = new URLSearchParams(location.search);
 const still = (document.documentElement.dataset.still ?? null) as 'hero' | 'city' | 'og' | null;
+// Pending from the first moment this page's scripts run, whatever ran before.
+w.__stage = { started: false, reason: 'pending' };
 
 function decided(state: StageState): void {
   w.__stage = state;
@@ -89,7 +91,7 @@ async function start(): Promise<void> {
     return;
   }
   const mode = verdict.mode;
-  const hero = document.querySelector<HTMLElement>('.hero');
+  const hero = document.querySelector<HTMLElement>('.hero--city');
   const entries = JSON.parse(document.querySelector('[data-stage-entries]')?.textContent ?? '[]');
   if (!hero || entries.length === 0) {
     decided({ started: false, reason: 'off' });

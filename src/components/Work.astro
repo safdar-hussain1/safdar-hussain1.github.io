@@ -10,13 +10,16 @@ interface Props {
 }
 const { entries } = Astro.props;
 const live = liveEntries(entries);
+const WORDS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'];
+const liveWord = WORDS[live.length] ?? String(live.length);
 // The city needs every entry, scenery included: one building each.
 const stageEntries = entries.map((e) => ({ slug: e.slug, name: e.name, building: e.building, accent: e.accent, accentInk: e.accentInk, status: e.status, tagline: e.tagline }));
 ---
-<section id="work" class="work section wrap" aria-labelledby="work-title" style={`--stops:${live.length}`}>
-  <div class="work__head">
-    <h2 id="work-title">Work</h2>
-    <p class="work__lede">Each one is a complete product that runs on your own device. On a desktop, <em>Use it here</em> opens it inside this page.</p>
+<section id="projects" class="work section wrap" aria-labelledby="projects-title" style={`--stops:${live.length}`}>
+  <div class="work__head sec__head" data-reveal>
+    <p class="eyebrow">Projects</p>
+    <h2 id="projects-title">{liveWord} products, each one running live</h2>
+    <p class="work__lede sec__lede">Each one is a complete product that runs on your own device. On a desktop, <em>Use it here</em> opens it inside this page.</p>
   </div>
   <div class="work__list">
     {live.map((e, i) => <WorkCard entry={e} index={i} total={live.length} />)}
@@ -35,19 +38,11 @@ const stageEntries = entries.map((e) => ({ slug: e.slug, name: e.name, building:
   .work {
     position: relative;
   }
-  .work__head {
-    display: grid;
-    gap: var(--s-2);
-    margin-bottom: var(--s-3);
-  }
-  .work__lede {
-    font-size: var(--step-1);
-    max-width: 44ch;
-  }
   .work__lede em {
     font-style: normal;
     font-family: var(--display);
     font-size: 0.9em;
     font-weight: 600;
+    color: var(--ink);
   }
 </style>

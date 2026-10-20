@@ -76,12 +76,16 @@ describe('masthead and hero', () => {
   test('the masthead links every section in order', () => {
     const nav = html.match(/<nav class="mast__nav"[^>]*>([\s\S]*?)<\/nav>/)![1];
     const hrefs = [...nav.matchAll(/href="([^"]+)"/g)].map((m) => m[1]);
-    expect(hrefs).toEqual(['#work', '#how', '#measured', '#about', '#contact', SITE.author.github]);
+    expect(hrefs).toEqual(['#projects', '#experience', '#skills', '#about', '#contact', '/city/']);
+    const labels = [...nav.matchAll(/<a [^>]*>([\s\S]*?)<\/a>/g)].map((m) => m[1].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim());
+    expect(labels).toEqual(['Projects', 'Experience', 'Skills', 'About', 'Contact', '3D city']);
   });
 
-  test('the hero line and cue are present', () => {
-    expect(html).toContain('I build products that run on your own device and publish the numbers behind them.');
-    expect(html).toContain('Every project runs live. Scroll.');
+  test('the hero has the pitch, the calls to action and the picture of the city', () => {
+    expect(html).toContain('I build machine learning, computer vision and full products that run on your own device, and I publish the numbers behind them.');
+    expect(html).toContain(`${SITE.author.jobTitle} at ${SITE.author.employer}`);
+    expect(html).toMatch(/<a class="btn brand" href="#projects"[^>]*>See the projects/);
+    expect(html).toMatch(/<a class="btn ghost" href="\/city\/"[^>]*>[\s\S]*?Explore the 3D city/);
     expect(html).toContain('id="hero-art"');
     expect(html).toMatch(/<img[^>]*class="hero__still"[^>]*src="\/hero-still-sm\.webp"[^>]*fetchpriority="high"/);
     expect(html).toMatch(/hero__still[^>]*alt="A small night city on a round plinth: 8 buildings along one road, 6 of them with a lit screen on the facade"/);

@@ -1,1 +1,0 @@
-import{r as e}from"./theme.D50JWg_M.js";document.getElementById(`theme-switch`)?.addEventListener(`click`,()=>e());

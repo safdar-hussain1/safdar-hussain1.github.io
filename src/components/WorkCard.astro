@@ -12,6 +12,7 @@ const live = e.status === 'live';
 ---
 <article
   class="plate"
+  data-reveal
   data-slug={e.slug}
   data-status={e.status}
   data-accent={e.accent}
@@ -83,11 +84,16 @@ const live = e.status === 'live';
   .plate__media {
     position: relative;
     aspect-ratio: 16 / 10;
-    border-radius: var(--radius);
+    border-radius: var(--radius-lg);
     overflow: hidden;
     border: 1px solid var(--line);
     background: var(--raised);
     box-shadow: var(--shadow);
+    transition: transform 400ms var(--ease), border-color 400ms var(--ease);
+  }
+  .plate:hover .plate__media {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--accent) 50%, var(--line));
   }
   .plate__media :global(video),
   .plate__poster {
@@ -123,16 +129,16 @@ const live = e.status === 'live';
     min-width: 0;
   }
   .plate__name {
-    font-size: clamp(1.7rem, 1.2rem + 1.6vw, 2.6rem);
-    font-weight: 500;
-    font-stretch: 108%;
-    letter-spacing: -0.01em;
+    font-size: clamp(1.7rem, 1.2rem + 1.6vw, 2.5rem);
+    font-weight: 600;
+    letter-spacing: -0.025em;
     display: grid;
     gap: 0.35rem;
   }
   .plate__count {
     font-size: 0.8rem;
     letter-spacing: 0.02em;
+    color: var(--accent-ink);
   }
   .plate__tagline {
     font-size: var(--step-1);
@@ -150,9 +156,9 @@ const live = e.status === 'live';
   :root[data-theme='light'] .plate {
     --accent-ink: var(--accent-ink-light);
   }
-  @media (prefers-color-scheme: light) {
-    :root:not([data-theme='dark']) .plate {
-      --accent-ink: var(--accent-ink-light);
+  @media (prefers-reduced-motion: reduce) {
+    .plate__media {
+      transition: none;
     }
   }
 </style>

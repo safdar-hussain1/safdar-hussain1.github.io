@@ -1,25 +1,98 @@
 ---
 import { SITE } from '../data/site';
+import Icon from './Icon.astro';
 ---
-<footer class="foot wrap">
-  <p>
-    Built by Safdar Hussain. <a href={SITE.repo}>Source on GitHub</a>. Every number about a project
-    on this site is copied from that project's README.
+<footer class="foot">
+  <div class="wrap foot__in">
+    <div class="foot__brand">
+      <b><span class="foot__mark" aria-hidden="true"></span>Safdar Hussain</b>
+      <p>AI engineer. Products that run on your own device, with the numbers behind them.</p>
+    </div>
+    <nav class="foot__nav" aria-label="Footer">
+      <a href="/#projects">Projects</a>
+      <a href="/#experience">Experience</a>
+      <a href="/#skills">Skills</a>
+      <a href="/#about">About</a>
+      <a href="/#contact">Contact</a>
+      <a href="/city/"><Icon name="cube" size={14} /> 3D city</a>
+    </nav>
+    <div class="foot__links">
+      <a href={SITE.author.github}><Icon name="github" size={16} /> GitHub</a>
+      <a href={SITE.author.linkedin}><Icon name="linkedin" size={16} /> LinkedIn</a>
+      <a href={SITE.repo}><Icon name="code" size={16} /> Source on GitHub</a>
+    </div>
+  </div>
+  <p class="wrap foot__note">
+    Built by Safdar Hussain. Every number about a project on this site is copied from that project's README.
   </p>
 </footer>
 
 <style>
   .foot {
-    margin-top: var(--s-5);
-    padding-block: var(--s-3) var(--s-4);
+    margin-top: var(--s-6);
+    padding-block: var(--s-4) var(--s-4);
     border-top: 1px solid var(--line);
     color: var(--ink-2);
     font-family: var(--display);
     font-size: var(--step--1);
-    font-stretch: 96%;
     line-height: 1.5;
   }
-  .foot p {
+  .foot__in {
+    display: grid;
+    gap: var(--s-3);
+  }
+  @media (min-width: 760px) {
+    .foot__in {
+      grid-template-columns: minmax(0, 1.3fr) auto auto;
+      gap: var(--s-4);
+      align-items: start;
+    }
+  }
+  .foot__brand {
+    display: grid;
+    gap: 0.5rem;
+  }
+  .foot__brand b {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--ink);
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  .foot__mark {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--grad);
+  }
+  .foot__brand p {
+    max-width: 36ch;
+  }
+  .foot__nav,
+  .foot__links {
+    display: grid;
+    gap: 0.5rem;
+  }
+  .foot__nav a,
+  .foot__links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    text-decoration: none;
+    color: var(--ink-2);
+    width: fit-content;
+  }
+  .foot__nav a:hover,
+  .foot__links a:hover {
+    color: var(--ink);
+  }
+  .foot__note {
     max-width: none;
+    margin-top: var(--s-3);
+    padding-top: var(--s-2);
+    border-top: 1px solid var(--line);
+    color: var(--ink-2);
+    font-size: 0.85rem;
   }
 </style>

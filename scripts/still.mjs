@@ -55,7 +55,7 @@ await withServer(async () => {
   if (only.length === 0 || only.includes('home')) {
     const og = await browser.newContext({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1, colorScheme: 'dark' });
     const page = await og.newPage();
-    await page.goto(`${base}/?still=hero`, { waitUntil: 'networkidle' });
+    await page.goto(`${base}/city/?still=hero`, { waitUntil: 'networkidle' });
     const city = await stageStill(page);
     if (!city) console.log('og-image: the stage did not start here, so this is the typographic hero');
     await savePng(await page.screenshot({ type: 'png' }), join(root, 'public/og-image.png'));
@@ -63,7 +63,7 @@ await withServer(async () => {
 
     const wide = await browser.newContext({ viewport: { width: 1600, height: 1000 }, deviceScaleFactor: 1, colorScheme: 'dark' });
     const hero = await wide.newPage();
-    await hero.goto(`${base}/?still=city`, { waitUntil: 'networkidle' });
+    await hero.goto(`${base}/city/?still=city`, { waitUntil: 'networkidle' });
     if (await stageStill(hero)) {
       const png = await hero.screenshot({ type: 'png' });
       await sharp(png).webp({ quality: 78, effort: 6 }).toFile(join(root, 'public/hero-still.webp'));

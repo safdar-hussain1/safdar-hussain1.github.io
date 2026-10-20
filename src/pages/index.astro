@@ -7,6 +7,7 @@ import Work from '../components/Work.astro';
 import HowIWork from '../components/HowIWork.astro';
 import Measured from '../components/Measured.astro';
 import Timeline from '../components/Timeline.astro';
+import Skills from '../components/Skills.astro';
 import About from '../components/About.astro';
 import Contact from '../components/Contact.astro';
 import Dock from '../components/Dock.astro';
@@ -22,12 +23,15 @@ const entries = allEntries((await getCollection('work')).map((e) => e.data));
   <HowIWork entries={entries} />
   <Measured entries={entries} />
   <Timeline />
+  <Skills />
   <About />
   <Contact />
   <Dock entries={entries} />
   <Palette entries={entries} />
   <script>
-    import '../scripts/stage-loader';
+    import { watchReveals } from '../scripts/reveal';
     import '../scripts/selftest-entry';
+
+    watchReveals();
   </script>
 </Base>

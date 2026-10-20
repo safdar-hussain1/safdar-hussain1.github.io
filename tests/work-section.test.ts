@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { readDoc } from './helpers/html';
 
 const html = readDoc();
-const whole = html.match(/<section id="work"[\s\S]*?<\/section>/)![0];
+const whole = html.match(/<section id="projects"[\s\S]*?<\/section>/)![0];
 // The city's own data lists every entry, scenery included; the cards and the rail do not.
 const stageData = whole.match(/<script type="application\/json" data-stage-entries>([\s\S]*?)<\/script>/);
 const section = whole.replace(/<script type="application\/json" data-stage-entries>[\s\S]*?<\/script>/, '');
@@ -15,6 +15,7 @@ describe('work section', () => {
     expect(section).not.toContain('wavelength');
     expect(section).not.toContain('sightline');
     expect(section).toContain('1 of 6');
+    expect(section).toMatch(/<h2 id="projects-title"[^>]*>Six products, each one running live<\/h2>/);
   });
 
   test('the city data carries all eight entries with their building and status', () => {

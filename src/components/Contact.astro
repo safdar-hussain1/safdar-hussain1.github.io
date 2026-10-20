@@ -3,13 +3,22 @@ import { SITE } from '../data/site';
 import Icon from './Icon.astro';
 ---
 <section id="contact" class="contact section wrap" aria-labelledby="contact-title">
-  <h2 id="contact-title">Contact</h2>
-  <p class="contact__lede">Email is best.</p>
-  <div class="contact__row">
-    <code id="contact-email">{SITE.author.email}</code>
-    <button class="btn" type="button" id="copy-email" aria-label="Copy the email address"><Icon name="copy" size={15} /> Copy</button>
-    <a class="btn" href={SITE.author.github}>GitHub</a>
-    <a class="btn" href={SITE.author.linkedin}>LinkedIn</a>
+  <div class="contact__panel card" data-reveal>
+    <div class="contact__glow" aria-hidden="true"></div>
+    <div class="contact__in">
+      <p class="eyebrow">Contact</p>
+      <h2 id="contact-title">Let's build something that runs on your device.</h2>
+      <p class="contact__lede">Email is best. I'm in Hyderabad and I work remotely.</p>
+      <div class="contact__row">
+        <code id="contact-email">{SITE.author.email}</code>
+        <button class="btn brand" type="button" id="copy-email" aria-label="Copy the email address"><Icon name="copy" size={16} /> Copy</button>
+      </div>
+      <div class="contact__links">
+        <a class="btn ghost" href={SITE.author.github}><Icon name="github" size={17} /> GitHub</a>
+        <a class="btn ghost" href={SITE.author.linkedin}><Icon name="linkedin" size={17} /> LinkedIn</a>
+        <a class="btn ghost" href={`mailto:${SITE.author.email}`}><Icon name="mail" size={17} /> Write an email</a>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -29,22 +38,53 @@ import Icon from './Icon.astro';
 </script>
 
 <style>
+  .contact__panel {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    padding: clamp(2rem, 1.4rem + 3vw, 4rem);
+  }
+  .contact__glow {
+    position: absolute;
+    inset: -40% -20% auto auto;
+    width: 60%;
+    height: 140%;
+    pointer-events: none;
+    background: radial-gradient(45% 45% at 70% 40%, color-mix(in srgb, var(--brand) 32%, transparent), transparent 70%), radial-gradient(35% 40% at 40% 70%, color-mix(in srgb, var(--brand-2) 22%, transparent), transparent 70%);
+    filter: blur(30px);
+  }
+  .contact__in {
+    position: relative;
+    display: grid;
+    gap: 1.1rem;
+    max-width: 44rem;
+  }
+  .contact__in h2 {
+    font-size: clamp(1.8rem, 1.2rem + 2vw, 2.7rem);
+  }
   .contact__lede {
     font-size: var(--step-1);
-    margin-bottom: var(--s-2);
+    color: var(--ink-2);
   }
   .contact__row {
     display: flex;
     flex-wrap: wrap;
     gap: 0.7rem;
     align-items: center;
+    margin-top: 0.4rem;
   }
   .contact__row code {
-    font-size: 1rem;
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 0.6rem 0.9rem;
-    background: var(--raised);
+    font-size: 1.05rem;
+    font-weight: 500;
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius-pill);
+    padding: 0.7rem 1.2rem;
+    background: var(--ground);
     user-select: all;
+  }
+  .contact__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
   }
 </style>

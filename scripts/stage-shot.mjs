@@ -10,7 +10,7 @@ const opt = (name, fallback) => {
   const i = argv.indexOf(name);
   return i >= 0 ? argv[i + 1] : fallback;
 };
-const BASE = opt('--url', 'http://127.0.0.1:4300/').replace(/\/?$/, '/');
+const BASE = opt('--url', 'http://127.0.0.1:4300/').replace(/\/?$/, '/') + 'city/';
 const OUT = opt('--out', join(tmpdir(), 'portfolio-stage'));
 const scheme = argv.includes('--light') ? 'light' : 'dark';
 const width = Number(opt('--width', 1440));
@@ -20,6 +20,7 @@ mkdirSync(OUT, { recursive: true });
 
 const browser = await launch({ gl: true });
 const ctx = await browser.newContext({ viewport: { width, height }, colorScheme: scheme, deviceScaleFactor: 1 });
+if (scheme === 'light') await ctx.addInitScript(() => localStorage.setItem('portfolio.theme', 'light'));
 const page = await ctx.newPage();
 page.on('pageerror', (e) => console.log('pageerror', e.message));
 page.on('console', (m) => {

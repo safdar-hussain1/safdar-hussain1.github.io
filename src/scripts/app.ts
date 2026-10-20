@@ -19,6 +19,7 @@ const dock = document.getElementById('dock');
 dock?.addEventListener('dock:open', () => sound.play('dock'));
 dock?.addEventListener('dock:close', () => sound.play('undock'));
 
-// The 3D stage decides whether it runs after the page has painted; until then it is pending.
+// The 3D stage lives on the city page and decides whether it runs after the page has painted;
+// every other page has it off. The city page's loader marks itself pending the moment it loads.
 const w = window as unknown as { __stage?: { started: boolean; reason?: string } };
-w.__stage ??= { started: false, reason: 'pending' };
+w.__stage ??= { started: false, reason: document.body.classList.contains('page-city') ? 'pending' : 'off' };

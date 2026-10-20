@@ -9,8 +9,11 @@ mkdirSync(out, { recursive: true });
 const browser = await launch();
 for (const [name, viewport, colorScheme] of [['dark', { width: 1440, height: 900 }, 'dark'], ['light', { width: 1440, height: 900 }, 'light'], ['390', { width: 390, height: 844 }, 'dark']]) {
   const ctx = await browser.newContext({ viewport, colorScheme });
+  if (colorScheme === 'light') await ctx.addInitScript(() => localStorage.setItem('portfolio.theme', 'light'));
   const page = await ctx.newPage();
   await page.goto(url, { waitUntil: 'networkidle' });
+  await page.evaluate(() => document.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('in')));
+  await page.waitForTimeout(900);
   await page.screenshot({ path: join(out, `${name}.png`), fullPage: true });
   await ctx.close();
 }

@@ -9,68 +9,78 @@ const { entries } = Astro.props;
 const live = liveEntries(entries);
 ---
 <div class="numbers" id="numbers-board">
-  <h3>In each project's own figures</h3>
-  <p class="meta">Every figure is quoted from the project's README, and each line links to it. No figure here is rounded or re-stated.</p>
   <div class="numbers__grid">
     {
-      live.map((e) => (
-        <div class="numbers__tile" style={`--accent:${e.accent};--accent-ink:${e.accentInk.dark};--accent-ink-light:${e.accentInk.light}`}>
+      live.map((e, i) => (
+        <article class="card card--hover numbers__tile" data-reveal data-reveal-delay={i * 50} style={`--accent:${e.accent};--accent-ink:${e.accentInk.dark};--accent-ink-light:${e.accentInk.light}`}>
           <b class="numbers__name"><span class="numbers__dot" aria-hidden="true"></span>{e.name}</b>
+          <p class="numbers__lead"><a href={e.facts[0].source}>{e.facts[0].text}</a></p>
           <ul>
-            {e.facts.slice(0, 3).map((f) => (
+            {e.facts.slice(1, 3).map((f) => (
               <li><a href={f.source}>{f.text}</a></li>
             ))}
           </ul>
-        </div>
+        </article>
       ))
     }
   </div>
 </div>
 
 <style>
-  .numbers {
-    display: grid;
-    gap: 0.6rem;
-  }
   .numbers__grid {
-    margin-top: var(--s-2);
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1px;
-    background: var(--line);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    overflow: hidden;
+    gap: 1rem;
   }
   .numbers__tile {
-    background: var(--raised);
-    padding: 1rem 1.1rem 1.1rem;
+    position: relative;
+    overflow: hidden;
+    padding: 1.3rem 1.4rem 1.4rem;
     display: grid;
-    gap: 0.6rem;
+    gap: 0.7rem;
     align-content: start;
+  }
+  .numbers__tile::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 4px;
+    background: var(--accent);
   }
   .numbers__name {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     font-family: var(--display);
-    font-weight: 500;
-    font-stretch: 104%;
+    font-weight: 600;
+    font-size: 1.05rem;
   }
   .numbers__dot {
     width: 9px;
     height: 9px;
     border-radius: 50%;
     background: var(--accent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent);
+  }
+  .numbers__lead {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 1.2rem;
+    letter-spacing: -0.015em;
+    line-height: 1.3;
+    max-width: none;
+  }
+  .numbers__lead a {
+    text-decoration-color: color-mix(in srgb, var(--accent) 60%, transparent);
+    text-decoration-thickness: 2px;
   }
   .numbers__tile ul {
     margin: 0;
     padding-left: 1rem;
     display: grid;
-    gap: 0.35rem;
+    gap: 0.4rem;
     font-family: var(--display);
     font-size: 0.92rem;
-    font-stretch: 97%;
     color: var(--ink-2);
   }
   .numbers__tile a {
@@ -82,10 +92,5 @@ const live = liveEntries(entries);
   }
   :root[data-theme='light'] .numbers__tile {
     --accent-ink: var(--accent-ink-light);
-  }
-  @media (prefers-color-scheme: light) {
-    :root:not([data-theme='dark']) .numbers__tile {
-      --accent-ink: var(--accent-ink-light);
-    }
   }
 </style>

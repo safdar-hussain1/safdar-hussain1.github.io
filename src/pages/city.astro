@@ -1,0 +1,51 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Masthead from '../components/Masthead.astro';
+import Hero from '../components/Hero.astro';
+import Work from '../components/Work.astro';
+import Dock from '../components/Dock.astro';
+import Palette from '../components/Palette.astro';
+import Icon from '../components/Icon.astro';
+import { SITE } from '../data/site';
+import { allEntries } from '../lib/work';
+
+// The city: every project as a building on one road, its live page on the facade. The glass
+// lens over the name, the dive and the drive along the road run on a desktop with a GPU; the
+// same cards stand in everywhere else.
+const entries = allEntries((await getCollection('work')).map((e) => e.data));
+const canonical = `${SITE.url}city/`;
+const title = 'The city — Safdar Hussain';
+const description = 'A small night city where every project is a building with its live page on the facade. Scroll through the glass lens, stop at each one and press Use it here.';
+const page = {
+  '@type': 'WebPage',
+  '@id': canonical,
+  url: canonical,
+  name: title,
+  description,
+  isPartOf: { '@id': `${SITE.url}#website` },
+};
+---
+<Base title={title} description={description} canonical={canonical} ogAlt={SITE.ogAlt} jsonLd={[page]} bodyClass="page-city">
+  <Masthead slot="header" home={false} />
+  <Hero entries={entries} variant="city" />
+  <Work entries={entries} />
+  <section class="city-back wrap">
+    <a class="btn ghost" href="/"><Icon name="arrow-right" size={16} /> Back to the portfolio</a>
+  </section>
+  <Dock entries={entries} />
+  <Palette entries={entries} />
+  <script>
+    import '../scripts/stage-loader';
+    import '../scripts/selftest-entry';
+  </script>
+</Base>
+
+<style>
+  .city-back {
+    padding-block: var(--s-4) 0;
+  }
+  .city-back .icon {
+    transform: rotate(180deg);
+  }
+</style>

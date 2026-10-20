@@ -1,6 +1,5 @@
 ---
 import Icon from './Icon.astro';
-import { SITE } from '../data/site';
 
 interface Props {
   home?: boolean;
@@ -8,19 +7,19 @@ interface Props {
 const { home = true } = Astro.props;
 const prefix = home ? '' : '/';
 const links = [
-  ['Work', `${prefix}#work`],
-  ['How I work', `${prefix}#how`],
-  ['Measured', `${prefix}#measured`],
+  ['Projects', `${prefix}#projects`],
+  ['Experience', `${prefix}#experience`],
+  ['Skills', `${prefix}#skills`],
   ['About', `${prefix}#about`],
   ['Contact', `${prefix}#contact`],
 ];
 ---
 <header class="mast" slot="header">
   <div class="mast__in wrap">
-    <a class="mast__wordmark" href="/">Safdar Hussain</a>
+    <a class="mast__wordmark" href="/"><span class="mast__mark" aria-hidden="true"></span>Safdar Hussain</a>
     <nav class="mast__nav" aria-label="Sections">
-      {links.map(([label, href]) => <a href={href}>{label}</a>)}
-      <a href={SITE.author.github} rel="me">Source</a>
+      {links.map(([label, href]) => <a href={href} data-section={href.slice(href.indexOf('#') + 1)}>{label}</a>)}
+      <a class="mast__city" href="/city/" aria-label="Explore the 3D city"><Icon name="cube" size={15} /><span>3D city</span></a>
     </nav>
     <div class="mast__tools">
       <button class="mast__btn" id="palette-trigger" type="button" aria-label="Open the command palette" title="Press / anywhere">
@@ -41,51 +40,84 @@ const links = [
 
 <script>
   import { toggleTheme } from '../scripts/theme';
+  import { watchSections } from '../scripts/spy';
 
   document.getElementById('theme-switch')?.addEventListener('click', () => toggleTheme());
+  watchSections(document.querySelectorAll<HTMLAnchorElement>('.mast__nav a[data-section]'));
 </script>
 
 <style>
   .mast {
     position: sticky;
-    top: env(safe-area-inset-top, 0px);
+    top: 0;
     z-index: 20;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    background: color-mix(in srgb, var(--ground) 70%, transparent);
+    padding-block: 0.6rem;
+    backdrop-filter: blur(18px) saturate(1.3);
+    -webkit-backdrop-filter: blur(18px) saturate(1.3);
+    background: color-mix(in srgb, var(--ground) 86%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
   }
   .mast__in {
     display: flex;
     align-items: center;
-    gap: 1.4rem;
-    padding-block: 0.75rem;
+    gap: 1.2rem;
+    min-height: 48px;
   }
   .mast__wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
     font-family: var(--display);
-    font-weight: 500;
-    font-stretch: 112%;
-    letter-spacing: 0.01em;
+    font-weight: 600;
+    letter-spacing: -0.01em;
     font-size: 1.05rem;
     text-decoration: none;
     white-space: nowrap;
   }
+  .mast__mark {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--grad);
+    box-shadow: 0 0 0 4px var(--brand-soft);
+  }
   .mast__nav {
     display: flex;
-    gap: 1.1rem;
+    align-items: center;
+    gap: 0.15rem;
     margin-left: auto;
+    padding: 0.25rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--raised) 70%, transparent);
     font-family: var(--display);
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     font-weight: 500;
-    font-stretch: 96%;
   }
   .mast__nav a {
     text-decoration: none;
     color: var(--ink-2);
     white-space: nowrap;
-    padding-block: 0.4rem;
+    padding: 0.42rem 0.85rem;
+    border-radius: var(--radius-pill);
+    transition: color 150ms var(--ease), background 150ms var(--ease);
   }
-  .mast__nav a:hover {
+  .mast__nav a:hover,
+  .mast__nav a.is-active {
     color: var(--ink);
+    background: var(--raised-2);
+  }
+  .mast__city {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-left: 0.2rem;
+    color: var(--ink) !important;
+    background: var(--brand-soft);
+    border: 1px solid color-mix(in srgb, var(--brand) 45%, transparent);
+  }
+  .mast__city:hover {
+    background: color-mix(in srgb, var(--brand) 28%, transparent) !important;
   }
   .mast__tools {
     display: flex;
@@ -107,6 +139,10 @@ const links = [
     border-radius: var(--radius-pill);
     background: var(--glass);
     color: var(--ink);
+    transition: border-color 150ms var(--ease);
+  }
+  .mast__btn:hover {
+    border-color: var(--line-2);
   }
   .mast__btn kbd {
     font-family: var(--display);
@@ -129,20 +165,43 @@ const links = [
   :root[data-theme='light'] .when-light {
     display: inline;
   }
-  @media (prefers-color-scheme: light) {
-    :root:not([data-theme='dark']) .when-dark {
+  @media (max-width: 980px) {
+    .mast__nav a:not(.mast__city) {
       display: none;
     }
-    :root:not([data-theme='dark']) .when-light {
-      display: inline;
-    }
-  }
-  @media (max-width: 760px) {
     .mast__nav {
-      display: none;
+      border: 0;
+      background: none;
+      padding: 0;
     }
     .mast__btn kbd {
       display: none;
+    }
+  }
+  @media (max-width: 520px) {
+    .mast__in {
+      gap: 0.6rem;
+    }
+    .mast__wordmark {
+      font-size: 0.98rem;
+    }
+    .mast__city {
+      padding: 0;
+      width: 40px;
+      height: 40px;
+      justify-content: center;
+      margin-left: 0;
+    }
+    .mast__city span {
+      display: none;
+    }
+    .mast__tools {
+      gap: 0.35rem;
+    }
+    .mast__btn {
+      min-width: 38px;
+      height: 38px;
+      padding: 0 0.45rem;
     }
   }
 </style>
