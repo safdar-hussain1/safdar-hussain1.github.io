@@ -54,5 +54,6 @@ describe('work section', () => {
   test('the rail lists the six live stops', () => {
     const rail = section.match(/<nav class="rail"[\s\S]*?<\/nav>/)![0];
     expect([...rail.matchAll(/aria-label="([^"]+)"/g)].map((m) => m[1]).slice(1)).toEqual(['1. WardOS', '2. Nightingale', '3. TrafficLens', '4. Red Light, Green Light', '5. Carmine', '6. HomeCast']);
+    expect([...rail.matchAll(/data-slug="([^"]+)"/g)].map((m) => m[1])).toEqual(['wardos', 'nightingale', 'trafficlens', 'red-light-green-light-cv', 'carmine', 'homecast']);
   });
 });

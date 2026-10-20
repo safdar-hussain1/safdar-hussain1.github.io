@@ -58,8 +58,8 @@ export function createCaptions(root: HTMLElement = document.body, theme: () => '
       });
       paintAccent();
       if (focused >= 0) {
-        const target = next.querySelectorAll<HTMLElement>(FOCUSABLE)[focused];
-        target?.focus({ preventScroll: true });
+        const list = next.querySelectorAll<HTMLElement>(FOCUSABLE);
+        list[Math.min(focused, list.length - 1)]?.focus({ preventScroll: true });
       }
     },
     clear() {

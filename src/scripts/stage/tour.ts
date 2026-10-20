@@ -126,22 +126,27 @@ export function createTour(opts: TourOptions): Tour {
     } else if (e.key === 'ArrowLeft') {
       e.preventDefault();
       goTo(lastFocus < 0 ? 0 : lastFocus - 1);
-    } else if (/^[1-9]$/.test(e.key) && Number(e.key) <= n) {
-      goTo(Number(e.key) - 1);
+    } else if (/^[1-9]$/.test(e.key) && Number(e.key) <= railSlugs.length) {
+      const i = stopFor(railSlugs[Number(e.key) - 1]);
+      if (i >= 0) goTo(i);
     }
   }
 
+  // The rail and the digit keys name the captions in the page's order; the stops are found by slug.
   const rail = doc.querySelector<HTMLElement>('.rail');
+  const railSlugs = Array.from(rail?.querySelectorAll<HTMLElement>('button[data-slug]') ?? []).map((b) => b.dataset.slug ?? '');
+  const stopFor = (slug: string) => stops.findIndex((b) => b.entry.slug === slug);
   const onRail = (e: Event) => {
-    const b = (e.target as HTMLElement).closest<HTMLElement>('button[data-i]');
-    if (b) goTo(Number(b.dataset.i));
+    const b = (e.target as HTMLElement).closest<HTMLElement>('button[data-slug]');
+    const i = b ? stopFor(b.dataset.slug ?? '') : -1;
+    if (i >= 0) goTo(i);
   };
   rail?.addEventListener('click', onRail);
   win.addEventListener('scroll', readScroll, { passive: true });
   doc.addEventListener('keydown', onKey);
   // The keyboard landing in a caption brings the camera to its stop.
   captions.onFocus((slug) => {
-    const i = stops.findIndex((b) => b.entry.slug === slug);
+    const i = stopFor(slug);
     if (i >= 0) jumpTo(i);
   });
   layout();
@@ -179,7 +184,7 @@ export function createTour(opts: TourOptions): Tour {
         const f = tp.idx - i0;
         pos.copy(stops[i0].anchor).lerp(stops[i1].anchor, f);
         look.copy(stops[i0].lookAt).lerp(stops[i1].lookAt, f);
-        pos.y += Math.sin(now / 2600) * 0.015;
+        pos.y += Math.sin(now / 2600) * 0.015 * smoothstep(0, 0.1, p - diveEnd);
         aimRight(LOOK_RIGHT);
       }
       camera.position.copy(pos);
@@ -219,7 +224,7 @@ export function createTour(opts: TourOptions): Tour {
       captions.clear();
     }
     stops.forEach((b, i) => {
-      const k = i === tp.focus && landed ? tp.near : 0;
+      const k = i === tp.focus ? tp.near * landing : 0;
       b.setFocus(k);
       const facade = facades.get(b.entry.slug);
       if (!facade) return;

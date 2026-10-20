@@ -90,7 +90,7 @@ function glowMaterial(color: string, opacity = 0): THREE.MeshBasicMaterial {
 
 // A lit sign with the project's name; the plate is dark with the name in the accent, or the
 // accent with the name in white when `inverse`.
-function sign(entry: StageEntry, width: number, inverse: boolean, ctx: BuildContext): { group: THREE.Group; mat: THREE.MeshStandardMaterial; glow: THREE.Mesh } {
+function sign(entry: StageEntry, width: number, inverse: boolean): { group: THREE.Group; mat: THREE.MeshStandardMaterial; glow: THREE.Mesh } {
   const ink = inverse ? '#ffffff' : entry.accentInk.dark;
   const back = inverse ? entry.accent : '#0b1020';
   const { tex, aspect } = signTexture(entry.name, ink, back);
@@ -104,7 +104,6 @@ function sign(entry: StageEntry, width: number, inverse: boolean, ctx: BuildCont
   glow.position.z = 0.045;
   glow.rotation.y = Math.PI;
   group.add(glow);
-  void ctx;
   return { group, mat, glow };
 }
 
@@ -157,7 +156,7 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
     crossGlow.position.set(0.5, 2.98, 0.95);
     crossGlow.rotation.y = Math.PI;
     group.add(crossGlow);
-    const s = sign(entry, 1.1, false, ctx);
+    const s = sign(entry, 1.1, false);
     s.group.position.set(0.5, 2.42, -0.06);
     group.add(s.group);
     const screenMount = new THREE.Group();
@@ -212,7 +211,7 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
       p.position.set(px, 1.5 + 0.325, 0.3);
       group.add(p);
     }
-    const s = sign(entry, 1.3, false, ctx);
+    const s = sign(entry, 1.3, false);
     s.group.position.set(-0.95, 1.31, -0.31);
     s.group.scale.setScalar(0.75);
     group.add(s.group);
@@ -237,7 +236,7 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
 
   // TrafficLens: a gantry across the road with the camera under its beam and the counting
   // monitor hanging from it, facing the traffic that comes toward the visitor.
-  gantry(entry, ctx) {
+  gantry(entry) {
     const group = new THREE.Group();
     const steel = matte(0x3a4566);
     const nearZ = -(FRONT_Z - ROAD_WIDTH / 2 - 0.2);
@@ -276,7 +275,7 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
     screenMount.position.set(-0.1, 2.3, (nearZ + farZ) / 2 + 0.2);
     screenMount.rotation.y = Math.PI / 2;
     group.add(screenMount);
-    const s = sign(entry, 1.4, true, ctx);
+    const s = sign(entry, 1.4, true);
     s.group.position.set(-0.12, 3.2, (nearZ + farZ) / 2 + 0.2);
     s.group.rotation.y = Math.PI / 2;
     s.group.scale.setScalar(0.85);
@@ -300,7 +299,7 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
   // Red Light, Green Light: a floodlit pitch with a start and a finish line, the signal pole
   // whose lamps alternate, four runners who creep on green and freeze on red, and the
   // scoreboard across the far end.
-  field(entry, ctx) {
+  field(entry) {
     const group = new THREE.Group();
     const pitch = box(3.4, 0.06, 2.5, matte('#1d5b34', { roughness: 1 }), 0, 0, 1.25);
     pitch.receiveShadow = true;
@@ -357,7 +356,7 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
     const screenMount = new THREE.Group();
     screenMount.position.set(0, 1.5, 2.4);
     group.add(screenMount);
-    const s = sign(entry, 1.6, true, ctx);
+    const s = sign(entry, 1.6, true);
     s.group.position.set(0, 2.28, 2.4);
     s.group.scale.setScalar(0.8);
     group.add(s.group);
@@ -408,7 +407,7 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
     doorLight.position.set(-0.85, 1.76, -0.08);
     group.add(doorLight);
     // The lit sign on the roof, with its own soft halo.
-    const s = sign(entry, 2.0, true, ctx);
+    const s = sign(entry, 2.0, true);
     s.group.position.set(0.3, 2.42, 0.5);
     s.group.scale.setScalar(1.05);
     group.add(s.group);
@@ -466,7 +465,7 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
       p.position.set(px, 0.5 + 0.35, 0.14);
       group.add(p);
     }
-    const s = sign(entry, 1.2, false, ctx);
+    const s = sign(entry, 1.2, false);
     s.group.position.set(-0.9, 0.27, -0.06);
     s.group.scale.setScalar(0.7);
     group.add(s.group);
@@ -508,7 +507,7 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
       bars.push(b);
       group.add(b);
     }
-    const s = sign(entry, 1.6, true, ctx);
+    const s = sign(entry, 1.6, true);
     s.group.position.set(0, 1.62, -0.22);
     s.group.scale.setScalar(0.9);
     group.add(s.group);
@@ -559,7 +558,7 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
     const lamp = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.05, 0.1), lit('#ffd9a0', 1.3));
     lamp.position.set(0.1, 1.48, -0.06);
     group.add(lamp);
-    const s = sign(entry, 1.3, false, ctx);
+    const s = sign(entry, 1.3, false);
     s.group.position.set(0.1, 1.55, -0.06);
     s.group.scale.setScalar(0.8);
     group.add(s.group);

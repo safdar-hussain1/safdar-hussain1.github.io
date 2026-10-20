@@ -152,19 +152,20 @@ async function start(): Promise<void> {
 
   // The ladder, once, after the scene has settled; a docked project postpones it.
   const forced = params.has('fps') ? Number(params.get('fps')) : undefined;
-  setTimeout(async () => {
+  const judge = async (last: boolean) => {
     const { decideLadder } = await import('./stage/perf');
     const { fps, step } = await decideLadder(forced, { busy: () => document.body.classList.contains('dock-open') });
     if (!w.__stage?.started) return;
-    if (step === 'flat') {
-      stage.applyLadder(step);
-      w.__stage = { started: false, reason: 'slow', mode, fps, step };
-      document.dispatchEvent(new CustomEvent('stage:ended'));
+    if (fps === null && !last) {
+      // Hidden or docked for every try: once more, later.
+      setTimeout(() => void judge(true), 20000);
       return;
     }
-    w.__stage = { ...w.__stage, fps, step };
     stage.applyLadder(step);
-  }, 2600);
+    // On 'flat' the stage has ended itself and said so; only the figures are added here.
+    w.__stage = { ...w.__stage, fps, step };
+  };
+  setTimeout(() => void judge(false), 2600);
 }
 
 function whenIdle(fn: () => void): void {

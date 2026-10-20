@@ -10,7 +10,7 @@ function page() {
   const doc = win.document;
   doc.body.innerHTML = `
     <div class="work__list">
-      <article class="plate" data-slug="wardos" data-status="live" data-accent="#0369a1" data-accent-ink="#3084b2" data-accent-ink-light="#0369a1"><a class="btn" data-dock="wardos" href="/wardos/">Use it here</a><a href="/work/wardos/">Read more</a></article>
+      <article class="plate" data-slug="wardos" data-status="live" data-accent="#0369a1" data-accent-ink="#3084b2" data-accent-ink-light="#0369a1"><a class="btn" data-dock="wardos" href="/wardos/">Use it here</a><a href="/work/wardos/">Read more</a><a href="/health-haven/">Also as a Java desktop system</a></article>
       <article class="plate" data-slug="carmine" data-status="live" data-accent="#a4133c" data-accent-ink="#c15f7a" data-accent-ink-light="#a4133c"><a class="btn" data-dock="carmine" href="/carmine/">Use it here</a><a href="/work/carmine/">Read more</a></article>
     </div>
     <nav class="rail"><button data-i="0" aria-current="false"></button><button data-i="1" aria-current="false"></button></nav>`;
@@ -60,5 +60,10 @@ describe('captions', () => {
     expect((doc.activeElement as HTMLElement | null)?.getAttribute('href')).toBe('/work/carmine/');
     doc.querySelector<HTMLElement>('.plate[data-slug="wardos"] [data-dock]')!.focus();
     expect(asked).toEqual(['wardos']);
+    // A caption with fewer controls takes the focus on its last one, never leaving it unseen.
+    c.setActive('wardos');
+    doc.querySelector<HTMLElement>('.plate[data-slug="wardos"] a[href="/health-haven/"]')!.focus();
+    c.setActive('carmine');
+    expect((doc.activeElement as HTMLElement | null)?.getAttribute('href')).toBe('/work/carmine/');
   });
 });

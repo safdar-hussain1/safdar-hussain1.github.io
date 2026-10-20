@@ -6,11 +6,19 @@ import { ladderStep, type LadderStep } from './math';
 // docked meanwhile, and a machine that could not be measured keeps everything.
 export const MAX_DELTA_MS = 100;
 
-/** Frames per second from frame intervals: the 75th percentile interval, pauses dropped. */
-export function fpsFromDeltas(deltas: number[], maxDelta = MAX_DELTA_MS): number | null {
-  const kept = deltas.filter((d) => d > 0 && d <= maxDelta).sort((a, b) => a - b);
-  if (kept.length < 30) return null;
-  const p75 = kept[Math.min(kept.length - 1, Math.floor(kept.length * 0.75))];
+/**
+ * Frames per second from frame intervals: the 75th percentile interval, with pauses dropped.
+ * A pause is an interval far longer than the machine's own pace (three times the median, and
+ * at least 100 ms), so a slow machine whose every frame is long still gets its true figure.
+ * Null only when the window is too short to judge.
+ */
+export function fpsFromDeltas(deltas: number[], minPause = MAX_DELTA_MS): number | null {
+  const all = deltas.filter((d) => d > 0).sort((a, b) => a - b);
+  if (all.length < 30) return null;
+  const median = all[Math.floor(all.length / 2)];
+  const kept = all.filter((d) => d <= Math.max(minPause, 3 * median));
+  const use = kept.length >= 30 ? kept : all;
+  const p75 = use[Math.min(use.length - 1, Math.floor(use.length * 0.75))];
   return 1000 / p75;
 }
 

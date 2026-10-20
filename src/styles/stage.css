@@ -59,6 +59,14 @@ body.stage-on .hero__art {
   opacity: 0;
   transition: opacity 700ms var(--ease);
 }
+body.stage-on .hero__copy {
+  padding: 0.7rem 0.9rem 0.8rem;
+  margin: -0.7rem -0.9rem -0.8rem;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--ground) 58%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
 body.stage-on .hero__line {
   max-width: 30ch;
   text-shadow: 0 1px 24px color-mix(in srgb, var(--ground) 80%, transparent);

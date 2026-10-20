@@ -28,7 +28,7 @@ export function canRunLens(env: StageEnv): { ok: boolean; reason?: StageReason }
   if (env.reducedMotion) return { ok: false, reason: 'reduced-motion' };
   if (env.saveData) return { ok: false, reason: 'save-data' };
   if (!env.webgl2) return { ok: false, reason: 'no-webgl2' };
-  if (env.width < LENS_MIN_WIDTH) return { ok: false, reason: 'narrow' };
+  if (env.width < LENS_MIN_WIDTH || (env.height !== undefined && env.height < 500)) return { ok: false, reason: 'narrow' };
   return { ok: true };
 }
 

@@ -41,7 +41,7 @@ export function buildCity(scene: THREE.Scene, palette: CityPalette): CityHandle 
   plinth.position.y = -0.6;
   plinth.receiveShadow = true;
   group.add(plinth);
-  const rim = new THREE.Mesh(new THREE.TorusGeometry(PLINTH_RADIUS, 0.06, 8, 160), matte(palette.kerb));
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(PLINTH_RADIUS, 0.06, 8, 160), kerbMat);
   rim.rotation.x = Math.PI / 2;
   rim.position.y = 0.0;
   group.add(rim);
@@ -68,9 +68,8 @@ export function buildCity(scene: THREE.Scene, palette: CityPalette): CityHandle 
   }
   group.add(dash);
 
-  // Street lamps every four units, between the stops and alternating sides, so none stands
-  // before a facade: a slim post, an arm over the road and a lit head with a soft halo.
-  // Lamps stand between the stops, never before a facade: x = -12, -8, ... 16.
+  // Street lamps every four units, between the stops (x = -12, -8, … 16) and alternating sides,
+  // so none stands before a facade: a slim post, an arm over the road and a lit head with a halo.
   const lampCount = 8;
   const postGeo = new THREE.CylinderGeometry(0.035, 0.05, 2.3, 6);
   const lamps = new THREE.InstancedMesh(postGeo, matte(0x2a3350), lampCount);

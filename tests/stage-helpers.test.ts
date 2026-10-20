@@ -28,6 +28,8 @@ describe('stage helpers', () => {
     // A quarter of slow frames moves the figure, as it should.
     const uneven = [...Array.from({ length: 60 }, () => 16.7), ...Array.from({ length: 30 }, () => 40)];
     expect(fpsFromDeltas(uneven)).toBeCloseTo(25, 0);
+    // A machine whose every frame is long is slow, not paused.
+    expect(fpsFromDeltas(Array.from({ length: 90 }, () => 125))).toBeCloseTo(8, 0);
     // Too few frames is no verdict.
     expect(fpsFromDeltas(steady.slice(0, 10))).toBeNull();
   });
@@ -35,6 +37,7 @@ describe('stage helpers', () => {
   test('canRunLens allows a tablet, not a phone', () => {
     expect(canRunLens({ ...ok, width: 768 })).toEqual({ ok: true });
     expect(canRunLens({ ...ok, width: 390 }).reason).toBe('narrow');
+    expect(canRunLens({ ...ok, width: 932, height: 430 }).reason).toBe('narrow');
     expect(canRunLens({ ...ok, width: 768, reducedMotion: true }).reason).toBe('reduced-motion');
   });
 

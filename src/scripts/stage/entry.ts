@@ -260,7 +260,9 @@ export function startStage(opts: StageOptions): StageHandle {
   // While a project is docked the dock covers the screen: the city stops rendering and its
   // loops pause, and both come back the moment the dock closes (before the camera flies back).
   const dockEl = doc.getElementById('dock');
-  let docked = false;
+  // A shared #work/<slug> link opens the dock before the stage starts: then the first frame
+  // renders (so the stage is ready) and the loop stops at once.
+  let docked = doc.body.classList.contains('dock-open');
   const onDockOpen = () => {
     docked = true;
     renderer.setAnimationLoop(null);
@@ -395,7 +397,10 @@ export function startStage(opts: StageOptions): StageHandle {
     lens.update(now, pointer);
     renderer.render(scene, camera);
     frames += 1;
-    if (frames === 1) resolveReady();
+    if (frames === 1) {
+      resolveReady();
+      if (docked) onDockOpen();
+    }
   }
   renderer.setAnimationLoop(frame);
   const onVisibility = () => {

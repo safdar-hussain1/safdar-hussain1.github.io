@@ -25,8 +25,9 @@ export function windowTexture(rand: () => number, opts: WindowOptions = {}): THR
       const v = rand();
       if (v > litShare) continue;
       const warm = rand() > 0.3;
-      const bright = 0.55 + rand() * 0.45;
-      c.fillStyle = warm ? `rgba(255, 214, 150, ${bright})` : `rgba(170, 200, 255, ${bright * 0.85})`;
+      const b = 0.55 + rand() * 0.45;
+      // Brightness goes into the colour: an emissive map reads the colour and ignores alpha.
+      c.fillStyle = warm ? `rgb(${Math.round(255 * b)}, ${Math.round(214 * b)}, ${Math.round(150 * b)})` : `rgb(${Math.round(170 * b * 0.85)}, ${Math.round(200 * b * 0.85)}, ${Math.round(255 * b * 0.85)})`;
       c.fillRect(k * cw + cw * 0.22, r * ch + ch * 0.26, cw * 0.56, ch * 0.48);
     }
   }
