@@ -29,8 +29,14 @@ const PHONE = { width: 390, height: 844 };
 
 // Full-page captures never scroll, so the sections that rise into view on scroll are shown first.
 async function revealAll(page) {
-  await page.evaluate(() => document.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('in')));
-  await page.waitForTimeout(700);
+  // Without the transition, so a slow frame cannot leave a section half-faded when axe reads it.
+  await page.evaluate(() =>
+    document.querySelectorAll('[data-reveal]').forEach((el) => {
+      el.style.transition = 'none';
+      el.classList.add('in');
+    }),
+  );
+  await page.waitForTimeout(300);
 }
 
 async function axe(page, label, options = {}) {
