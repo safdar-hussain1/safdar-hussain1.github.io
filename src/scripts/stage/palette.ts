@@ -20,7 +20,6 @@ export interface CityPalette {
   hemiGround: string;
   fog: [number, number];
   lensEnv: number;
-  bloom: number;
   /** Scales every additive glow: 1 at night, a fraction by day, where glow reads as haze. */
   glow: number;
   /** Scales the accent spot on the stop in focus, for the same reason. */
@@ -48,7 +47,6 @@ export const PALETTES: Record<'dark' | 'light', CityPalette> = {
     hemiGround: '#141a30',
     fog: [9, 32],
     lensEnv: 0.9,
-    bloom: 0,
     glow: 1,
     accent: 1,
   },
@@ -72,7 +70,6 @@ export const PALETTES: Record<'dark' | 'light', CityPalette> = {
     hemiGround: '#9aa3b8',
     fog: [12, 42],
     lensEnv: 0.6,
-    bloom: 0,
     glow: 0.12,
     accent: 0.3,
   },
