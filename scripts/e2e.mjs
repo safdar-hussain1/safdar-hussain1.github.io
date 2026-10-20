@@ -37,6 +37,8 @@ async function axe(page, label, options = {}) {
   }
 }
 
+// The dock and the palette flows test the flat page's own dock and palette, so they open the
+// page with the city switched off; the stage and tour flows cover the city.
 const flows = {
   async 'home-dark'(browser) {
     const ctx = await browser.newContext({ viewport: WIDE, colorScheme: 'dark' });
@@ -100,7 +102,7 @@ const flows = {
   async dock(browser) {
     const ctx = await browser.newContext({ viewport: WIDE, colorScheme: 'dark' });
     const page = await ctx.newPage();
-    await page.goto(BASE, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE}?stage=off`, { waitUntil: 'networkidle' });
     const historyBefore = await page.evaluate(() => history.length);
     await page.locator('[data-dock="wardos"]').click();
     await page.waitForSelector('#dock:not([hidden])');
@@ -136,7 +138,7 @@ const flows = {
   async palette(browser) {
     const ctx = await browser.newContext({ viewport: WIDE, colorScheme: 'dark' });
     const page = await ctx.newPage();
-    await page.goto(BASE, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE}?stage=off`, { waitUntil: 'networkidle' });
     await page.keyboard.press('/');
     await page.waitForSelector('#palette:not([hidden])');
     const activeBg = await page.evaluate(() => getComputedStyle(document.querySelector('#palette [role="option"][aria-selected="true"]')).backgroundColor);
