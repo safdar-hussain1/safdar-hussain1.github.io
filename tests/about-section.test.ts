@@ -81,7 +81,7 @@ describe('how I work, experience, skills, about and contact', () => {
     const foot = html.match(/<footer class="foot[^"]*"[\s\S]*?<\/footer>/)![0];
     for (const h of ['/#projects', '/#experience', '/#skills', '/#practice', '/#about', '/#contact', '/city/']) expect(foot).toContain(`href="${h}"`);
     expect(foot).toContain('href="https://leetcode.com/u/safdar-hussain1/"');
-    expect(foot).toMatch(/Source on GitHub<\/a>/);
+    expect(foot).not.toContain('github.com/safdar-hussain1/safdar-hussain1.github.io');
     expect(foot).toMatch(/built by Safdar Hussain/i);
     expect(foot).toContain('All rights reserved.');
   });

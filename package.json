@@ -16,7 +16,7 @@
     "shot": "node scripts/shot.mjs"
   },
   "author": "Safdar Hussain <safdar.eryx@gmail.com>",
-  "license": "MIT",
+  "license": "UNLICENSED",
   "type": "module",
   "private": true,
   "homepage": "https://safdar-hussain1.github.io/",

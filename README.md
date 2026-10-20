@@ -1,7 +1,7 @@
 # safdar-hussain1.github.io
 
 [![tests](https://github.com/safdar-hussain1/safdar-hussain1.github.io/actions/workflows/tests.yml/badge.svg)](https://github.com/safdar-hussain1/safdar-hussain1.github.io/actions/workflows/tests.yml)
-[![licence: MIT](https://img.shields.io/badge/licence-MIT-lightgrey)](LICENSE)
+[![all rights reserved](https://img.shields.io/badge/licence-all%20rights%20reserved-lightgrey)](LICENSE)
 
 The source of **https://safdar-hussain1.github.io/**, Safdar Hussain's portfolio. Every
 project on it is a complete product with its own live site, and the portfolio runs each one
@@ -145,4 +145,4 @@ Astro, TypeScript, Three.js for the city (procedural geometry, no model files) a
 its few tweens, loaded only when the city will run; Vitest, playwright-core driving the
 installed Chrome, axe-core, sharp; Archivo and Newsreader (both SIL Open Font License) bundled
 from Fontsource; the GitHub REST API for the live board. Everything is free; see `NOTICE`.
-MIT licence.
+all rights reserved (see LICENSE): the site is published to be viewed, not reused.
