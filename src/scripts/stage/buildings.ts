@@ -334,14 +334,14 @@ const BUILDERS: Record<BuildingKind, (entry: StageEntry, ctx: BuildContext) => P
       starts.push(0.5);
       group.add(r);
     });
-    // Floodlights: two masts with lit heads.
-    for (const x of [-1.6, 1.6]) {
+    // Floodlights: two masts at the back corners beside the scoreboard, their heads turned to the pitch.
+    for (const x of [-1.7, 1.7]) {
       const mast = post(2.4, 0.03, 0x2a3350);
-      mast.position.set(x, 1.2, 0.0);
+      mast.position.set(x, 1.2, 2.3);
       group.add(mast);
       const head = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.06, 0.06), lit('#f1f5ff', 1.2));
-      head.position.set(x, 2.4, 0.08);
-      head.rotation.x = 0.5;
+      head.position.set(x, 2.4, 2.22);
+      head.rotation.x = -0.5;
       group.add(head);
     }
     // The scoreboard at the far end, on two posts, the name on its top edge.
