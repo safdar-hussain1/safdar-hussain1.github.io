@@ -389,3 +389,84 @@ html[data-still='hero'] .hero__cue,
 html[data-still='hero'] .hero__art {
   display: none;
 }
+
+/* The light theme. Colour sits behind the page in soft washes (one per section, alternating
+   sides, bounded to the column so nothing scrolls sideways), the surfaces are glass over it, the
+   serif-italic word of each title and the headline figures take the gradient, and the deep
+   bands keep two lights of their own. */
+:root[data-theme='light'] .section--ruled,
+:root[data-theme='light'] .work,
+:root[data-theme='light'] .band {
+  position: relative;
+  isolation: isolate;
+}
+:root[data-theme='light'] .section--ruled::before,
+:root[data-theme='light'] .work::before,
+:root[data-theme='light'] .band::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+/* Inside a column, every wash fades out before the column's edge (centre ± 0.7 × radius). */
+:root[data-theme='light'] .section--ruled::before,
+:root[data-theme='light'] .work::before {
+  background:
+    radial-gradient(54% 230px at 62% 170px, rgba(129, 140, 248, 0.3), transparent 70%),
+    radial-gradient(48% 260px at 36% calc(100% - 210px), rgba(244, 114, 182, 0.15), transparent 70%);
+}
+:root[data-theme='light'] section:nth-of-type(even).section--ruled::before,
+:root[data-theme='light'] section:nth-of-type(even).work::before {
+  background:
+    radial-gradient(54% 230px at 38% 170px, rgba(192, 132, 252, 0.28), transparent 70%),
+    radial-gradient(48% 260px at 64% calc(100% - 210px), rgba(125, 211, 252, 0.3), transparent 70%);
+}
+:root[data-theme='light'] .band--2::before {
+  background:
+    radial-gradient(44% 56% at 92% 6%, rgba(129, 140, 248, 0.26), transparent 70%),
+    radial-gradient(36% 48% at 4% 72%, rgba(244, 114, 182, 0.14), transparent 70%);
+}
+:root[data-theme='light'] section:nth-of-type(even).band--2::before {
+  background:
+    radial-gradient(44% 56% at 6% 8%, rgba(192, 132, 252, 0.24), transparent 70%),
+    radial-gradient(36% 48% at 96% 78%, rgba(125, 211, 252, 0.26), transparent 70%);
+}
+:root[data-theme='light'] .band:not(.band--2)::before {
+  background:
+    radial-gradient(46% 60% at 86% 8%, rgba(122, 162, 255, 0.22), transparent 70%),
+    radial-gradient(40% 54% at 8% 92%, rgba(192, 132, 252, 0.2), transparent 70%);
+}
+:root[data-theme='light'] h1 .em,
+:root[data-theme='light'] h2 .em,
+:root[data-theme='light'] .hero__line .em {
+  background: var(--grad-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-right: 0.06em;
+}
+:root[data-theme='light'] .band:not(.band--2) h2 .em {
+  background: linear-gradient(120deg, #9ec1ff 0%, #d8b4fe 55%, #f9a8d4 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+:root[data-theme='light'] .card {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), var(--shadow-2);
+}
+:root[data-theme='light'] .card--hover:hover {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), var(--shadow);
+}
+:root[data-theme='light'] .btn.cta {
+  box-shadow: 0 12px 30px -12px rgba(79, 70, 229, 0.55);
+}
+:root[data-theme='light'] .btn.cta:hover {
+  box-shadow: 0 16px 36px -12px rgba(147, 51, 234, 0.6);
+}
+:root[data-theme='light'] .btn.ghost {
+  background: rgba(255, 255, 255, 0.7);
+}
+:root[data-theme='light'] .btn:not(.cta):hover {
+  border-color: var(--brand);
+  color: var(--brand-ink);
+}

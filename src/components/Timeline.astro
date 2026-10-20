@@ -80,6 +80,18 @@ const span = (t: Item) => shortDate(t.when) + (t.until ? ` – ${shortDate(t.unt
     font-size: 0.82rem;
     color: var(--ink-3);
   }
+  :root[data-theme='light'] .exp__kind {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-pill);
+    background: var(--chip-bg);
+    border: 1px solid var(--chip-line);
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--ink-2);
+  }
   .exp__body {
     display: grid;
     gap: 0.35rem;

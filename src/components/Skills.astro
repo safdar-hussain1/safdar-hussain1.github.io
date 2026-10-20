@@ -140,6 +140,17 @@ const byslug = (slug: string) => entries.find((e) => e.slug === slug && e.status
     transform: translateY(-3px);
     box-shadow: var(--shadow);
   }
+  :root[data-theme='light'] .skills__teachcard {
+    position: relative;
+    overflow: hidden;
+  }
+  :root[data-theme='light'] .skills__teachcard::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: var(--grad);
+  }
   .skills__n {
     font-family: var(--display);
     font-size: 0.8rem;

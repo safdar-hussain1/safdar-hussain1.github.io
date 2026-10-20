@@ -1,6 +1,8 @@
-/* Layout: one 1120px column. Dark is the site's own look; the light theme is a switch and reads
-   as paper: warm ground, near-black ink, hairlines, one indigo accent, no glow. Every colour is
-   a token; the band tokens colour the full-width contact section. */
+/* Layout: one 1120px column. Dark is the site's own look: deep navy, one blue-to-violet gradient,
+   soft lights. The light theme is the same design in daylight: an aurora of lavender, violet,
+   pink and sky behind the page, glass surfaces over it, the gradient in the type, indigo-tinted
+   hairlines and chips, colour in every shadow; the contact band and the footer stay deep so the
+   page ends the same way in both themes. Every colour is a token. */
 :root {
   --ground: #0a0e1c;
   --ground-2: #0d1326;
@@ -29,6 +31,9 @@
   --shadow-2: 0 18px 50px -24px rgba(0, 0, 0, 0.7);
   --accent: var(--brand);
   --accent-ink: var(--brand-ink);
+  --grad-text: var(--grad);
+  --chip-bg: var(--raised);
+  --chip-line: var(--line);
   --good: #5ad38a;
   --bad: #ff7b7b;
 
@@ -62,31 +67,34 @@
 }
 
 :root[data-theme='light'] {
-  --ground: #ffffff;
-  --ground-2: #f5f7fb;
+  --ground: #f7f7fd;
+  --ground-2: #eeeffa;
   --raised: #ffffff;
-  --raised-2: #f1f4f9;
-  --line: rgba(15, 23, 42, 0.09);
-  --line-2: rgba(15, 23, 42, 0.17);
-  --ink: #0f172a;
-  --ink-2: #475569;
-  --ink-3: #5b6678;
+  --raised-2: #f1f0fb;
+  --line: rgba(79, 70, 229, 0.14);
+  --line-2: rgba(79, 70, 229, 0.3);
+  --ink: #14123a;
+  --ink-2: #4a4b75;
+  --ink-3: #65668f;
   --brand: #4f46e5;
   --brand-2: #9333ea;
   --brand-ink: #4338ca;
-  --brand-soft: rgba(79, 70, 229, 0.08);
-  --grad: linear-gradient(120deg, #4f46e5 0%, #9333ea 60%, #db2777 100%);
+  --brand-soft: rgba(79, 70, 229, 0.1);
+  --grad: linear-gradient(120deg, #4f46e5 0%, #9333ea 55%, #db2777 100%);
+  --grad-text: linear-gradient(120deg, #4338ca 0%, #7e22ce 55%, #be185d 100%);
   --cta-bg: var(--grad);
   --cta-ink: #ffffff;
-  --band: #0f1536;
+  --band: #14123a;
   --band-ink: #eef2ff;
-  --band-2: #f3f5fb;
+  --band-2: linear-gradient(180deg, #f1efff 0%, #eef4ff 100%);
   --focus: #4338ca;
-  --glass: rgba(255, 255, 255, 0.8);
-  --card: #ffffff;
+  --glass: rgba(255, 255, 255, 0.78);
+  --card: rgba(255, 255, 255, 0.82);
   --card-hover: #ffffff;
-  --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 28px 56px -28px rgba(15, 23, 42, 0.2);
-  --shadow-2: 0 1px 2px rgba(15, 23, 42, 0.04), 0 14px 36px -22px rgba(15, 23, 42, 0.18);
+  --chip-bg: rgba(79, 70, 229, 0.06);
+  --chip-line: rgba(79, 70, 229, 0.18);
+  --shadow: 0 1px 2px rgba(20, 18, 58, 0.05), 0 32px 72px -32px rgba(79, 70, 229, 0.36);
+  --shadow-2: 0 1px 2px rgba(20, 18, 58, 0.05), 0 18px 44px -22px rgba(79, 70, 229, 0.28);
   --good: #15803d;
   --bad: #b91c1c;
   color-scheme: light;

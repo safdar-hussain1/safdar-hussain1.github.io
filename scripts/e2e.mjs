@@ -172,9 +172,12 @@ const flows = {
     await page.keyboard.type('about');
     await page.keyboard.press('Enter');
     await page.waitForFunction(() => location.hash === '#about', null, { timeout: 5000 });
-    await page.waitForTimeout(1500);
+    // The scroll is smooth and the page is long; under software rendering it can take seconds to arrive.
+    const arrived = await page
+      .waitForFunction(() => document.getElementById('about').getBoundingClientRect().top <= 200, null, { timeout: 8000, polling: 100 })
+      .then(() => true, () => false);
     const y = await page.evaluate(() => document.getElementById('about').getBoundingClientRect().top);
-    if (y > 200) throw new Error(`palette did not scroll to About (top ${Math.round(y)})`);
+    if (!arrived || y > 200) throw new Error(`palette did not scroll to About (top ${Math.round(y)})`);
     if (!(await page.locator('#palette').isHidden())) throw new Error('palette still open after Enter');
     await ctx.close();
   },

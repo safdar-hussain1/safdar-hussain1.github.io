@@ -31,8 +31,9 @@ files.
 | **The city** (`/city/`) | On a wide screen with a GPU: the lens over the name, then one building per project along a road, its live page on the facade screen, the cards as captions, a rail of stops at the right (arrow keys and digits move along it). The frame rate is measured once after the start; a slow machine loses the shadows, then the moving traffic, then the city itself and keeps the cards |
 | **The palette** | Press `/` anywhere (or Ctrl/Cmd-K) to jump to any project, section or link, switch the theme or the sound |
 
-The site is dark; a switch turns it light (white surfaces, slate ink, the same gradient; the
-contact band and the footer stay dark) and the choice is remembered. The city is lit at night on the dark theme and stands in daylight on the light one. Sound is off until you turn
+The site is dark; a switch turns it light (an aurora of lavender, violet, pink and sky behind
+the page, glass surfaces over it, the gradient in the type; the contact band and the footer stay
+deep) and the choice is remembered. The city is lit at night on the dark theme and stands in daylight on the light one. Sound is off until you turn
 it on. Phones open the live sites directly instead of framing them, and on the city page they
 keep the cards; a tablet gets the lens alone; reduced motion, Save-Data and a browser without
 hardware WebGL2 also keep the cards. Every word on every page is in the HTML whether or not

@@ -93,6 +93,16 @@ const maxTag = Math.max(1, ...tags.map((t) => t.solved));
     letter-spacing: -0.04em;
     line-height: 1;
   }
+  :root[data-theme='light'] .practice__big {
+    width: fit-content;
+    background: var(--grad-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  :root[data-theme='light'] .practice__tags i::after {
+    background: var(--grad);
+  }
   .practice__label {
     font-family: var(--display);
     color: var(--ink-2);

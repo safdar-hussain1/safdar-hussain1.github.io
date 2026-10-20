@@ -10,9 +10,9 @@
   align-items: center;
   gap: 0.45rem;
   padding: 0.38rem 0.8rem;
-  border: 1px solid var(--line);
+  border: 1px solid var(--chip-line);
   border-radius: var(--radius-pill);
-  background: var(--raised);
+  background: var(--chip-bg);
   font-family: var(--display);
   font-size: 0.82rem;
   font-weight: 500;
@@ -31,32 +31,46 @@
   display: none;
 }
 
-/* A small green pulse: something is live, or being built right now. */
+/* A small green pulse: something is live, or being built right now. The ring is a pseudo-element
+   moved by transform and opacity only, so the animation never repaints what sits under it. */
 .pulse {
+  position: relative;
   width: 9px;
   height: 9px;
   border-radius: 50%;
   background: var(--good);
-  box-shadow: 0 0 0 0 color-mix(in srgb, var(--good) 55%, transparent);
-  animation: pulse 2.2s ease-out infinite;
   flex: none;
+}
+
+.pulse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--good);
+  opacity: 0.55;
+  animation: pulse 2.2s ease-out infinite;
+  will-change: transform, opacity;
 }
 
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--good) 55%, transparent);
+    transform: scale(1);
+    opacity: 0.55;
   }
   70% {
-    box-shadow: 0 0 0 9px transparent;
+    transform: scale(3);
+    opacity: 0;
   }
   100% {
-    box-shadow: 0 0 0 0 transparent;
+    transform: scale(3);
+    opacity: 0;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pulse {
-    animation: none;
+  .pulse::after {
+    display: none;
   }
 }
 

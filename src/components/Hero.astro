@@ -115,6 +115,7 @@ const stillAlt = `A small night city on a round plinth: ${entries.length} buildi
     inset: 0;
     pointer-events: none;
     z-index: -1;
+    will-change: transform;
     background:
       radial-gradient(42% 55% at 18% 40%, color-mix(in srgb, var(--brand) 30%, transparent), transparent 70%),
       radial-gradient(38% 50% at 82% 30%, color-mix(in srgb, var(--brand-2) 22%, transparent), transparent 70%);
@@ -122,8 +123,34 @@ const stillAlt = `A small night city on a round plinth: ${entries.length} buildi
     opacity: 0.7;
   }
   :root[data-theme='light'] .hero__glow {
-    opacity: 0.55;
-    filter: blur(48px);
+    opacity: 1;
+    filter: blur(54px);
+    background:
+      radial-gradient(38% 48% at 14% 32%, rgba(129, 140, 248, 0.52), transparent 70%),
+      radial-gradient(34% 44% at 84% 22%, rgba(192, 132, 252, 0.44), transparent 70%),
+      radial-gradient(28% 36% at 62% 88%, rgba(244, 114, 182, 0.3), transparent 70%),
+      radial-gradient(26% 34% at 34% 96%, rgba(125, 211, 252, 0.36), transparent 70%);
+  }
+  :root[data-theme='light'] .hero__status {
+    padding: 0.42rem 0.95rem 0.42rem 0.75rem;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid var(--line);
+    box-shadow: 0 10px 26px -16px rgba(79, 70, 229, 0.4);
+  }
+  :root[data-theme='light'] .hero__social {
+    background: rgba(255, 255, 255, 0.7);
+  }
+  :root[data-theme='light'] .hero__art {
+    border-color: rgba(79, 70, 229, 0.22);
+    box-shadow: 0 2px 6px rgba(20, 18, 58, 0.06), 0 46px 90px -40px rgba(79, 70, 229, 0.5);
+  }
+  :root[data-theme='light'] .hero__stats b {
+    width: fit-content;
+    background: var(--grad-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   .hero__text {
     position: relative;
